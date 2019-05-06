@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F8F8"
+    android:orientation="vertical">
+
+    <com.yxw.cn.repairservice.view.TitleBar
+        android:id="@+id/titlebar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp" />
+
+    <com.yxw.cn.repairservice.view.ClearEditText
+        android:id="@+id/et_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:padding="12dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        android:textSize="12dp" />
+
+    <Button
+        android:id="@+id/confirm"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_margin="32dp"
+        android:background="@drawable/bg_btn_red"
+        android:text="确定"
+        android:textColor="#ffffff" />
+</LinearLayout>
