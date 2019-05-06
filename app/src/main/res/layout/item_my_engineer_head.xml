@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingTop="16dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="9dp"
+    android:background="#FFFFFF">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="#333333"
+        android:gravity="center|left"
+        android:textSize="14sp"
+        android:text="工程师列表"/>
+
+    <LinearLayout
+        android:id="@+id/lly_edit"
+        android:layout_width="60dp"
+        android:layout_height="26dp"
+        android:gravity="center"
+        android:background="@drawable/myengineer_border_gray">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="14dp"
+            android:src="@drawable/icon_my_engineer_edit"/>
+
+        <TextView
+            android:id="@+id/tv_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#666666"
+            android:layout_marginLeft="3dp"
+            android:textSize="12sp"
+            android:text="编辑"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lly_apply"
+        android:layout_width="60dp"
+        android:layout_height="26dp"
+        android:gravity="center"
+        android:layout_marginLeft="5dp"
+        android:background="@drawable/myengineer_border_gray">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="14dp"
+            android:src="@drawable/icon_my_engineer_edit"/>
+
+        <TextView
+            android:id="@+id/tv_apply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#666666"
+            android:layout_marginLeft="3dp"
+            android:textSize="12sp"
+            android:text="申请"/>
+    </LinearLayout>
+
+</LinearLayout>

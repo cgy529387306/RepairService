@@ -14,6 +14,7 @@ import com.youth.banner.Banner;
 import com.youth.banner.loader.ImageLoader;
 import com.yxw.cn.repairservice.BaseRefreshFragment;
 import com.yxw.cn.repairservice.R;
+import com.yxw.cn.repairservice.activity.MyEngineerActivity;
 import com.yxw.cn.repairservice.activity.order.MyOrderActivity;
 import com.yxw.cn.repairservice.adapter.HomeMsgAdapter;
 import com.yxw.cn.repairservice.adapter.OrderTypeAdapter;
@@ -81,12 +82,15 @@ public class HomeFragment extends BaseRefreshFragment {
         mGridCate.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(CurrentUser.getInstance().isLogin() && CurrentUser.getInstance().getIdCardStatus()==3){
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("type",getOrderTypeList().get(i));
-                    startActivity(MyOrderActivity.class,bundle);
-                }else{
-                    toast("工程师身份审核未通过!");
+//                if(CurrentUser.getInstance().isLogin() && CurrentUser.getInstance().getIdCardStatus()==3){
+//                    Bundle bundle = new Bundle();
+//                    bundle.putSerializable("type",getOrderTypeList().get(i));
+//                    startActivity(MyOrderActivity.class,bundle);
+//                }else{
+//                    toast("工程师身份审核未通过!");
+//                }
+                if (i == 4){
+                    startActivity(MyEngineerActivity.class);
                 }
             }
         });
@@ -95,10 +99,10 @@ public class HomeFragment extends BaseRefreshFragment {
     private List<OrderType> getOrderTypeList(){
         List<OrderType> orderTypeList = new ArrayList<>();
         orderTypeList.add(new OrderType(20,R.drawable.icon_orders,"订单池"));
-        orderTypeList.add(new OrderType(40,R.drawable.icon_order_waiting,"待预约"));
-        orderTypeList.add(new OrderType(50,R.drawable.icon_order_finishing,"待完成"));
-        orderTypeList.add(new OrderType(60,R.drawable.icon_order_coming,"待上门"));
-        orderTypeList.add(new OrderType(100,R.drawable.icon_order_finished,"已完成"));
+        orderTypeList.add(new OrderType(40,R.drawable.icon_order_finishing,"服务中"));
+        orderTypeList.add(new OrderType(50,R.drawable.icon_order_finished,"已完成"));
+        orderTypeList.add(new OrderType(60,R.drawable.icon_order_account_center,"结算中心"));
+        orderTypeList.add(new OrderType(100,R.drawable.icon_order_myengineer,"我的工程师"));
         return orderTypeList;
     }
 

@@ -25,4 +25,6 @@
     <color name="bg_color">#f6f6f6</color>
     <color name="gray_divider">#E4E4E4</color>
     <color name="red_order">#E82B2D</color>
+    <color name="red_my_engineer">#F04A4D</color>
+    <color name="black_my_engineer">#666666</color>
 </resources>
