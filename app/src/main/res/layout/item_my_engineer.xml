@@ -34,27 +34,33 @@
         android:gravity="center_vertical"
         android:layout_marginLeft="29dp"
         android:text="135666666"/>
-
-    <com.hedgehog.ratingbar.RatingBar
-        android:id="@+id/ratingbar"
+    <FrameLayout
+        android:id="@+id/fly_delete"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        hedgehog:halfstart="true"
-        android:gravity="center"
-        hedgehog:starCount="5"
-        hedgehog:starEmpty="@drawable/icon_service_star"
-        hedgehog:starFill="@drawable/icon_service_star"
-        hedgehog:starImagePadding="1dp"
-        hedgehog:starImageHeight="18dp"
-        android:visibility="visible"
-        hedgehog:starImageWidth="18dp"/>
+        android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/iv_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginRight="38dp"
-        android:visibility="gone"
-        android:src="@drawable/icon_my_engineer_delete"/>
+        <com.hedgehog.ratingbar.RatingBar
+            android:id="@+id/ratingbar"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            hedgehog:halfstart="true"
+            android:gravity="center"
+            hedgehog:starCount="5"
+            hedgehog:starEmpty="@drawable/icon_service_star"
+            hedgehog:starFill="@drawable/icon_service_star"
+            hedgehog:starImagePadding="1dp"
+            hedgehog:starImageHeight="18dp"
+            hedgehog:starImageWidth="18dp"/>
+
+        <ImageView
+            android:id="@+id/iv_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:src="@drawable/icon_my_engineer_delete"/>
+    </FrameLayout>
+
 </LinearLayout>
 

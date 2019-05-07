@@ -8,12 +8,17 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.model.Response;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.adapter.MyEngineerAdapter;
-import com.yxw.cn.repairservice.adapter.ServiceProdiverAdapter;
+import com.yxw.cn.repairservice.contast.UrlConstant;
+import com.yxw.cn.repairservice.entity.Category;
+import com.yxw.cn.repairservice.entity.ResponseData;
+import com.yxw.cn.repairservice.okgo.JsonCallback;
+import com.yxw.cn.repairservice.util.AppUtil;
 import com.yxw.cn.repairservice.view.RecycleViewDivider;
 import com.yxw.cn.repairservice.view.TitleBar;
 
@@ -27,7 +32,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * 我的工程师
  */
-public class MyEngineerActivity extends BaseActivity implements BaseQuickAdapter.OnItemChildClickListener{
+public class MyEngineerActivity extends BaseActivity{
 
     @BindView(R.id.titlebar)
     TitleBar titleBar;
@@ -62,7 +67,6 @@ public class MyEngineerActivity extends BaseActivity implements BaseQuickAdapter
         mTvEdit = header.findViewById(R.id.tv_edit);
         mTvApply = header.findViewById(R.id.tv_apply);
         mMyEngineerAdapter.addHeaderView(header);
-        mMyEngineerAdapter.setOnItemChildClickListener(this);
         mLlyEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,6 +87,12 @@ public class MyEngineerActivity extends BaseActivity implements BaseQuickAdapter
                 mMyEngineerAdapter.notifyDataSetChanged();
             }
         });
+        mLlyApply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(ApplyServiceActivity.class);
+            }
+        });
     }
     private List<String> getList(){
         List<String> dataLsit = new ArrayList<>();
@@ -97,9 +107,29 @@ public class MyEngineerActivity extends BaseActivity implements BaseQuickAdapter
     }
 
     @Override
-    public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-        if (view.getId() == R.id.iv_delete){
+    public void getData() {
+        super.getData();
+        OkGo.<ResponseData<List<Category>>>post(UrlConstant.GET_ALL_CATEGORY)
+                .tag(this)
+                .execute(new JsonCallback<ResponseData<List<Category>>>() {
 
-        }
+                    @Override
+                    public void onSuccess(ResponseData<List<Category>> response) {
+                        dismissLoading();
+                        if (response!=null){
+                            if (response.isSuccess()){
+                                AppUtil.categoryItemList = response.getData();
+                            }else{
+                                toast(response.getMsg());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Response<ResponseData<List<Category>>> response) {
+                        super.onError(response);
+                        dismissLoading();
+                    }
+                });
     }
 }

@@ -127,6 +127,9 @@
         <activity android:name=".activity.setting.ComplaintActivity"/>
         <activity android:name=".activity.LookImageActivity"/>
         <activity android:name=".activity.MyEngineerActivity"/>
+        <activity android:name=".activity.ApplyServiceActivity"/>
+        <activity android:name=".activity.AccountCenterActivity"/>
+        <activity android:name=".activity.AccountCenterDetailsActivity"/>
 
         <service
             android:name=".service.InitService"

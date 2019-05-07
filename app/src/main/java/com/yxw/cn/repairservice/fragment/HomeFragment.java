@@ -14,6 +14,7 @@ import com.youth.banner.Banner;
 import com.youth.banner.loader.ImageLoader;
 import com.yxw.cn.repairservice.BaseRefreshFragment;
 import com.yxw.cn.repairservice.R;
+import com.yxw.cn.repairservice.activity.AccountCenterActivity;
 import com.yxw.cn.repairservice.activity.MyEngineerActivity;
 import com.yxw.cn.repairservice.activity.order.MyOrderActivity;
 import com.yxw.cn.repairservice.adapter.HomeMsgAdapter;
@@ -89,7 +90,9 @@ public class HomeFragment extends BaseRefreshFragment {
 //                }else{
 //                    toast("工程师身份审核未通过!");
 //                }
-                if (i == 4){
+                if (i == 3){
+                    startActivity(AccountCenterActivity.class);
+                }else if (i ==4){
                     startActivity(MyEngineerActivity.class);
                 }
             }
