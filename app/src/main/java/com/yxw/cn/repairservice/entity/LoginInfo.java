@@ -31,7 +31,7 @@ public class LoginInfo {
     private String serviceDate;
     private String serviceTime;
     private int idCardStatus;//身份证状态 0未上传 1已上传 2审核未通过 3审核通过
-
+    private String bindingCode;
 
     public String getToken() {
         return token == null ? "" : token;
@@ -234,5 +234,13 @@ public class LoginInfo {
 
     public void setServiceStatus(int serviceStatus) {
         this.serviceStatus = serviceStatus;
+    }
+
+    public String getBindingCode() {
+        return bindingCode == null ? "" : bindingCode;
+    }
+
+    public void setBindingCode(String bindingCode) {
+        this.bindingCode = bindingCode;
     }
 }

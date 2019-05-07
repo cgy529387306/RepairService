@@ -36,7 +36,7 @@
             android:textColor="#666666"
             android:textColorHint="#999999"
             android:textSize="14sp"
-            android:text="18650480850"
+            android:text="15394414300"
             android:hint="手机号"/>
         <LinearLayout
             android:layout_width="match_parent"

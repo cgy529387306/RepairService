@@ -16,6 +16,9 @@ import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.adapter.MyEngineerAdapter;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.Category;
+import com.yxw.cn.repairservice.entity.CurrentUser;
+import com.yxw.cn.repairservice.entity.EngineerInfo;
+import com.yxw.cn.repairservice.entity.LoginInfo;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.util.AppUtil;
@@ -23,7 +26,9 @@ import com.yxw.cn.repairservice.view.RecycleViewDivider;
 import com.yxw.cn.repairservice.view.TitleBar;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -47,7 +52,7 @@ public class MyEngineerActivity extends BaseActivity{
     MyEngineerAdapter mMyEngineerAdapter;
     boolean is_edit = true;
     boolean is_delete = false;
-
+    private LoginInfo loginInfo;
     @Override
     protected int getLayoutResId() {
         return R.layout.act_my_engineer;
@@ -58,7 +63,7 @@ public class MyEngineerActivity extends BaseActivity{
         titleBar.setTitle("我的工程师");
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.addItemDecoration(new RecycleViewDivider(LinearLayoutManager.VERTICAL,1,getResources().getColor(R.color.gray_divider)));
-        mMyEngineerAdapter = new MyEngineerAdapter(getList());
+        mMyEngineerAdapter = new MyEngineerAdapter();
         mRecyclerView.setAdapter(mMyEngineerAdapter);
         //添加Header
         View header = LayoutInflater.from(this).inflate(R.layout.item_my_engineer_head, mRecyclerView, false);
@@ -94,12 +99,6 @@ public class MyEngineerActivity extends BaseActivity{
             }
         });
     }
-    private List<String> getList(){
-        List<String> dataLsit = new ArrayList<>();
-        dataLsit.add("陈秋梅");
-        dataLsit.add("蔡桂有");
-        return dataLsit;
-    }
 
     @OnClick({})
     public void click(View view) {
@@ -109,16 +108,17 @@ public class MyEngineerActivity extends BaseActivity{
     @Override
     public void getData() {
         super.getData();
-        OkGo.<ResponseData<List<Category>>>post(UrlConstant.GET_ALL_CATEGORY)
+        loginInfo = CurrentUser.getInstance();
+        OkGo.<ResponseData<List<EngineerInfo>>>post(UrlConstant.CHILD_SERVICE+loginInfo.getBindingCode())
                 .tag(this)
-                .execute(new JsonCallback<ResponseData<List<Category>>>() {
+                .execute(new JsonCallback<ResponseData<List<EngineerInfo>>>() {
 
                     @Override
-                    public void onSuccess(ResponseData<List<Category>> response) {
+                    public void onSuccess(ResponseData<List<EngineerInfo>> response) {
                         dismissLoading();
                         if (response!=null){
-                            if (response.isSuccess()){
-                                AppUtil.categoryItemList = response.getData();
+                            if (response.isSuccess() && response.getData()!=null){
+                                mMyEngineerAdapter.setNewData(response.getData());
                             }else{
                                 toast(response.getMsg());
                             }
@@ -126,7 +126,7 @@ public class MyEngineerActivity extends BaseActivity{
                     }
 
                     @Override
-                    public void onError(Response<ResponseData<List<Category>>> response) {
+                    public void onError(Response<ResponseData<List<EngineerInfo>>> response) {
                         super.onError(response);
                         dismissLoading();
                     }

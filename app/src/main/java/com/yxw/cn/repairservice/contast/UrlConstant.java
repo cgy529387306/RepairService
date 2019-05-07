@@ -2,7 +2,7 @@ package com.yxw.cn.repairservice.contast;
 
 public class UrlConstant {
 
-    public final static int mRoleSign = 1;  // 1工程师端 3服务商端
+    public final static int mRoleSign = 3;  // 1工程师端 3服务商端
 
     public final static String URL_SHOPPING = "http://47.98.53.48:8080/mall/index";
 
@@ -40,6 +40,8 @@ public class UrlConstant {
     public final static String JOIN_SERVICE = BASE_USER + "/ms70/api/user/info/joinService/";//工程师加入服务商
     public final static String PARENT_SERVICE = BASE_USER + "/ms70/api/user/info/parentService/{bindingCode}";//隶属服务商
     public final static String SAVE_CATEGORY = BASE_USER + "/ms70/api/user/info/saveProject";//新增用户项目
+
+    public final static String CHILD_SERVICE = BASE_USER + "/ms70/api/user/info/childService/";//我的工程师列表
 
     public final static String GET_ALL_CATEGORY = BASE_USER + "/ms20/api/sys/dicts/categoryList";//获取项目分类列表
     public final static String GET_ALL_REGION= BASE_USER + "/ms20/api/sys/region/getRegionList";//获取所有地区接口

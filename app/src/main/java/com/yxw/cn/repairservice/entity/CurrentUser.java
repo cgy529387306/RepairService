@@ -72,6 +72,7 @@ public class CurrentUser extends LoginInfo{
             me.setServiceTime(entity.getServiceTime());
             me.setIdCardStatus(entity.getIdCardStatus());
             me.setAliplayAccount(entity.getAliplayAccount());
+            me.setBindingCode(entity.getBindingCode());
             json = JsonHelper.toJson(me);
             born = me != null;
         }
