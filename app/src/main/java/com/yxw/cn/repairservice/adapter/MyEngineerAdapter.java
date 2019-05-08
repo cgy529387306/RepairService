@@ -3,20 +3,16 @@ package com.yxw.cn.repairservice.adapter;
 import android.app.Activity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.hedgehog.ratingbar.RatingBar;
 import com.yxw.cn.repairservice.R;
-import com.yxw.cn.repairservice.activity.order.OrderDetailActivity;
 import com.yxw.cn.repairservice.entity.EngineerInfo;
-import com.yxw.cn.repairservice.pop.ContactPop;
 import com.yxw.cn.repairservice.pop.DeleteEngineerPop;
 import com.yxw.cn.repairservice.util.AppUtil;
-import com.yxw.cn.repairservice.util.ToastUtil;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -42,9 +38,9 @@ public class MyEngineerAdapter extends BaseQuickAdapter<EngineerInfo, BaseViewHo
         helper.setText(R.id.tv_name,item.getRealName());
         helper.setText(R.id.tv_phone,item.getMobile());
         AppUtil.showPic(mContext, mIvAvatar, item.getAvatar());
-        helper.setVisible(R.id.iv_delete,is_delete ? true:false);
-        helper.setVisible(R.id.ratingbar,is_delete ? false:true);
-        ratingBar.setStarCount(item.getStar());
+        helper.setVisible(R.id.iv_delete,is_delete);
+        helper.setVisible(R.id.ratingbar,!is_delete);
+        ratingBar.setRating(item.getStar());
         helper.setOnClickListener(R.id.iv_delete, new View.OnClickListener() {
             @Override
             public void onClick(View v) {

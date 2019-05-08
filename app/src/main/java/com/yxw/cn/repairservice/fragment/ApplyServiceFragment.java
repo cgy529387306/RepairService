@@ -35,21 +35,18 @@ public class ApplyServiceFragment extends BaseRefreshFragment {
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
-    private static final String KEY_STATE = "key_state";
     private static final String KEY_TYPE = "key_type";
     private ApplyServiceAdapter mAdapter;
     private int mPage = 2;
-    private int mApplyStatus;
     private int mApplyType;
     private boolean isNext = false;
     /**
      * @param state 0:未通过  1:全部
      * @return
      */
-    public static Fragment getInstance(int state,int type) {
+    public static Fragment getInstance(int type) {
         Fragment fragment = new ApplyServiceFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt(KEY_STATE, state);
         bundle.putInt(KEY_TYPE, type);
         fragment.setArguments(bundle);
         return fragment;
@@ -62,7 +59,6 @@ public class ApplyServiceFragment extends BaseRefreshFragment {
 
     @Override
     protected void initView() {
-        mApplyStatus = (int) getArguments().get(KEY_STATE);
         mApplyType = (int) getArguments().get(KEY_TYPE);
         mAdapter = new ApplyServiceAdapter();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -72,10 +68,13 @@ public class ApplyServiceFragment extends BaseRefreshFragment {
     }
 
     private void getApplyData(int i) {
-        Map<String, Object> requestMap = new HashMap<>();
-//        requestMap.put("serviceStatus",mApplyStatus);
+
         Map<String, Object> map = new HashMap<>();
-//        map.put("filter", requestMap);
+        if (mApplyType==0){
+            Map<String, Object> requestMap = new HashMap<>();
+            requestMap.put("serviceStatus",2);
+            map.put("filter", requestMap);
+        }
         map.put("pageIndex", i);
         map.put("pageSize", loadCount);
         map.put("sorter", "");

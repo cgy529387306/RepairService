@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="58dp"
-    xmlns:hedgehog="http://schemas.android.com/apk/res-auto"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:background="@color/white">
@@ -38,25 +37,21 @@
         android:id="@+id/fly_delete"
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
-
-        <com.hedgehog.ratingbar.RatingBar
+        <RatingBar
             android:id="@+id/ratingbar"
+            style="@style/Custom_Ratingbar"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            hedgehog:halfstart="true"
-            android:gravity="center"
-            hedgehog:starCount="5"
-            hedgehog:starEmpty="@drawable/icon_service_star"
-            hedgehog:starFill="@drawable/icon_service_star"
-            hedgehog:starImagePadding="1dp"
-            hedgehog:starImageHeight="18dp"
-            hedgehog:starImageWidth="18dp"/>
+            android:layout_height="30dp"
+            android:isIndicator="true"
+            android:layout_gravity="center"
+            android:numStars="5"
+            android:stepSize="1" />
 
         <ImageView
             android:id="@+id/iv_delete"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
+            android:layout_gravity="right"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:src="@drawable/icon_my_engineer_delete"/>

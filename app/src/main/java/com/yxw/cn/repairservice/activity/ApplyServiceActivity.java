@@ -47,8 +47,8 @@ public class ApplyServiceActivity extends BaseActivity{
         titlebar.setTitle("加入服务商申请");
 
         mFragmentList = new ArrayList<>();
-        mFragmentList.add(ApplyServiceFragment.getInstance(1,0));
-        mFragmentList.add(ApplyServiceFragment.getInstance(2,1));
+        mFragmentList.add(ApplyServiceFragment.getInstance(0));
+        mFragmentList.add(ApplyServiceFragment.getInstance(1));
         mViewPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
