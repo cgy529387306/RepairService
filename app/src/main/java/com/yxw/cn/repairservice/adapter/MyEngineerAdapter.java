@@ -12,6 +12,7 @@ import com.yxw.cn.repairservice.activity.order.OrderDetailActivity;
 import com.yxw.cn.repairservice.entity.EngineerInfo;
 import com.yxw.cn.repairservice.pop.ContactPop;
 import com.yxw.cn.repairservice.pop.DeleteEngineerPop;
+import com.yxw.cn.repairservice.util.AppUtil;
 import com.yxw.cn.repairservice.util.ToastUtil;
 
 import java.util.ArrayList;
@@ -37,7 +38,10 @@ public class MyEngineerAdapter extends BaseQuickAdapter<EngineerInfo, BaseViewHo
     @Override
     protected void convert(BaseViewHolder helper, EngineerInfo item) {
         RatingBar ratingBar = helper.getView(R.id.ratingbar);
-        helper.setText(R.id.tv_name,item.getUserName());
+        ImageView mIvAvatar = helper.getView(R.id.iv_avatar);
+        helper.setText(R.id.tv_name,item.getRealName());
+        helper.setText(R.id.tv_phone,item.getMobile());
+        AppUtil.showPic(mContext, mIvAvatar, item.getAvatar());
         helper.setVisible(R.id.iv_delete,is_delete ? true:false);
         helper.setVisible(R.id.ratingbar,is_delete ? false:true);
         ratingBar.setStarCount(item.getStar());
@@ -45,7 +49,7 @@ public class MyEngineerAdapter extends BaseQuickAdapter<EngineerInfo, BaseViewHo
             @Override
             public void onClick(View v) {
                 if (mDeleteEngineerPop==null){
-                    mDeleteEngineerPop = new DeleteEngineerPop((Activity) mContext,item.getUserName());
+                    mDeleteEngineerPop = new DeleteEngineerPop((Activity) mContext,item.getRealName());
                 }
                 mDeleteEngineerPop.showPopupWindow(v);
             }

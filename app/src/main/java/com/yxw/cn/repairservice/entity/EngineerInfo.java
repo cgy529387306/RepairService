@@ -2,12 +2,42 @@ package com.yxw.cn.repairservice.entity;
 
 public class EngineerInfo {
 
+
     /**
+     * avatar : http://jxdj2.oss-cn-shenzhen.aliyuncs.com/fixuser/20190502/00410552166e09.jpeg
+     * mobile : 18650480850
+     * realName : 张三
      * star : 3
-     * userName : 18650480850
      */
+
+    private String avatar;
+    private String mobile;
+    private String realName;
     private int star;
-    private String userName;
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
 
     public int getStar() {
         return star;
@@ -15,13 +45,5 @@ public class EngineerInfo {
 
     public void setStar(int star) {
         this.star = star;
-    }
-
-    public String getUserName() {
-        return userName == null ? "" : userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 }
