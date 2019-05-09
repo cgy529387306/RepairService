@@ -35,6 +35,8 @@ public class ApplyServiceAdapter extends BaseQuickAdapter<ApplyItem, BaseViewHol
         helper.setText(R.id.tv_mobile,item.getMobile());
         if (item.getServiceStatus() == 0){
             helper.setVisible(R.id.lly_operate,true);
+        }else {
+            helper.setVisible(R.id.lly_operate,false);
         }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date(item.getApplyTime());

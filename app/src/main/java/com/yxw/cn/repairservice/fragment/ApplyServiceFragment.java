@@ -17,6 +17,7 @@ import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.ApplyItem;
 import com.yxw.cn.repairservice.entity.ApplyListData;
 import com.yxw.cn.repairservice.entity.EngineerInfo;
+import com.yxw.cn.repairservice.entity.MessageEvent;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.util.EventBusUtil;
@@ -150,7 +151,8 @@ public class ApplyServiceFragment extends BaseRefreshFragment implements ApplySe
 
                     @Override
                     public void onSuccess(ResponseData<List<EngineerInfo>> response) {
-                        mAdapter.notifyDataSetChanged();
+                        EventBusUtil.post(MessageConstant.NOTIFY_UPDATE_APPLY);
+                        toast("审核成功");
                     }
 
                     @Override
@@ -171,7 +173,8 @@ public class ApplyServiceFragment extends BaseRefreshFragment implements ApplySe
 
                     @Override
                     public void onSuccess(ResponseData<List<EngineerInfo>> response) {
-                        mAdapter.notifyDataSetChanged();
+                        EventBusUtil.post(MessageConstant.NOTIFY_UPDATE_APPLY);
+                        toast("审核成功");
                     }
 
                     @Override
@@ -179,5 +182,14 @@ public class ApplyServiceFragment extends BaseRefreshFragment implements ApplySe
                         super.onError(response);
                     }
                 });
+    }
+    @Override
+    public void onEvent(MessageEvent event) {
+        super.onEvent(event);
+        switch (event.getId()) {
+            case MessageConstant.NOTIFY_UPDATE_APPLY:
+                getApplyData(1);
+                break;
+        }
     }
 }
