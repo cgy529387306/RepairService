@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
+import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
 import com.yxw.cn.repairservice.BaseRefreshFragment;
@@ -13,14 +14,14 @@ import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.adapter.ApplyServiceAdapter;
 import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
+import com.yxw.cn.repairservice.entity.ApplyItem;
 import com.yxw.cn.repairservice.entity.ApplyListData;
-import com.yxw.cn.repairservice.entity.OrderListData;
+import com.yxw.cn.repairservice.entity.EngineerInfo;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.util.EventBusUtil;
 import com.yxw.cn.repairservice.util.SpaceItemDecoration;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,7 @@ import butterknife.BindView;
 /**
  * 加入服务商申请列表
  */
-public class ApplyServiceFragment extends BaseRefreshFragment {
+public class ApplyServiceFragment extends BaseRefreshFragment implements ApplyServiceAdapter.OnApplyServiceOperateListener{
 
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
@@ -40,8 +41,9 @@ public class ApplyServiceFragment extends BaseRefreshFragment {
     private int mPage = 2;
     private int mApplyType;
     private boolean isNext = false;
+    private Gson mGson = new Gson();
     /**
-     * @param state 0:未通过  1:全部
+     * @param type 0:未通过  1:全部
      * @return
      */
     public static Fragment getInstance(int type) {
@@ -60,7 +62,7 @@ public class ApplyServiceFragment extends BaseRefreshFragment {
     @Override
     protected void initView() {
         mApplyType = (int) getArguments().get(KEY_TYPE);
-        mAdapter = new ApplyServiceAdapter();
+        mAdapter = new ApplyServiceAdapter(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(20));
         mRecyclerView.setAdapter(mAdapter);
@@ -135,5 +137,47 @@ public class ApplyServiceFragment extends BaseRefreshFragment {
     public void onLoad() {
         super.onLoad();
         getApplyData(mPage);
+    }
+
+    @Override
+    public void onApplyServiceAgree(ApplyItem applyItem) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("applyId",applyItem.getApplyId());
+        map.put("applyStatus",1);
+        OkGo.<ResponseData<List<EngineerInfo>>>post(UrlConstant.EXAMINE_APPLY)
+                .upJson(mGson.toJson(map))
+                .execute(new JsonCallback<ResponseData<List<EngineerInfo>>>() {
+
+                    @Override
+                    public void onSuccess(ResponseData<List<EngineerInfo>> response) {
+                        mAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onError(Response<ResponseData<List<EngineerInfo>>> response) {
+                        super.onError(response);
+                    }
+                });
+    }
+
+    @Override
+    public void onApplyServiceRefuse(ApplyItem applyItem) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("applyId",applyItem.getApplyId());
+        map.put("applyStatus",2);
+        OkGo.<ResponseData<List<EngineerInfo>>>post(UrlConstant.EXAMINE_APPLY)
+                .upJson(mGson.toJson(map))
+                .execute(new JsonCallback<ResponseData<List<EngineerInfo>>>() {
+
+                    @Override
+                    public void onSuccess(ResponseData<List<EngineerInfo>> response) {
+                        mAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onError(Response<ResponseData<List<EngineerInfo>>> response) {
+                        super.onError(response);
+                    }
+                });
     }
 }

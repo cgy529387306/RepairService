@@ -43,6 +43,7 @@ public class UrlConstant {
 
     public final static String CHILD_SERVICE = BASE_USER + "/ms70/api/user/info/childService/";//我的工程师列表
     public final static String FIND_ALL_APPLY = BASE_USER + "/ms70/api/user/info/findAllByApplicationStart/";//加入服务商申请
+    public final static String EXAMINE_APPLY = BASE_USER + "/ms70/api/user/info/examineApply/";//加入服务商申请 同意或者拒绝
 
     public final static String GET_ALL_CATEGORY = BASE_USER + "/ms20/api/sys/dicts/categoryList";//获取项目分类列表
     public final static String GET_ALL_REGION= BASE_USER + "/ms20/api/sys/region/getRegionList";//获取所有地区接口
