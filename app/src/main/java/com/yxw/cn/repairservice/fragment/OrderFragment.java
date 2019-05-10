@@ -106,7 +106,7 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
         if (mOrderType!=2){
             requestMap.put("customerBookingTime",mBookingTime);
         }
-//        requestMap.put("orderStatus",mOrderStatus);
+        requestMap.put("orderStatus",0);
         Map<String, Object> map = new HashMap<>();
         map.put("filter", requestMap);
         map.put("pageIndex", p);

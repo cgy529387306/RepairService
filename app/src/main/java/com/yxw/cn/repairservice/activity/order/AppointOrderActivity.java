@@ -1,6 +1,8 @@
 package com.yxw.cn.repairservice.activity.order;
 
 
+import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -11,6 +13,7 @@ import com.lzy.okgo.model.Response;
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.activity.ApplyServiceActivity;
+import com.yxw.cn.repairservice.activity.ChooseEngineerActivity;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.InServiceInfo;
 import com.yxw.cn.repairservice.entity.ResponseData;
@@ -30,6 +33,8 @@ public class AppointOrderActivity extends BaseActivity{
 
     @BindView(R.id.titlebar)
     TitleBar titleBar;
+    @BindView(R.id.tv_name)
+    TextView mTvName;
     private Gson mGson = new Gson();
     @Override
     protected int getLayoutResId() {
@@ -41,9 +46,12 @@ public class AppointOrderActivity extends BaseActivity{
         titleBar.setTitle("订单指派");
     }
 
-    @OnClick({})
+    @OnClick({R.id.lly_choose_engineer})
     public void click(View view) {
-
+        int id = view.getId();
+        if (id == R.id.lly_choose_engineer){
+            startActivityForResult(new Intent(this, ChooseEngineerActivity.class),600);
+        }
     }
 
     @Override
@@ -65,6 +73,16 @@ public class AppointOrderActivity extends BaseActivity{
                         super.onError(response);
                     }
                 });
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 600) {
+                String name = data.getExtras().getString("realName");
+                mTvName.setText(name);
+            }
+        }
     }
 }

@@ -22,47 +22,62 @@
         android:text="选择工程师"/>
 
     <LinearLayout
+        android:id="@+id/lly_choose_engineer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="46dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:background="@color/white">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/iv_avatar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:paddingLeft="14dp"
-            android:layout_gravity="center"
-            android:src="@drawable/avatar"/>
+        <!--<de.hdodenhof.circleimageview.CircleImageView-->
+            <!--android:id="@+id/iv_avatar"-->
+            <!--android:layout_width="40dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:paddingLeft="14dp"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:src="@drawable/avatar"/>-->
 
+        <!--<TextView-->
+            <!--android:id="@+id/tv_name"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:textColor="#333333"-->
+            <!--android:textSize="14sp"-->
+            <!--android:gravity="center|left"-->
+            <!--android:layout_marginLeft="12dp"-->
+            <!--android:text="叶浩然"/>-->
+
+        <!--<RatingBar-->
+            <!--android:id="@+id/ratingbar"-->
+            <!--style="@style/Custom_Ratingbar"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:isIndicator="true"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:numStars="5"-->
+            <!--android:stepSize="1" />-->
         <TextView
-            android:id="@+id/tv_name"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:textColor="#333333"
             android:textSize="14sp"
             android:gravity="center|left"
-            android:layout_marginLeft="12dp"
-            android:text="叶浩然"/>
-
-        <RatingBar
-            android:id="@+id/ratingbar"
-            style="@style/Custom_Ratingbar"
+            android:text="工程师"/>
+        <TextView
+            android:id="@+id/tv_name"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:isIndicator="true"
-            android:layout_gravity="center"
-            android:numStars="5"
-            android:stepSize="1" />
-
+            android:layout_height="match_parent"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            android:gravity="center|left"
+            android:text="陈浩然"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:paddingLeft="21dp"
-            android:paddingRight="30dp"
+            android:layout_marginLeft="15dp"
             android:src="@drawable/icon_arrow_down"/>
 
     </LinearLayout>
