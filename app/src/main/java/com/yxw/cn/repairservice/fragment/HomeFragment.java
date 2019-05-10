@@ -16,6 +16,7 @@ import com.yxw.cn.repairservice.BaseRefreshFragment;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.activity.AccountCenterActivity;
 import com.yxw.cn.repairservice.activity.MyEngineerActivity;
+import com.yxw.cn.repairservice.activity.order.InServiceActivity;
 import com.yxw.cn.repairservice.activity.order.MyOrderActivity;
 import com.yxw.cn.repairservice.adapter.HomeMsgAdapter;
 import com.yxw.cn.repairservice.adapter.OrderTypeAdapter;
@@ -83,14 +84,11 @@ public class HomeFragment extends BaseRefreshFragment {
         mGridCate.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                if(CurrentUser.getInstance().isLogin() && CurrentUser.getInstance().getIdCardStatus()==3){
-//                    Bundle bundle = new Bundle();
-//                    bundle.putSerializable("type",getOrderTypeList().get(i));
-//                    startActivity(MyOrderActivity.class,bundle);
-//                }else{
-//                    toast("工程师身份审核未通过!");
-//                }
-                if (i == 3){
+                if (i == 0) {
+                    startActivity(MyOrderActivity.class);
+                }else if (i == 1) {
+                    startActivity(InServiceActivity.class);
+                }else if (i == 3){
                     startActivity(AccountCenterActivity.class);
                 }else if (i ==4){
                     startActivity(MyEngineerActivity.class);

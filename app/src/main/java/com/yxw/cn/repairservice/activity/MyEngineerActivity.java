@@ -1,6 +1,7 @@
 package com.yxw.cn.repairservice.activity;
 
 
+import android.app.Activity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,30 +15,28 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.adapter.MyEngineerAdapter;
+import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
-import com.yxw.cn.repairservice.entity.Category;
 import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.EngineerInfo;
 import com.yxw.cn.repairservice.entity.LoginInfo;
+import com.yxw.cn.repairservice.entity.MessageEvent;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
-import com.yxw.cn.repairservice.util.AppUtil;
+import com.yxw.cn.repairservice.pop.DeleteEngineerPop;
+import com.yxw.cn.repairservice.util.EventBusUtil;
 import com.yxw.cn.repairservice.view.RecycleViewDivider;
 import com.yxw.cn.repairservice.view.TitleBar;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * 我的工程师
  */
-public class MyEngineerActivity extends BaseActivity{
+public class MyEngineerActivity extends BaseActivity implements MyEngineerAdapter.OnDeleteEngineerOperateListener,DeleteEngineerPop.SelectListener {
 
     @BindView(R.id.titlebar)
     TitleBar titleBar;
@@ -53,6 +52,7 @@ public class MyEngineerActivity extends BaseActivity{
     boolean is_edit = true;
     boolean is_delete = false;
     private LoginInfo loginInfo;
+    private DeleteEngineerPop mDeleteEngineerPop;
     @Override
     protected int getLayoutResId() {
         return R.layout.act_my_engineer;
@@ -63,7 +63,7 @@ public class MyEngineerActivity extends BaseActivity{
         titleBar.setTitle("我的工程师");
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.addItemDecoration(new RecycleViewDivider(LinearLayoutManager.VERTICAL,1,getResources().getColor(R.color.gray_divider)));
-        mMyEngineerAdapter = new MyEngineerAdapter();
+        mMyEngineerAdapter = new MyEngineerAdapter(this);
         mRecyclerView.setAdapter(mMyEngineerAdapter);
         //添加Header
         View header = LayoutInflater.from(this).inflate(R.layout.item_my_engineer_head, mRecyclerView, false);
@@ -108,6 +108,10 @@ public class MyEngineerActivity extends BaseActivity{
     @Override
     public void getData() {
         super.getData();
+        getEngineerData();
+
+    }
+    private void getEngineerData() {
         loginInfo = CurrentUser.getInstance();
         OkGo.<ResponseData<List<EngineerInfo>>>post(UrlConstant.CHILD_SERVICE+loginInfo.getBindingCode())
                 .tag(this)
@@ -129,6 +133,38 @@ public class MyEngineerActivity extends BaseActivity{
                     public void onError(Response<ResponseData<List<EngineerInfo>>> response) {
                         super.onError(response);
                         dismissLoading();
+                    }
+                });
+    }
+
+    @Override
+    public void onDeleteEngineer(EngineerInfo item) {
+        if (mDeleteEngineerPop==null){
+            mDeleteEngineerPop = new DeleteEngineerPop(MyEngineerActivity.this,item,this);
+        }
+        mDeleteEngineerPop.showPopupWindow(mRecyclerView);
+    }
+
+    @Override
+    public void onComfirm(EngineerInfo mEngineerInfo) {
+        OkGo.<ResponseData<List<EngineerInfo>>>post(UrlConstant.DELETE_ENGINEER+mEngineerInfo.getMobile())
+                .tag(this)
+                .execute(new JsonCallback<ResponseData<List<EngineerInfo>>>() {
+
+                    @Override
+                    public void onSuccess(ResponseData<List<EngineerInfo>> response) {
+                        if (response!=null){
+                            if (response.isSuccess() && response.getData()!=null){
+                                mMyEngineerAdapter.setNewData(response.getData());
+                            }else{
+                                toast(response.getMsg());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Response<ResponseData<List<EngineerInfo>>> response) {
+                        super.onError(response);
                     }
                 });
     }

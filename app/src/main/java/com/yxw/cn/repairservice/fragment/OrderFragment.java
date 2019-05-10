@@ -63,13 +63,12 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
     private ContactPop mContactPop;
     private DialogPlus mTakingDialog;
     /**
-     * @param state 0:今天 1:明天 2:全部
+     * @param type 0:今天 1:明天 2:全部
      * @return
      */
-    public static Fragment getInstance(int state,int type) {
+    public static Fragment getInstance(int type) {
         Fragment fragment = new OrderFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt(KEY_STATE, state);
         bundle.putInt(KEY_TYPE, type);
         fragment.setArguments(bundle);
         return fragment;
@@ -82,7 +81,6 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
 
     @Override
     protected void initView() {
-        mOrderStatus = (int) getArguments().get(KEY_STATE);
         mOrderType = (int) getArguments().get(KEY_TYPE);
         if (mOrderType==0){
             mBookingTime = Helper.date2String(new Date(),"yyyy-MM-dd");
@@ -108,13 +106,13 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
         if (mOrderType!=2){
             requestMap.put("customerBookingTime",mBookingTime);
         }
-        requestMap.put("orderStatus",mOrderStatus);
+//        requestMap.put("orderStatus",mOrderStatus);
         Map<String, Object> map = new HashMap<>();
         map.put("filter", requestMap);
         map.put("pageIndex", p);
         map.put("pageSize", loadCount);
         map.put("sorter", "");
-        OkGo.<ResponseData<OrderListData>>post(UrlConstant.ORDER_LIST)
+        OkGo.<ResponseData<OrderListData>>post(UrlConstant.ORDER_SERVICE_LIST)
                 .upJson(gson.toJson(map))
                 .execute(new JsonCallback<ResponseData<OrderListData>>() {
                     @Override
@@ -187,65 +185,22 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
 
     @Override
     public void onAbnormal(OrderItem orderItem) {
-        startActivity(OrderAbnormalActivity.class);
+
     }
 
     @Override
     public void onContact(OrderItem orderItem) {
-        if (mContactPop==null){
-            mContactPop = new ContactPop(getActivity(),this,orderItem);
-        }
-        mContactPop.showPopupWindow(mRecyclerView);
+
     }
 
     @Override
     public void onTurnReservation(OrderItem orderItem) {
-        TimePickerUtil.showYearPicker(getActivity(), new OnChooseDateListener() {
-            @Override
-            public void getDate(Date date) {
-                String startTime = TimeUtil.dateToString(date, "yyyy-MM-dd HH:mm:00");
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
-                calendar.set(Calendar.HOUR,
-                        calendar.get(Calendar.HOUR) + 1);
-                String endTime = TimeUtil.dateToString(calendar.getTime(), "yyyy-MM-dd HH:mm:00");
-                showLoading();
-                HashMap<String, Object> map = new HashMap<>();
-                map.put("orderId", orderItem.getOrderId());
-                map.put("bookingStartTime", startTime);
-                map.put("bookingEndTime", endTime);
-                OkGo.<ResponseData<String>>post(UrlConstant.ORDER_TURN_RESERVATION)
-                        .upJson(gson.toJson(map))
-                        .execute(new JsonCallback<ResponseData<String>>() {
-                            @Override
-                            public void onSuccess(ResponseData<String> response) {
-                                dismissLoading();
-                                if (response!=null){
-                                    if (response.isSuccess()) {
-                                        toast("预约成功");
-                                        EventBusUtil.post(MessageConstant.NOTIFY_UPDATE_ORDER);
-                                    }else{
-                                        toast(response.getMsg());
-                                    }
-                                }
-                            }
 
-                            @Override
-                            public void onError(Response<ResponseData<String>> response) {
-                                super.onError(response);
-                                dismissLoading();
-                            }
-                        });
-
-            }
-        });
     }
 
     @Override
     public void onSign(OrderItem orderItem) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("order",orderItem);
-        startActivity(OrderSignInActivity.class,bundle);
+
     }
 
     @Override
@@ -257,6 +212,7 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
     public void onView(OrderItem orderItem) {
 
     }
+
 
     @Override
     public void onEvent(MessageEvent event) {

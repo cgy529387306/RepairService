@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.yxw.cn.repairservice.view.TitleBar
+        android:id="@+id/titlebar"
+        android:layout_width="match_parent"
+        android:background="#FFFFFF"
+        android:layout_height="48dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#666666"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="15dp"
+        android:text="选择工程师"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@color/white">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:paddingLeft="14dp"
+            android:layout_gravity="center"
+            android:src="@drawable/avatar"/>
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            android:gravity="center|left"
+            android:layout_marginLeft="12dp"
+            android:text="叶浩然"/>
+
+        <RatingBar
+            android:id="@+id/ratingbar"
+            style="@style/Custom_Ratingbar"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:isIndicator="true"
+            android:layout_gravity="center"
+            android:numStars="5"
+            android:stepSize="1" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:paddingLeft="21dp"
+            android:paddingRight="30dp"
+            android:src="@drawable/icon_arrow_down"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#666666"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="15dp"
+        android:text="重要程度"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:paddingLeft="44dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="15dp"
+        android:layout_marginBottom="15dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textColor="#273D52"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:text="非常重要"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textColor="#F04A4D"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:background="@drawable/appoint_order_border_red"
+            android:text="很重要"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textColor="#273D52"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:text="一般"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="19dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/corner_edit_gray">
+
+        <EditText
+            android:id="@+id/et_remark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:gravity="top"
+            android:hint="请输入您的宝贵意见或举报内容"
+            android:lines="6"
+            android:maxLength="3000"
+            android:textColor="#333333"
+            android:textSize="14sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/confirm"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_btn_red"
+        android:textSize="16sp"
+        android:text="提交"
+        android:textColor="@color/white" />
+</LinearLayout>

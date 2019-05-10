@@ -16,9 +16,9 @@ import com.lzy.okgo.model.Response;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
-import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.EngineerInfo;
-import com.yxw.cn.repairservice.entity.LoginInfo;
+import com.yxw.cn.repairservice.entity.InServiceInfo;
+import com.yxw.cn.repairservice.entity.OrderItem;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.util.EventBusUtil;
@@ -29,27 +29,26 @@ import java.util.List;
 /**
  * Created by chenqm
  */
-public class DeleteEngineerPop extends PopupWindow implements View.OnClickListener {
+public class ApplyCancelOrderPop extends PopupWindow implements View.OnClickListener {
     private View mContentView;
-    private Context mContext;
+    private Activity mContext;
     private TextView mTvEngineer;
     private TextView mTvCancel;
     private TextView mTvConfirm;
-    private EngineerInfo mEngineerInfo;
+    private InServiceInfo item;
     private SelectListener mSelectListener;
 
     public interface SelectListener {
-        void onComfirm(EngineerInfo mEngineerInfo);
+        void onComfirm(InServiceInfo orderItem);
     }
 
-
-    public DeleteEngineerPop(Context context, EngineerInfo engineerInfo,SelectListener mSelectListener) {
+    public ApplyCancelOrderPop(Activity context,InServiceInfo item,SelectListener mSelectListener) {
         this.mContext = context;
-        this.mEngineerInfo = engineerInfo;
+        this.item = item;
         this.mSelectListener = mSelectListener;
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mContentView = inflater.inflate(R.layout.pop_delete_engineer, null);
+        mContentView = inflater.inflate(R.layout.pop_apply_cancel_order, null);
         // 设置SelectPicPopupWindow的View
         this.setContentView(mContentView);
         setFocusable(false);
@@ -58,15 +57,13 @@ public class DeleteEngineerPop extends PopupWindow implements View.OnClickListen
         setHeight(ViewPager.LayoutParams.MATCH_PARENT);
         setBackgroundDrawable(new BitmapDrawable());
         setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        initView(mEngineerInfo);
+        initView();
         initListener();
     }
 
-    private void initView(EngineerInfo engineerInfo) {
-        mTvEngineer = mContentView.findViewById(R.id.tv_engineer);
+    private void initView() {
         mTvCancel = mContentView.findViewById(R.id.tv_cancel);
         mTvConfirm = mContentView.findViewById(R.id.tv_confirm);
-        mTvEngineer.setText("删除工程师" + engineerInfo.getRealName() + "，确定吗?");
     }
 
     private void initListener() {
@@ -94,7 +91,7 @@ public class DeleteEngineerPop extends PopupWindow implements View.OnClickListen
         dismiss();
         if (id == R.id.tv_cancel){
         }else if (id == R.id.tv_confirm){
-            mSelectListener.onComfirm(mEngineerInfo);
+            mSelectListener.onComfirm(item);
         }
     }
 }

@@ -24,16 +24,16 @@
             android:layout_height="match_parent"
             android:text="手机维修/苹果"/>
 
-        <!--<TextView-->
-            <!--android:id="@+id/tv_order_state"-->
-            <!--android:layout_marginRight="10dp"-->
-            <!--android:textSize="14sp"-->
-            <!--android:padding="5dp"-->
-            <!--android:textColor="#E82B2D"-->
-            <!--android:gravity="center"-->
-            <!--android:layout_width="80dp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:text="待接单"/>-->
+        <TextView
+            android:id="@+id/tv_order_state"
+            android:layout_marginRight="10dp"
+            android:textSize="14sp"
+            android:padding="5dp"
+            android:textColor="#E82B2D"
+            android:gravity="center"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:text="待分配"/>
 
     </LinearLayout>
     <include layout="@layout/view_line_h"/>
@@ -194,10 +194,31 @@
             android:layout_weight="1"
             android:layout_height="0dp" />
         <TextView
+            android:id="@+id/tv_operate0"
+            android:layout_width="90dp"
+            android:layout_height="30dp"
+            android:text="申请退单"
+            android:background="@drawable/order_border_gray"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:textColor="#999999" />
+
+        <TextView
+            android:id="@+id/tv_operate1"
+            android:layout_width="90dp"
+            android:layout_height="30dp"
+            android:text="申请退单"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/order_border_gray"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:textColor="#999999" />
+        <TextView
             android:id="@+id/tv_operate2"
             android:layout_width="90dp"
             android:layout_height="30dp"
-            android:text="我要接单"
+            android:text="指派工程师"
+            android:layout_marginLeft="8dp"
             android:background="@drawable/order_border_red"
             android:gravity="center"
             android:textSize="12sp"

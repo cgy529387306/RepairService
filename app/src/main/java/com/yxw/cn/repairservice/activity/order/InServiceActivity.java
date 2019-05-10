@@ -10,7 +10,8 @@ import android.view.ViewGroup;
 
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
-import com.yxw.cn.repairservice.fragment.OrderFragment;
+import com.yxw.cn.repairservice.entity.OrderType;
+import com.yxw.cn.repairservice.fragment.InServiceFragment;
 import com.yxw.cn.repairservice.view.TitleBar;
 
 import java.util.ArrayList;
@@ -20,11 +21,11 @@ import butterknife.BindView;
 
 
 /**
- * 订单列表
+ * 服务中
  * @author @author chenqm on 2018/1/15.
  */
 
-public class MyOrderActivity extends BaseActivity{
+public class InServiceActivity extends BaseActivity{
 
     @BindView(R.id.titlebar)
     TitleBar titlebar;
@@ -34,7 +35,7 @@ public class MyOrderActivity extends BaseActivity{
     ViewPager mViewPager;
 
     private List<Fragment> mFragmentList = new ArrayList<>();
-    private String[] mTitles = {"今天","明天","全部"};
+    private String[] mTitles = {"待指派","待预约","待上门","待完成","全部"};
 
     @Override
     protected int getLayoutResId() {
@@ -43,12 +44,14 @@ public class MyOrderActivity extends BaseActivity{
 
     @Override
     public void initView() {
-        titlebar.setTitle("订单池");
+        titlebar.setTitle("服务中");
 
         mFragmentList = new ArrayList<>();
-        mFragmentList.add(OrderFragment.getInstance(0));
-        mFragmentList.add(OrderFragment.getInstance(1));
-        mFragmentList.add(OrderFragment.getInstance(2));
+        mFragmentList.add(InServiceFragment.getInstance(0));
+        mFragmentList.add(InServiceFragment.getInstance(1));
+        mFragmentList.add(InServiceFragment.getInstance(2));
+        mFragmentList.add(InServiceFragment.getInstance(3));
+        mFragmentList.add(InServiceFragment.getInstance(4));
         mViewPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {

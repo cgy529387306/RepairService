@@ -130,6 +130,8 @@
         <activity android:name=".activity.ApplyServiceActivity"/>
         <activity android:name=".activity.AccountCenterActivity"/>
         <activity android:name=".activity.AccountCenterDetailsActivity"/>
+        <activity android:name=".activity.order.InServiceActivity"/>
+        <activity android:name=".activity.order.AppointOrderActivity"/>
 
         <service
             android:name=".service.InitService"

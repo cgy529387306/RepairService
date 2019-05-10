@@ -22,14 +22,19 @@ public class MyEngineerAdapter extends BaseQuickAdapter<EngineerInfo, BaseViewHo
 
     boolean is_delete;
     DeleteEngineerPop mDeleteEngineerPop;
-    public MyEngineerAdapter() {
+    private OnDeleteEngineerOperateListener mOnDeleteEngineerOperateListener;
+    public MyEngineerAdapter(OnDeleteEngineerOperateListener mOnDeleteEngineerOperateListener) {
         super(R.layout.item_my_engineer, new ArrayList<>());
+        this.mOnDeleteEngineerOperateListener = mOnDeleteEngineerOperateListener;
     }
 
     public void deleteStatus(Boolean is_delete){
         this.is_delete = is_delete;
     }
 
+    public interface OnDeleteEngineerOperateListener{
+        void onDeleteEngineer(EngineerInfo item);//删除工程师
+    }
 
     @Override
     protected void convert(BaseViewHolder helper, EngineerInfo item) {
@@ -44,10 +49,7 @@ public class MyEngineerAdapter extends BaseQuickAdapter<EngineerInfo, BaseViewHo
         helper.setOnClickListener(R.id.iv_delete, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mDeleteEngineerPop==null){
-                    mDeleteEngineerPop = new DeleteEngineerPop((Activity) mContext,item.getRealName());
-                }
-                mDeleteEngineerPop.showPopupWindow(v);
+                mOnDeleteEngineerOperateListener.onDeleteEngineer(item);
             }
         });
     }

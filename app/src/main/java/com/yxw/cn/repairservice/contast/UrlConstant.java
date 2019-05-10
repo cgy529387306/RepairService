@@ -44,6 +44,7 @@ public class UrlConstant {
     public final static String CHILD_SERVICE = BASE_USER + "/ms70/api/user/info/childService/";//我的工程师列表
     public final static String FIND_ALL_APPLY = BASE_USER + "/ms70/api/user/info/findAllByApplicationStart/";//加入服务商申请
     public final static String EXAMINE_APPLY = BASE_USER + "/ms70/api/user/info/examineApply/";//加入服务商申请 同意或者拒绝
+    public final static String DELETE_ENGINEER = BASE_USER + "/ms70/api/user/info/deleteFixUse/";// 服务商端删除工程师
 
     public final static String GET_ALL_CATEGORY = BASE_USER + "/ms20/api/sys/dicts/categoryList";//获取项目分类列表
     public final static String GET_ALL_REGION= BASE_USER + "/ms20/api/sys/region/getRegionList";//获取所有地区接口
@@ -61,6 +62,9 @@ public class UrlConstant {
     public final static String ORDER_DETAIL = BASE_USER + "/ms60/api/fix/order/view/";//获取订单详情
     public final static String ORDER_EXEPTION_APPOINT = BASE_USER + "/ms60/api/fix/order/exception/appointment";//预约异常
     public final static String ORDER_EXEPTION_SIGN = BASE_USER + "/ms60/api/fix/order/exception/signIn";//签到异常
+
+    public final static String ORDER_SERVICE_LIST = BASE_USER + "/ms60/api/fix/order/findServiceProviderList/";//服务商端订单条件查询
+    public final static String ORDER_SERVICE_ASSIGN = BASE_USER + "/ms60/api/fix/order/accept/serviceAssign/";//服务商指派工程师
 
 
 
