@@ -23,9 +23,7 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
 import com.yxw.cn.repairservice.BaseApplication;
 import com.yxw.cn.repairservice.R;
-import com.yxw.cn.repairservice.activity.user.ChooseCategoryActivity;
 import com.yxw.cn.repairservice.activity.user.IdCardInfoActivity;
-import com.yxw.cn.repairservice.activity.user.ServiceTimeActivity;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.Abnormal;
 import com.yxw.cn.repairservice.entity.Category;
@@ -33,9 +31,10 @@ import com.yxw.cn.repairservice.entity.CityBean;
 import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.LoginInfo;
 import com.yxw.cn.repairservice.entity.QueryListByMark;
+import com.yxw.cn.repairservice.entity.ReasonBean;
 import com.yxw.cn.repairservice.entity.RegionTree;
-import com.yxw.cn.repairservice.entity.RegionTreeList;
 import com.yxw.cn.repairservice.entity.ResponseData;
+import com.yxw.cn.repairservice.entity.TradeItem;
 import com.yxw.cn.repairservice.entity.UserOrder;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 
@@ -53,6 +52,8 @@ public class AppUtil {
     public static List<RegionTree> regionTreeList = new ArrayList<>();
     public static List<Category> categoryItemList = new ArrayList<>();
     public static List<CityBean> cityItemList = new ArrayList<>();
+    public static List<ReasonBean> signReasonList = new ArrayList<>();
+    public static List<ReasonBean> reservationReasonList = new ArrayList<>();
     public static List<Abnormal> categoryItemList0 = new ArrayList<>();
     private static Gson gson = new Gson();
 
@@ -83,15 +84,7 @@ public class AppUtil {
         LoginInfo loginInfo = CurrentUser.getInstance();
         Intent intent;
         if(loginInfo.getIdCardStatus() == 0 || loginInfo.getIdCardStatus() == 2){
-            intent = new Intent(context,IdCardInfoActivity.class);
-            context.startActivity(intent);
-        }else if(TextUtils.isEmpty(loginInfo.getServiceTime())||TextUtils.isEmpty(loginInfo.getServiceDate())){
-            intent = new Intent(context, ServiceTimeActivity.class);
-            intent.putExtra("place",true);
-            context.startActivity(intent);
-        }else if(loginInfo.getTags() == null || loginInfo.getTags().size()==0){
-            intent = new Intent(context, ChooseCategoryActivity.class);
-            intent.putExtra("force",true);
+            intent = new Intent(context, IdCardInfoActivity.class);
             context.startActivity(intent);
         }
     }
@@ -100,27 +93,33 @@ public class AppUtil {
         return order.getProvince()+order.getCity()+order.getDistrict()+order.getAddress();
     }
 
-    public static String getUserOrderStatus(UserOrder.ListBean item) {
-        if (item.getOrderStatus()< 25) {
-            return "未接单";
-        }else if (item.getOrderStatus() >= 25 && item.getOrderStatus() < 35) {
-            return "待预约";
+    public static String getTradeName(TradeItem item) {
+        String tradeName = "";
+        if (item==null){
+            return tradeName;
         }
-        else if (item.getOrderStatus() >= 35 && item.getOrderStatus() < 55) {
-            return "待服务";
-        } else if (item.getOrderStatus() >= 55 && item.getOrderStatus() < 60) {
-            return "进行中";
-        } else if (item.getOrderStatus() >= 60) {
-            return "已完成";
-        } else {
-            return "";
+        if (item.getTradeType()==0){
+            if (item.getTradeWay()==0){
+                tradeName = "支付宝提现";
+            }else if (item.getTradeWay()==1){
+                tradeName = "微信提现";
+            }else if (item.getTradeWay()==2){
+                tradeName = "银联提现";
+            }
+        }else if (item.getTradeType()==1){
+            tradeName = "交保证金";
+        }else if (item.getTradeType()==3){
+            tradeName = "订单结算";
         }
+        return tradeName;
     }
 
     public static String getOrderStatus(int orderStatus) {
         //待接单 待预约 待上门 待完成 已完成
         if (orderStatus<=20){
             return "待接单";
+        }else if (orderStatus<=30){
+            return "待分配";
         }else if (orderStatus<=40){
             return "待预约";
         }else if (orderStatus<=55){
@@ -201,40 +200,67 @@ public class AppUtil {
     }
 
     public static void initRegionTreeData() {
-        OkGo.<ResponseData<RegionTreeList>>get(UrlConstant.GET_REGION_TREE)
-                .execute(new JsonCallback<ResponseData<RegionTreeList>>() {
+        OkGo.<ResponseData<List<RegionTree>>>post(UrlConstant.GET_ALL_REGION)
+                .execute(new JsonCallback<ResponseData<List<RegionTree>>>() {
 
                     @Override
-                    public void onSuccess(ResponseData<RegionTreeList> response) {
-                        if (response.getData().getList() != null && response.getData().getList().size() > 0) {
-                            regionTreeList.clear();
-                            regionTreeList.addAll(response.getData().getList());
-                            RegionPickerUtil.init();
+                    public void onSuccess(ResponseData<List<RegionTree>> response) {
+                        if (response!=null){
+                            if (response.isSuccess() && response.getData()!=null){
+                                AppUtil.regionTreeList = response.getData();
+                            }
                         }
-                    }
-
-                    @Override
-                    public void onError(Response<ResponseData<RegionTreeList>> response) {
-                        super.onError(response);
                     }
                 });
     }
 
     public static void initCategoryData() {
-        OkGo.<ResponseData<List<Category>>>get(UrlConstant.GET_ALL_CATEGORY)
+        OkGo.<ResponseData<List<Category>>>post(UrlConstant.GET_ALL_CATEGORY)
                 .execute(new JsonCallback<ResponseData<List<Category>>>() {
 
                     @Override
                     public void onSuccess(ResponseData<List<Category>> response) {
-                        if (response.getData() != null && response.getData().size() > 0) {
-                            categoryItemList.clear();
-                            categoryItemList.addAll(response.getData());
+                        if (response!=null){
+                            if (response.isSuccess()){
+                                AppUtil.categoryItemList = response.getData();
+                            }
                         }
                     }
+                });
+    }
+
+    public static void initSignReasonData() {
+        HashMap<String,String> map = new HashMap<>();
+        map.put("dictKey","SIGN_IN_EXCEPTION");
+        OkGo.<ResponseData<List<ReasonBean>>>post(UrlConstant.GET_EXCEPTION_REASON)
+                .upJson(gson.toJson(map))
+                .execute(new JsonCallback<ResponseData<List<ReasonBean>>>() {
 
                     @Override
-                    public void onError(Response<ResponseData<List<Category>>> response) {
-                        super.onError(response);
+                    public void onSuccess(ResponseData<List<ReasonBean>> response) {
+                        if (response!=null){
+                            if (response.isSuccess() && response.getData()!=null){
+                                AppUtil.signReasonList = response.getData();
+                            }
+                        }
+                    }
+                });
+    }
+
+    public static void initReservationReasonData() {
+        HashMap<String,String> map = new HashMap<>();
+        map.put("dictKey","TURN_RESERVATION_REASON");
+        OkGo.<ResponseData<List<ReasonBean>>>post(UrlConstant.GET_EXCEPTION_REASON)
+                .upJson(gson.toJson(map))
+                .execute(new JsonCallback<ResponseData<List<ReasonBean>>>() {
+
+                    @Override
+                    public void onSuccess(ResponseData<List<ReasonBean>> response) {
+                        if (response!=null){
+                            if (response.isSuccess() && response.getData()!=null){
+                                AppUtil.reservationReasonList = response.getData();
+                            }
+                        }
                     }
                 });
     }
@@ -323,7 +349,7 @@ public class AppUtil {
      */
     public static String getCurProcessName(Context context) {
         int pid = android.os.Process.myPid();
-        android.app.ActivityManager activityManager = (android.app.ActivityManager) context
+        ActivityManager activityManager = (ActivityManager) context
                 .getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningAppProcessInfo appProcess : activityManager
                 .getRunningAppProcesses()) {

@@ -50,6 +50,7 @@ public class OrderItem implements Serializable {
     private String orderId;
     private String orderSn;
     private String orderSnOriginal;
+    private String operaterId;
     private int payStatus;
     private String province;
     private int receiveStatus;
@@ -58,6 +59,9 @@ public class OrderItem implements Serializable {
     private double totalPrice;
     private String userId;
     private int orderStatus;
+    private String orderStatusName;
+    private String categoryCName;//维修小类
+    private String categoryPName;//维修大类
 
     public String getAddress() {
         return address == null ? "" : address;
@@ -267,4 +271,35 @@ public class OrderItem implements Serializable {
         return orderStatus;
     }
 
+    public String getOrderStatusName() {
+        return orderStatusName == null ? "" : orderStatusName;
+    }
+
+    public void setOrderStatusName(String orderStatusName) {
+        this.orderStatusName = orderStatusName;
+    }
+
+    public String getCategoryCName() {
+        return categoryCName == null ? "" : categoryCName;
+    }
+
+    public void setCategoryCName(String categoryCName) {
+        this.categoryCName = categoryCName;
+    }
+
+    public String getCategoryPName() {
+        return categoryPName == null ? "" : categoryPName;
+    }
+
+    public void setCategoryPName(String categoryPName) {
+        this.categoryPName = categoryPName;
+    }
+
+    public String getOperaterId() {
+        return operaterId == null ? "" : operaterId;
+    }
+
+    public void setOperaterId(String operaterId) {
+        this.operaterId = operaterId;
+    }
 }

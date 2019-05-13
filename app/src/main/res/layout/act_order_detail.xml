@@ -23,7 +23,7 @@
         android:textSize="16sp"
         android:text="接单倒计时"
         android:textColor="@color/white" />
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -313,7 +313,7 @@
                     android:layout_weight="1"
                     android:layout_height="0dp"/>
                 <TextView
-                    android:id="@+id/tv_remark"
+                    android:id="@+id/tv_desc"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="手机屏幕碎了，得换屏幕"
@@ -332,7 +332,7 @@
                 android:layout_height="10dp"
                 android:background="#F8F8F8"/>
         </LinearLayout>
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
     <LinearLayout
         android:id="@+id/ll_bottom"
         android:layout_width="match_parent"
@@ -348,10 +348,6 @@
             android:textSize="16sp"
             android:text="改约"
             android:textColor="#666666" />
-        <View
-            android:layout_width="0.5dp"
-            android:layout_height="match_parent"
-            android:background="#F8F8F8"/>
         <TextView
             android:id="@+id/tv_operate1"
             android:layout_width="0dp"
@@ -362,10 +358,6 @@
             android:textSize="16sp"
             android:text="异常反馈"
             android:textColor="#666666" />
-        <View
-            android:layout_width="0.5dp"
-            android:layout_height="match_parent"
-            android:background="#F8F8F8"/>
         <TextView
             android:id="@+id/tv_operate2"
             android:layout_width="0dp"

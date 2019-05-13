@@ -34,7 +34,7 @@ public class ApplyServiceActivity extends BaseActivity{
     ViewPager mViewPager;
 
     private List<Fragment> mFragmentList = new ArrayList<>();
-    private String[] mTitles = {"未通过","全部"};
+    private String[] mTitles = {"待审核","全部"};
 
     @Override
     protected int getLayoutResId() {
@@ -48,7 +48,7 @@ public class ApplyServiceActivity extends BaseActivity{
 
         mFragmentList = new ArrayList<>();
         mFragmentList.add(ApplyServiceFragment.getInstance(0));
-        mFragmentList.add(ApplyServiceFragment.getInstance(1));
+        mFragmentList.add(ApplyServiceFragment.getInstance(2));
         mViewPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {

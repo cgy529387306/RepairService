@@ -4,14 +4,12 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,12 +29,6 @@ import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.search.core.SearchResult;
-import com.baidu.mapapi.search.geocode.GeoCodeOption;
-import com.baidu.mapapi.search.geocode.GeoCodeResult;
-import com.baidu.mapapi.search.geocode.GeoCoder;
-import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
-import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
 import com.orhanobut.dialogplus.DialogPlus;
@@ -48,8 +40,9 @@ import com.yxw.cn.repairservice.adapter.UserOrderPicAdapter;
 import com.yxw.cn.repairservice.adapter.UserOrderStatusAdapter;
 import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
+import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.MessageEvent;
-import com.yxw.cn.repairservice.entity.Order;
+import com.yxw.cn.repairservice.entity.OrderDetail;
 import com.yxw.cn.repairservice.entity.OrderItem;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.entity.UserOrder;
@@ -63,15 +56,12 @@ import com.yxw.cn.repairservice.util.ToastUtil;
 import com.yxw.cn.repairservice.view.TitleBar;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * 订单详情
@@ -100,8 +90,8 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
     TextView tvCreateTime;
     @BindView(R.id.tv_booking_time)
     TextView tvBookingTime;
-    @BindView(R.id.tv_remark)
-    TextView tvRemark;
+    @BindView(R.id.tv_desc)
+    TextView tvDesc;
     @BindView(R.id.tv_operate0)
     TextView tvOperate0;
     @BindView(R.id.tv_operate1)
@@ -119,6 +109,7 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
     @BindView(R.id.ll_bottom)
     LinearLayout llBottom;
 
+    private OrderDetail orderDetail;
     private OrderItem orderItem;
     private String orderId;
     private String orderStatus;
@@ -128,9 +119,7 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
     private UserOrderDetailAdapter orderAdapter;
     private List<UserOrder.ListBean.PicListBean> picList;
     private UserOrderPicAdapter picAdapter;
-    private List<UserOrder.ListBean.TimelineListBean> statusList;
     private UserOrderStatusAdapter statusAdapter;
-    private UserOrder.ListBean listBean;
     private boolean mStop;
     private int connectFlag = 0;
     private TitleBar.TextAction textAction;
@@ -149,11 +138,8 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
     @Override
     public void initView() {
         titleBar.setTitle("订单详情");
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            llBottom.setElevation(2);
-            llBottom.setTranslationZ(2);
-        }
         orderItem = (OrderItem) getIntent().getSerializableExtra("data");
+        llBottom.setVisibility(orderItem.getOperaterId().equals(CurrentUser.getInstance().getUserId())?View.VISIBLE:View.GONE);
         orderId = orderItem.getOrderId();
         orderList = new ArrayList<>();
         orderAdapter = new UserOrderDetailAdapter(orderList);
@@ -165,6 +151,7 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
         };
         orderRv.setLayoutManager(layoutManager);
         orderRv.setAdapter(orderAdapter);
+
         picList = new ArrayList<>();
         picAdapter = new UserOrderPicAdapter(picList);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4) {
@@ -175,8 +162,21 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
         };
         picRv.setLayoutManager(gridLayoutManager);
         picRv.setAdapter(picAdapter);
+
+        statusRv.setLayoutManager(new LinearLayoutManager(this){
+            @Override
+            public boolean canScrollVertically() {
+                //解决ScrollView里存在多个RecyclerView时滑动卡顿的问题
+                //如果你的RecyclerView是水平滑动的话可以重写canScrollHorizontally方法
+                return false;
+            }
+        });
+        statusRv.setNestedScrollingEnabled(false);
+        statusAdapter = new UserOrderStatusAdapter(new ArrayList<>());
+        statusRv.setAdapter(statusAdapter);
+
+        initMyLocation();
         initOrderData();
-        initLocation();
     }
 
     private void initOrderData(){
@@ -186,20 +186,46 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
             tvAddress.setText(orderItem.getAddress());
             tvTotalPrice.setText(String.valueOf(orderItem.getTotalPrice()));
             tvOrderNo.setText(orderItem.getOrderSn());
+            tvTitle.setText(orderItem.getCategoryPName());
+            tvTitle2.setText(orderItem.getCategoryCName());
+            tvBookingTime.setText(orderItem.getBookingStartTime());
+            tvDesc.setText(orderItem.getFixDesc());
             initOrderStatus();
+            initOrderLocation();
         }
+    }
+
+    private void initDetail(){
+        if (orderDetail!=null){
+            tvTitle.setText(orderDetail.getCategoryName());
+            tvTitle2.setText(orderDetail.getCategoryNameJoint());
+            statusAdapter.setNewData(orderDetail.getFixOrderTimelineViewRespIOList());
+        }
+    }
+
+    private void initOrderLocation(){
+        LatLng point = new LatLng(orderItem.getLocationLat(), orderItem.getLocationLng());//坐标参数（纬度，经度）
+        BitmapDescriptor mCurrentMarker = BitmapDescriptorFactory
+                .fromView(View.inflate(OrderDetailActivity.this, R.layout.view_location_icon, null));
+        //构建MarkerOption，用于在地图上添加Marker
+        OverlayOptions option = new MarkerOptions()
+                .position(point)
+                .icon(mCurrentMarker);
+        mBaiDuMap.addOverlay(option);
     }
 
     @Override
     public void getData() {
-        OkGo.<ResponseData<OrderItem>>post(UrlConstant.ORDER_DETAIL+orderId)
-                .execute(new JsonCallback<ResponseData<OrderItem>>() {
+        OkGo.<ResponseData<OrderDetail>>post(UrlConstant.ORDER_DETAIL+orderId)
+                .execute(new JsonCallback<ResponseData<OrderDetail>>() {
                     @Override
-                    public void onSuccess(ResponseData<OrderItem> response) {
+                    public void onSuccess(ResponseData<OrderDetail> response) {
                         if (response!=null){
                             if (response.isSuccess()){
                                 orderItem = response.getData();
-//                                initOrderData();
+                                orderDetail = response.getData();
+                                initOrderData();
+                                initDetail();
                             }else{
                                 toast(response.getMsg());
                             }
@@ -233,7 +259,7 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
     public void onEvent(MessageEvent event) {
         super.onEvent(event);
         switch (event.getId()) {
-            case MessageConstant.NOTIFY_ORDER_DETAIL:
+            case MessageConstant.NOTIFY_UPDATE_ORDER:
                 getData();
                 break;
         }
@@ -243,7 +269,11 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
     protected void onDestroy() {
         super.onDestroy();
         mLocationClient.unRegisterLocationListener(mLocationListener);
-
+        mLocationClient.stop();
+        mBaiDuMap.setMyLocationEnabled(false);
+        mBaiDuMap.clear();
+        mMapView.onDestroy();
+        mMapView = null;
     }
 
     @Override
@@ -263,7 +293,7 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
         }
     }
 
-    private void initLocation() {
+    private void initMyLocation() {
         mBaiDuMap = mMapView.getMap();
         mBaiDuMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
         mLocationClient = new LocationClient(this);
@@ -285,8 +315,7 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
         mLocationClient.setLocOption(option);
         // 开启定位
         mBaiDuMap.setMyLocationEnabled(true);
-        if (!mLocationClient.isStarted())
-            mLocationClient.start();
+        mLocationClient.start();
     }
 
 
@@ -322,11 +351,7 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
             @Override
             public void getDate(Date date) {
                 String startTime = TimeUtil.dateToString(date, "yyyy-MM-dd HH:mm:00");
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
-                calendar.set(Calendar.HOUR,
-                        calendar.get(Calendar.HOUR) + 1);
-                String endTime = TimeUtil.dateToString(calendar.getTime(), "yyyy-MM-dd HH:mm:00");
+                String endTime = TimeUtil.getAfterHourTime(date);
                 showLoading();
                 HashMap<String, Object> map = new HashMap<>();
                 map.put("orderId", orderItem.getOrderId());
@@ -365,11 +390,7 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
             @Override
             public void getDate(Date date) {
                 String startTime = TimeUtil.dateToString(date, "yyyy-MM-dd HH:mm:00");
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
-                calendar.set(Calendar.HOUR,
-                        calendar.get(Calendar.HOUR) + 1);
-                String endTime = TimeUtil.dateToString(calendar.getTime(), "yyyy-MM-dd HH:mm:00");
+                String endTime = TimeUtil.getAfterHourTime(date);
                 showLoading();
                 HashMap<String, Object> map = new HashMap<>();
                 map.put("orderId", orderItem.getOrderId());
@@ -406,6 +427,7 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
     class MyLocationListener implements BDLocationListener {
         @Override
         public void onReceiveLocation(BDLocation location) {
+
             // 构造定位数据
             MyLocationData locData = new MyLocationData.Builder()
                     .accuracy(location.getRadius())
@@ -414,28 +436,19 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
                     .longitude(location.getLongitude()).build();
             // 设置定位数据
             mBaiDuMap.setMyLocationData(locData);
-            // 设置自定义图标
-            BitmapDescriptor mCurrentMarker = BitmapDescriptorFactory
+
+            BitmapDescriptor currentMarker = BitmapDescriptorFactory
                     .fromView(View.inflate(OrderDetailActivity.this, R.layout.view_location_icon_my, null));
             MyLocationConfiguration config = new MyLocationConfiguration(
-                    MyLocationConfiguration.LocationMode.NORMAL, true, mCurrentMarker);
-            mBaiDuMap.setMyLocationConfigeration(config);
+                    MyLocationConfiguration.LocationMode.NORMAL, true, currentMarker);
+            mBaiDuMap.setMyLocationConfiguration(config);
 
             LatLng ll = new LatLng(location.getLatitude(),
                     location.getLongitude());
             MapStatus.Builder builder = new MapStatus.Builder();
-            builder.target(ll).zoom(12.0f);
+            builder.target(ll).zoom(14.0f);
             mBaiDuMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
-            if (location.getLocType() == BDLocation.TypeGpsLocation) {
-                // GPS定位结果
-//                tv_location.setText(location.getProvince() + location.getCity() +  location.getDistrict()+location.getStreet());
-            } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-                // 网络定位结果
-//                tv_location.setText(location.getProvince() + location.getCity() +  location.getDistrict()+location.getStreet());
-            } else if (location.getLocType() == BDLocation.TypeOffLineLocation) {
-                // 离线定位结果
-//                tv_location.setText(location.getProvince() + location.getCity() +  location.getDistrict()+location.getStreet());
-            } else if (location.getLocType() == BDLocation.TypeServerError) {
+            if (location.getLocType() == BDLocation.TypeServerError) {
                 Toast.makeText(OrderDetailActivity.this, "服务器错误，请检查", Toast.LENGTH_SHORT).show();
             } else if (location.getLocType() == BDLocation.TypeNetWorkException) {
                 Toast.makeText(OrderDetailActivity.this, "网络错误，请检查", Toast.LENGTH_SHORT).show();
@@ -460,6 +473,26 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
                     showOrderTakingDialog(orderItem);
                 }
             });
+        }else if (orderStatus<=30){
+            //待分配
+            tvOperate0.setVisibility(View.GONE);
+            tvOperate1.setVisibility(View.VISIBLE);
+            tvOperate1.setText("申请退单");
+            tvOperate1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO
+                }
+            });
+
+            tvOperate2.setVisibility(View.VISIBLE);
+            tvOperate2.setText("指派工程师");
+            tvOperate2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                   //TODO
+                }
+            });
         }else if (orderStatus<=40){
             //待预约
             tvOperate0.setVisibility(View.GONE);
@@ -468,7 +501,10 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
             tvOperate1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(OrderAbnormalActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("type",0);
+                    bundle.putString("orderId",orderItem.getOrderId());
+                    startActivity(AppointAbnormalActivity.class,bundle);
                 }
             });
 
@@ -494,11 +530,7 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
                         @Override
                         public void getDate(Date date) {
                             String startTime = TimeUtil.dateToString(date, "yyyy-MM-dd HH:mm:00");
-                            Calendar calendar = Calendar.getInstance();
-                            calendar.setTime(date);
-                            calendar.set(Calendar.HOUR,
-                                    calendar.get(Calendar.HOUR) + 1);
-                            String endTime = TimeUtil.dateToString(calendar.getTime(), "yyyy-MM-dd HH:mm:00");
+                            String endTime = TimeUtil.getAfterHourTime(date);
                             showLoading();
                             HashMap<String, Object> map = new HashMap<>();
                             map.put("orderId", orderItem.getOrderId());
@@ -537,7 +569,10 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
             tvOperate1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(OrderAbnormalActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("type",1);
+                    bundle.putString("orderId",orderItem.getOrderId());
+                    startActivity(SignAbnormalActivity.class,bundle);
                 }
             });
 
@@ -548,39 +583,30 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
                 public void onClick(View v) {
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("order",orderItem);
+                    bundle.putInt("type",0);
                     startActivity(OrderSignInActivity.class,bundle);
                 }
             });
         }else if (orderStatus<90){
             //待完成
             tvOperate0.setVisibility(View.GONE);
-            tvOperate1.setVisibility(View.VISIBLE);
-            tvOperate1.setText("异常反馈");
-            tvOperate1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(OrderAbnormalActivity.class);
-                }
-            });
+            tvOperate1.setVisibility(View.GONE);
             tvOperate2.setVisibility(View.VISIBLE);
             tvOperate2.setText("服务完成");
             tvOperate2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("order",orderItem);
+                    bundle.putInt("type",1);
+                    startActivity(OrderSignInActivity.class,bundle);
                 }
             });
         }else{
             //已完成
             tvOperate0.setVisibility(View.GONE);
             tvOperate1.setVisibility(View.GONE);
-            tvOperate2.setVisibility(View.VISIBLE);
-            tvOperate2.setText("查看");
-            tvOperate2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                }
-            });
+            tvOperate2.setVisibility(View.GONE);
         }
     }
 

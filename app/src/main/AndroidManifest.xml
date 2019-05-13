@@ -110,8 +110,8 @@
 
 
         <activity android:name=".activity.order.MyOrderActivity"/>
-        <activity android:name=".activity.order.OrderActivity"/>
-        <activity android:name=".activity.order.OrderAbnormalActivity"/>
+        <activity android:name=".activity.order.SignAbnormalActivity"/>
+        <activity android:name=".activity.order.AppointAbnormalActivity"/>
         <activity android:name=".activity.order.OrderSignInActivity"/>
         <activity android:name=".activity.order.OrderDetailActivity"/>
 
@@ -123,7 +123,6 @@
 
         <activity android:name=".activity.setting.CustomerServiceActivity"/>
         <activity android:name=".activity.WebActivity"/>
-        <activity android:name=".activity.user.ServiceTimeActivity"/>
         <activity android:name=".activity.setting.ComplaintActivity"/>
         <activity android:name=".activity.LookImageActivity"/>
         <activity android:name=".activity.MyEngineerActivity"/>

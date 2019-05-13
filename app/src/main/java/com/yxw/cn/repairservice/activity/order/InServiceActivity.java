@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
-import com.yxw.cn.repairservice.entity.OrderType;
 import com.yxw.cn.repairservice.fragment.InServiceFragment;
 import com.yxw.cn.repairservice.view.TitleBar;
 
@@ -35,7 +34,7 @@ public class InServiceActivity extends BaseActivity{
     ViewPager mViewPager;
 
     private List<Fragment> mFragmentList = new ArrayList<>();
-    private String[] mTitles = {"待指派","待预约","待上门","待完成","全部"};
+    private String[] mTitles = {"待指派","待预约","待上门","待完成"};
 
     @Override
     protected int getLayoutResId() {
@@ -45,9 +44,8 @@ public class InServiceActivity extends BaseActivity{
     @Override
     public void initView() {
         titlebar.setTitle("服务中");
-
+        //0（待接单） 1（待分派） 2（待预约） 3（待上门） 4（待完成） 5（已完成） 6（已退单）
         mFragmentList = new ArrayList<>();
-        mFragmentList.add(InServiceFragment.getInstance(0));
         mFragmentList.add(InServiceFragment.getInstance(1));
         mFragmentList.add(InServiceFragment.getInstance(2));
         mFragmentList.add(InServiceFragment.getInstance(3));

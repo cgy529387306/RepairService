@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,12 +26,6 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.search.core.SearchResult;
-import com.baidu.mapapi.search.geocode.GeoCodeOption;
-import com.baidu.mapapi.search.geocode.GeoCodeResult;
-import com.baidu.mapapi.search.geocode.GeoCoder;
-import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
-import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.bumptech.glide.Glide;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
@@ -46,20 +39,17 @@ import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.OrderItem;
 import com.yxw.cn.repairservice.entity.ResponseData;
-import com.yxw.cn.repairservice.entity.UserOrder;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
-import com.yxw.cn.repairservice.view.CountDownTextView;
+import com.yxw.cn.repairservice.util.Base64Util;
+import com.yxw.cn.repairservice.util.EventBusUtil;
+import com.yxw.cn.repairservice.util.Helper;
 import com.yxw.cn.repairservice.view.TitleBar;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import com.yxw.cn.repairservice.util.Base64Util;
-import com.yxw.cn.repairservice.util.EventBusUtil;
-import com.yxw.cn.repairservice.util.ToastUtil;
 
 /**
  * 签到
@@ -70,56 +60,25 @@ public class OrderSignInActivity extends BaseActivity {
     TitleBar titleBar;
     @BindView(R.id.iv_picture)
     ImageView ivPicture;
-    @BindView(R.id.ok)
-    Button ok;
+    @BindView(R.id.btn_confirm)
+    Button btnConfirm;
     @BindView(R.id.et_remark)
     EditText etRemark;
     @BindView(R.id.distance)
     TextView distance;
     @BindView(R.id.tv_location)
-    TextView tv_location;
+    TextView tvLocation;
     @BindView(R.id.mapView)
     MapView mMapView;
 
-    private OrderItem mOrderItem;
+    private OrderItem orderItem;
     private boolean flag;
     private String path;
     private BDLocation mLocation;
-    private int page;
-    private BaiduMap mBaiduMap;
+    private int type;//0:签到 1:完成
+    private BaiduMap mBaiDuMap;
     private LocationClient mLocationClient;
     private MyLocationListener mLocationListener;
-    private GeoCoder mSearch;
-    private OnGetGeoCoderResultListener geoCoderListener = new OnGetGeoCoderResultListener() {
-        public void onGetGeoCodeResult(GeoCodeResult result) {
-            if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-                ToastUtil.show("没有检索到订单具体位置！");
-                //没有检索到结果
-            } else {
-                LatLng point = new LatLng(result.getLocation().latitude, result.getLocation().longitude);//坐标参数（纬度，经度）
-                BitmapDescriptor mCurrentMarker = BitmapDescriptorFactory
-                        .fromView(View.inflate(OrderSignInActivity.this, R.layout.view_location_icon, null));
-                //构建MarkerOption，用于在地图上添加Marker
-                OverlayOptions option = new MarkerOptions()
-                        .position(point)
-                        .icon(mCurrentMarker);
-                mBaiduMap.addOverlay(option);
-            }
-        }
-
-        @Override
-        public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
-            if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-                //没有找到检索结果
-            } else {
-                Map<String, Object> map = new HashMap<>();
-                map.put("result", result);
-                finish();
-            }
-            //获取反向地理编码结果
-        }
-    };
-
 
     @Override
     protected int getLayoutResId() {
@@ -128,34 +87,32 @@ public class OrderSignInActivity extends BaseActivity {
 
     @Override
     public void initView() {
-        super.initView();
-        mOrderItem = (OrderItem) getIntent().getSerializableExtra("order");
-        page = getIntent().getIntExtra("flag", 0);
-        if (page == 0) {
-            titleBar.setTitle("上门签到");
-            ok.setText("立即签到");
-        } else {
-            titleBar.setTitle("确认服务完成");
-            ok.setText("完成服务");
-        }
-        initLocation();
+        orderItem = (OrderItem) getIntent().getSerializableExtra("order");
+        type = getIntent().getIntExtra("type", 0);
+        initTitle();
+        initMyLocation();
+        initOrderLocation();
     }
 
-    @OnClick({R.id.iv_picture, R.id.ok})
+    private void initTitle(){
+        if (type == 0) {
+            titleBar.setTitle("上门签到");
+            btnConfirm.setText("立即签到");
+        } else {
+            titleBar.setTitle("确认服务完成");
+            btnConfirm.setText("完成服务");
+        }
+    }
+
+    @OnClick({R.id.iv_picture, R.id.btn_confirm})
     public void click(View view) {
         switch (view.getId()) {
-            case R.id.ok:
-                confirmArrival();
-//                if (page == 0) {
-//                    if (flag) {
-//                        confirmArrival();
-//                    } else {
-//                        toast("在签到范围外，不能签到!");
-//                    }
-//                } else {
-//                    confirmArrival();
-//
-//                }
+            case R.id.btn_confirm:
+                if (flag) {
+                    confirmArrival();
+                } else {
+                    toast("在签到范围外，不能签到!");
+                }
                 break;
             case R.id.iv_picture:
                 PictureSelector.create(this)
@@ -191,28 +148,29 @@ public class OrderSignInActivity extends BaseActivity {
         }
     }
 
+
     @Override
-    protected void onStart() {
-        super.onStart();
-        // 开启定位
-        mBaiduMap.setMyLocationEnabled(true);
-        if (!mLocationClient.isStarted())
-            mLocationClient.start();
+    protected void onDestroy() {
+        super.onDestroy();
+        mLocationClient.unRegisterLocationListener(mLocationListener);
+        mLocationClient.stop();
+        mBaiDuMap.setMyLocationEnabled(false);
+        mBaiDuMap.clear();
+        mMapView.onDestroy();
+        mMapView = null;
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         // 停止定位
-        mBaiduMap.setMyLocationEnabled(false);
+        mBaiDuMap.setMyLocationEnabled(false);
         mLocationClient.stop();
     }
 
-    private void initLocation() {
-        mSearch = GeoCoder.newInstance();
-        mSearch.setOnGetGeoCodeResultListener(geoCoderListener);
-        mBaiduMap = mMapView.getMap();
-        mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
+    private void initMyLocation() {
+        mBaiDuMap = mMapView.getMap();
+        mBaiDuMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
         mLocationClient = new LocationClient(this);
         mLocationListener = new MyLocationListener();
         mLocationClient.registerLocationListener(mLocationListener);
@@ -234,13 +192,22 @@ public class OrderSignInActivity extends BaseActivity {
         option.SetIgnoreCacheException(false);//可选，默认false，设置是否收集CRASH信息，默认收集
         option.setEnableSimulateGps(false);//可选，默认false，设置是否需要过滤GPS仿真结果，默认需要
         mLocationClient.setLocOption(option);
+        // 开启定位
+        mBaiDuMap.setMyLocationEnabled(true);
+        mLocationClient.start();
     }
 
-    private void confirmLocation() {
-        mSearch.geocode(new GeoCodeOption()
-                .city(mOrderItem.getCity())
-                .address(mOrderItem.getAddress()));
+    private void initOrderLocation(){
+        LatLng point = new LatLng(orderItem.getLocationLat(), orderItem.getLocationLng());//坐标参数（纬度，经度）
+        BitmapDescriptor mCurrentMarker = BitmapDescriptorFactory
+                .fromView(View.inflate(OrderSignInActivity.this, R.layout.view_location_icon, null));
+        //构建MarkerOption，用于在地图上添加Marker
+        OverlayOptions option = new MarkerOptions()
+                .position(point)
+                .icon(mCurrentMarker);
+        mBaiDuMap.addOverlay(option);
     }
+
 
     public void getDistance(double lat1, double lon1,
                             double lat2, double lon2) {
@@ -261,14 +228,22 @@ public class OrderSignInActivity extends BaseActivity {
     }
 
     private void confirmArrival() {
+        if (Helper.isEmpty(path)){
+            toast("现场照片不能为空!");
+            return;
+        }
         HashMap<String, Object> map = new HashMap<>();
-        map.put("orderId", mOrderItem.getOrderId());
+        map.put("orderId", orderItem.getOrderId());
         map.put("locationLat", mLocation.getLatitude());
         map.put("locationLng", mLocation.getLongitude());
         map.put("shot", path);
         map.put("remark", etRemark.getText().toString());
+        if (type==1){
+            map.put("smsCode", "888888");
+        }
+        String requestUrl = type==1? UrlConstant.ORDER_FINISH:UrlConstant.ORDER_ARRIVAL;
         showLoading();
-        OkGo.<ResponseData<String>>post(UrlConstant.ORDER_ARRIVAL)
+        OkGo.<ResponseData<String>>post(requestUrl)
                 .upJson(gson.toJson(map))
                 .execute(new JsonCallback<ResponseData<String>>() {
                     @Override
@@ -277,7 +252,7 @@ public class OrderSignInActivity extends BaseActivity {
                         if (response!=null){
                             if (response.isSuccess()){
                                 finish();
-                                EventBusUtil.post(MessageConstant.NOTIFY_ORDER_DETAIL);
+                                EventBusUtil.post(MessageConstant.NOTIFY_UPDATE_ORDER);
                             }else{
                                 toast(response.getMsg());
                             }
@@ -303,14 +278,13 @@ public class OrderSignInActivity extends BaseActivity {
                     .direction(0).latitude(location.getLatitude())
                     .longitude(location.getLongitude()).build();
             // 设置定位数据
-            mBaiduMap.setMyLocationData(locData);
+            mBaiDuMap.setMyLocationData(locData);
             // 设置自定义图标
             BitmapDescriptor mCurrentMarker = BitmapDescriptorFactory
                     .fromView(View.inflate(OrderSignInActivity.this, R.layout.view_location_icon_my, null));
             MyLocationConfiguration config = new MyLocationConfiguration(
                     MyLocationConfiguration.LocationMode.NORMAL, true, mCurrentMarker);
-            mBaiduMap.setMyLocationConfigeration(config);
-
+            mBaiDuMap.setMyLocationConfiguration(config);
             /**
              * 绘制圆形
              */
@@ -318,31 +292,21 @@ public class OrderSignInActivity extends BaseActivity {
             OverlayOptions oCircle = new CircleOptions().fillColor(0x90F8EFDE)
                     .center(point).stroke(new Stroke(5, 0xAAF0D2C2))
                     .radius(2000);
-            mBaiduMap.addOverlay(oCircle);
-
+            mBaiDuMap.addOverlay(oCircle);
             LatLng ll = new LatLng(location.getLatitude(),
                     location.getLongitude());
             MapStatus.Builder builder = new MapStatus.Builder();
             builder.target(ll).zoom(12.0f);
-            mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
-            if (location.getLocType() == BDLocation.TypeGpsLocation) {
-                // GPS定位结果
-                tv_location.setText(location.getProvince() + location.getCity() + location.getDistrict() + location.getStreet() + location.getLocationDescribe());
-            } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-                // 网络定位结果
-                tv_location.setText(location.getProvince() + location.getCity() + location.getDistrict() + location.getStreet() + location.getLocationDescribe());
-            } else if (location.getLocType() == BDLocation.TypeOffLineLocation) {
-                // 离线定位结果
-                tv_location.setText(location.getProvince() + location.getCity() + location.getDistrict() + location.getStreet() + location.getLocationDescribe());
-            } else if (location.getLocType() == BDLocation.TypeServerError) {
+            mBaiDuMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+            tvLocation.setText(location.getAddrStr());
+            if (location.getLocType() == BDLocation.TypeServerError) {
                 Toast.makeText(OrderSignInActivity.this, "服务器错误，请检查", Toast.LENGTH_SHORT).show();
             } else if (location.getLocType() == BDLocation.TypeNetWorkException) {
                 Toast.makeText(OrderSignInActivity.this, "网络错误，请检查", Toast.LENGTH_SHORT).show();
             } else if (location.getLocType() == BDLocation.TypeCriteriaException) {
                 Toast.makeText(OrderSignInActivity.this, "请确认手机是否开启GPS", Toast.LENGTH_SHORT).show();
             }
-            getDistance(mLocation.getLatitude(), mLocation.getLongitude(), mOrderItem.getLocationLat(), mOrderItem.getLocationLng());
-            confirmLocation();
+            getDistance(mLocation.getLatitude(), mLocation.getLongitude(), orderItem.getLocationLat(), orderItem.getLocationLng());
             mLocationClient.stop();
         }
     }
