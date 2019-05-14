@@ -9,6 +9,7 @@ import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.OrderItem;
 import com.yxw.cn.repairservice.util.AppUtil;
+import com.yxw.cn.repairservice.util.Helper;
 
 import java.util.List;
 
@@ -49,7 +50,8 @@ public class OrderAdapter extends BaseQuickAdapter<OrderItem, BaseViewHolder> {
                 .setText(R.id.tv_order_state, AppUtil.getOrderStatus(item.getOrderStatus()))
                 .setText(R.id.tv_price,String.valueOf(item.getTotalPrice()));
         int orderStatus = item.getOrderStatus();
-        helper.setVisible(R.id.lly_operate,item.getOperaterId().equals(CurrentUser.getInstance().getUserId()));
+        boolean isShowOperate = orderStatus<40 || (Helper.isNotEmpty(item.getOperaterId()) && item.getOperaterId().equals(CurrentUser.getInstance().getUserId()));
+        helper.getView(R.id.lly_operate).setVisibility(isShowOperate?View.VISIBLE:View.GONE);
 
         if (orderStatus<=20){
             //待接单
