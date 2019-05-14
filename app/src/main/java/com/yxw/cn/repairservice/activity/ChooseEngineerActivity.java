@@ -4,11 +4,7 @@ package com.yxw.cn.repairservice.activity;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.lzy.okgo.OkGo;
@@ -17,14 +13,12 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.adapter.ChooseEngineerAdapter;
-import com.yxw.cn.repairservice.adapter.MyEngineerAdapter;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.EngineerInfo;
 import com.yxw.cn.repairservice.entity.LoginInfo;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
-import com.yxw.cn.repairservice.pop.DeleteEngineerPop;
 import com.yxw.cn.repairservice.view.RecycleViewDivider;
 import com.yxw.cn.repairservice.view.TitleBar;
 
@@ -33,7 +27,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import butterknife.OnItemClick;
 
 /**
  * 选择工程师
@@ -65,8 +58,12 @@ public class ChooseEngineerActivity extends BaseActivity{
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent();
-                intent.putExtra("realName", mList.get(position).getRealName());
+                intent.putExtra("realName",mChooseEngineerAdapter.getData().get(position).getRealName());
+                intent.putExtra("star",mChooseEngineerAdapter.getData().get(position).getStar());
+                intent.putExtra("avatar",mChooseEngineerAdapter.getData().get(position).getAvatar());
+                intent.putExtra("userId",mChooseEngineerAdapter.getData().get(position).getUserId());
                 setResult(RESULT_OK,intent);
+                finish();
             }
         });
     }
@@ -93,6 +90,7 @@ public class ChooseEngineerActivity extends BaseActivity{
                         dismissLoading();
                         if (response!=null){
                             if (response.isSuccess() && response.getData()!=null){
+                                mChooseEngineerAdapter.setNewData(response.getData());
                             }else{
                                 toast(response.getMsg());
                             }

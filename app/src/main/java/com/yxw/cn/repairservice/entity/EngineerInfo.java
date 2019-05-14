@@ -14,6 +14,7 @@ public class EngineerInfo {
     private String mobile;
     private String realName;
     private int star;
+    private String userId;
 
     public String getAvatar() {
         return avatar;
@@ -45,5 +46,13 @@ public class EngineerInfo {
 
     public void setStar(int star) {
         this.star = star;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

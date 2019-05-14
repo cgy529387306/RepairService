@@ -11,19 +11,8 @@ import android.view.WindowManager;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.lzy.okgo.OkGo;
-import com.lzy.okgo.model.Response;
 import com.yxw.cn.repairservice.R;
-import com.yxw.cn.repairservice.contast.MessageConstant;
-import com.yxw.cn.repairservice.contast.UrlConstant;
-import com.yxw.cn.repairservice.entity.EngineerInfo;
-import com.yxw.cn.repairservice.entity.InServiceInfo;
 import com.yxw.cn.repairservice.entity.OrderItem;
-import com.yxw.cn.repairservice.entity.ResponseData;
-import com.yxw.cn.repairservice.okgo.JsonCallback;
-import com.yxw.cn.repairservice.util.EventBusUtil;
-
-import java.util.List;
 
 
 /**
@@ -35,14 +24,14 @@ public class ApplyCancelOrderPop extends PopupWindow implements View.OnClickList
     private TextView mTvEngineer;
     private TextView mTvCancel;
     private TextView mTvConfirm;
-    private InServiceInfo item;
+    private OrderItem item;
     private SelectListener mSelectListener;
 
     public interface SelectListener {
-        void onComfirm(InServiceInfo orderItem);
+        void onComfirm(OrderItem orderItem);
     }
 
-    public ApplyCancelOrderPop(Activity context,InServiceInfo item,SelectListener mSelectListener) {
+    public ApplyCancelOrderPop(Activity context,OrderItem item,SelectListener mSelectListener) {
         this.mContext = context;
         this.item = item;
         this.mSelectListener = mSelectListener;

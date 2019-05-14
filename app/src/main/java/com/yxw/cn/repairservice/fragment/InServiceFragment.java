@@ -18,6 +18,7 @@ import com.orhanobut.dialogplus.ViewHolder;
 import com.yxw.cn.repairservice.BaseRefreshFragment;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.activity.order.AppointAbnormalActivity;
+import com.yxw.cn.repairservice.activity.order.AppointOrderActivity;
 import com.yxw.cn.repairservice.activity.order.OrderDetailActivity;
 import com.yxw.cn.repairservice.activity.order.OrderSignInActivity;
 import com.yxw.cn.repairservice.activity.order.SignAbnormalActivity;
@@ -40,6 +41,7 @@ import com.yxw.cn.repairservice.util.TimeUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -47,7 +49,7 @@ import butterknife.BindView;
 /**
  * 订单列表
  */
-public class InServiceFragment extends BaseRefreshFragment implements BaseQuickAdapter.OnItemClickListener,OrderAdapter.OnOrderOperateListener, ContactPop.SelectListener {
+public class InServiceFragment extends BaseRefreshFragment implements BaseQuickAdapter.OnItemClickListener,OrderAdapter.OnOrderOperateListener, ContactPop.SelectListener,ApplyCancelOrderPop.SelectListener {
 
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
@@ -157,30 +159,6 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
         getOrderData(mPage);
     }
 
-//    @Override
-//    public void onComfirm(InServiceInfo orderItem) { //申请退单
-//        OkGo.<ResponseData<List<InServiceInfo>>>post(UrlConstant.DELETE_ENGINEER + orderItem.getMobile())
-//                .tag(this)
-//                .execute(new JsonCallback<ResponseData<List<InServiceInfo>>>() {
-//
-//                    @Override
-//                    public void onSuccess(ResponseData<List<InServiceInfo>> response) {
-//                        if (response!=null){
-//                            if (response.isSuccess() && response.getData()!=null){
-//                                mAdapter.setNewData(response.getData());
-//                            }else{
-//                                toast(response.getMsg());
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onError(Response<ResponseData<List<InServiceInfo>>> response) {
-//                        super.onError(response);
-//                    }
-//                });
-//    }
-
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
         if (mAdapter.getItem(position)!=null){
@@ -190,12 +168,17 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
 
     @Override
     public void onOrderCancel(OrderItem orderItem) {
-        //TODO
+        //TODO 申请退单
+        if (mApplyCancelOrderPop==null){
+            mApplyCancelOrderPop = new ApplyCancelOrderPop(getActivity(),orderItem,this);
+        }
+        mApplyCancelOrderPop.showPopupWindow(mRecyclerView);
     }
 
     @Override
     public void onOrderAppoint(OrderItem orderItem) {
-        //TODO
+        //TODO  指派工程师
+        startActivity(AppointOrderActivity.class,orderItem);
     }
 
     @Override
@@ -425,5 +408,29 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
             });
         }
         mTakingDialog.show();
+    }
+
+    @Override
+    public void onComfirm(OrderItem orderItem) { //申请退单
+        OkGo.<ResponseData<List<OrderItem>>>post(UrlConstant.ORDER_SERVICE_RETURN + orderItem.getAcceptId())
+                .tag(this)
+                .execute(new JsonCallback<ResponseData<List<OrderItem>>>() {
+
+                    @Override
+                    public void onSuccess(ResponseData<List<OrderItem>> response) {
+                        if (response!=null){
+                            if (response.isSuccess() && response.getData()!=null){
+                                mAdapter.setNewData(response.getData());
+                            }else{
+                                toast(response.getMsg());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Response<ResponseData<List<OrderItem>>> response) {
+                        super.onError(response);
+                    }
+                });
     }
 }
