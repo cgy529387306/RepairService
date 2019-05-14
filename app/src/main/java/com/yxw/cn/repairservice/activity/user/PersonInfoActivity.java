@@ -32,6 +32,7 @@ import com.yxw.cn.repairservice.util.AppUtil;
 import com.yxw.cn.repairservice.util.Base64Util;
 import com.yxw.cn.repairservice.util.EventBusUtil;
 import com.yxw.cn.repairservice.util.Helper;
+import com.yxw.cn.repairservice.util.RegionPickerUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -76,7 +77,7 @@ public class PersonInfoActivity extends BaseActivity {
 
     @Override
     public void setStatusBar() {
-        ImmersionBar.with(this).fitsSystemWindows(true).statusBarColor(R.color.bg_personal).statusBarDarkFont(false).init();
+        ImmersionBar.with(this).statusBarDarkFont(false).init();
     }
 
     @Override
@@ -102,41 +103,12 @@ public class PersonInfoActivity extends BaseActivity {
                 mTvIdCardStatus.setText(AppUtil.getIdCardStatus(loginInfo.getIdCardStatus()));
                 mTvServiceProvider.setText(TextUtils.isEmpty(loginInfo.getParentId())?"":"服务商ID"+loginInfo.getParentId());
 //                mTvIdCardNo.setText(loginInfo.getIdentityCard());
-                mTvResident.setText(loginInfo.getResidentName());
+                mTvResident.setText(loginInfo.getResidentAreaName());
                 if (Helper.isNotEmpty(loginInfo.getCategory())){
                     String[] dataArray = loginInfo.getCategory().split(",");
                     if (Helper.isNotEmpty(dataArray)){
                         mCateList = Arrays.asList(dataArray);
                         mCateAdapter.setNewData(mCateList);
-                    }
-                }
-                if (!TextUtils.isEmpty(loginInfo.getServiceDate()) && !TextUtils.isEmpty(loginInfo.getServiceTime())) {
-                    StringBuilder date = new StringBuilder();
-                    for (String dateInd :
-                            loginInfo.getServiceDate().split(",")) {
-                        switch (dateInd) {
-                            case "1":
-                                date.append("周一、");
-                                break;
-                            case "2":
-                                date.append("周二、");
-                                break;
-                            case "3":
-                                date.append("周三、");
-                                break;
-                            case "4":
-                                date.append("周四、");
-                                break;
-                            case "5":
-                                date.append("周五、");
-                                break;
-                            case "6":
-                                date.append("周六、");
-                                break;
-                            case "7":
-                                date.append("周日、");
-                                break;
-                        }
                     }
                 }
                 AppUtil.showPic(this, mIvAvatar, loginInfo.getAvatar());
@@ -185,7 +157,7 @@ public class PersonInfoActivity extends BaseActivity {
                         .forResult(11);
                 break;
             case R.id.ll_mobile:
-                startActivity(UpdateMobileActivity.class);
+//                startActivity(UpdateMobileActivity.class);
                 break;
             case R.id.ll_name:
 //                startActivity(UpdateNameActivity.class);
@@ -194,15 +166,16 @@ public class PersonInfoActivity extends BaseActivity {
                 Intent intent = new Intent(this, ChooseCategoryActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("cateList", (Serializable) mCateList);
+                bundle.putBoolean("canBack",true);
                 intent.putExtras(bundle);
                 startActivity(intent);
                 break;
             case R.id.ll_resident:
-                startActivityForResult(new Intent(PersonInfoActivity.this,SelectCityActivity.class),22);
+                RegionPickerUtil.showPicker(this, mTvResident, true);
                 break;
             case R.id.ll_service_provider:
                 if (loginInfo!=null && !TextUtils.isEmpty(loginInfo.getParentId())){
-                    startActivity(ServiceProviderActivity.class);
+                    startActivity(JoinServiceProviderActivity.class);
                 }else{
                     startActivity(ServiceProviderEmptyActivity.class);
                 }
@@ -221,13 +194,6 @@ public class PersonInfoActivity extends BaseActivity {
                     if (selectList.size() > 0) {
                        LocalMedia localMedia = selectList.get(0);
                        doUploadAvatar(localMedia);
-                    }
-                    break;
-                case 22:
-                    //选择城市
-                    if(data!=null && data.getStringExtra("city")!=null){
-                        String city = data.getStringExtra("city");
-                        doSaveCity(city);
                     }
                     break;
             }
@@ -251,36 +217,6 @@ public class PersonInfoActivity extends BaseActivity {
                                  toast(response.getMsg());
                                  if (response.isSuccess()) {
                                      EventBusUtil.post(MessageConstant.NOTIFY_GET_INFO);
-                                 }
-                             }
-
-                             @Override
-                             public void onError(Response<ResponseData<String>> response) {
-                                 super.onError(response);
-                                 dismissLoading();
-                             }
-                         }
-                );
-    }
-
-    private void doSaveCity(String city){
-        showLoading();
-        HashMap<String, String> map = new HashMap<>();
-        map.put("residentArea", city);
-        OkGo.<ResponseData<String>>post(UrlConstant.CHANGE_USERINFO)
-                .upJson(gson.toJson(map))
-                .execute(new JsonCallback<ResponseData<String>>() {
-                             @Override
-                             public void onSuccess(ResponseData<String> response) {
-                                 dismissLoading();
-                                 if (response != null){
-                                     if (response.isSuccess()) {
-                                         mTvResident.setText(city);
-                                         EventBusUtil.post(MessageConstant.NOTIFY_GET_INFO);
-                                         finish();
-                                     } else {
-                                         toast(response.getMsg());
-                                     }
                                  }
                              }
 
