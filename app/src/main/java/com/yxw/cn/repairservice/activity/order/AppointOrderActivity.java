@@ -3,29 +3,37 @@ package com.yxw.cn.repairservice.activity.order;
 
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.activity.ChooseEngineerActivity;
+import com.yxw.cn.repairservice.adapter.OrderUrgencyAdapter;
 import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.LoginInfo;
 import com.yxw.cn.repairservice.entity.OrderItem;
 import com.yxw.cn.repairservice.entity.ResponseData;
+import com.yxw.cn.repairservice.entity.UrgencyBean;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.util.AppUtil;
 import com.yxw.cn.repairservice.util.EventBusUtil;
+import com.yxw.cn.repairservice.util.Helper;
 import com.yxw.cn.repairservice.view.ClearEditText;
 import com.yxw.cn.repairservice.view.TitleBar;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,7 +44,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * 订单指派
  */
-public class AppointOrderActivity extends BaseActivity{
+public class AppointOrderActivity extends BaseActivity implements BaseQuickAdapter.OnItemClickListener{
 
     @BindView(R.id.titlebar)
     TitleBar titleBar;
@@ -48,9 +56,15 @@ public class AppointOrderActivity extends BaseActivity{
     RatingBar ratingbar;
     @BindView(R.id.et_fee)
     ClearEditText mEtFee;
+    @BindView(R.id.rv_urgency)
+    RecyclerView mRvUrgency;
+    @BindView(R.id.lly_engineer)
+    LinearLayout mLlyEngineer;
     private OrderItem orderItem;
     private Gson mGson = new Gson();
     private String userId = "";
+    private String urgency = "";
+    private OrderUrgencyAdapter mOrderUrgencyAdapter;
     @Override
     protected int getLayoutResId() {
         return R.layout.act_appoint_order;
@@ -64,6 +78,11 @@ public class AppointOrderActivity extends BaseActivity{
         mTvName.setText(loginInfo.getRealName());
         AppUtil.showPic(this, mIvAvatar, loginInfo.getAvatar());
         userId = loginInfo.getUserId();
+        mOrderUrgencyAdapter = new OrderUrgencyAdapter(new ArrayList<>());
+        mOrderUrgencyAdapter.setOnItemClickListener(this);
+        mRvUrgency.setLayoutManager(new GridLayoutManager(this, 3));
+        mRvUrgency.setAdapter(mOrderUrgencyAdapter);
+
     }
 
     @OnClick({R.id.lly_choose_engineer,R.id.confirm})
@@ -103,6 +122,44 @@ public class AppointOrderActivity extends BaseActivity{
     }
 
     @Override
+    public void getData() {
+        super.getData();
+        getReservationUrgencyData();
+    }
+
+    private void getReservationUrgencyData() {
+        if (AppUtil.reservationReasonList != null && AppUtil.reservationUrgencyList.size() > 0) {
+            mOrderUrgencyAdapter.setNewData(AppUtil.reservationUrgencyList);
+        } else {
+            showLoading();
+            HashMap<String,String> map = new HashMap<>();
+            map.put("dictKey","URGENCY");
+            OkGo.<ResponseData<List<UrgencyBean>>>post(UrlConstant.GET_EXCEPTION_REASON)
+                    .upJson(gson.toJson(map))
+                    .execute(new JsonCallback<ResponseData<List<UrgencyBean>>>() {
+
+                        @Override
+                        public void onSuccess(ResponseData<List<UrgencyBean>> response) {
+                            dismissLoading();
+                            if (response!=null){
+                                if (response.isSuccess() && response.getData()!=null){
+                                    if (AppUtil.reservationUrgencyList != null && AppUtil.reservationUrgencyList.size() > 0) {
+                                        mOrderUrgencyAdapter.setNewData(AppUtil.reservationUrgencyList);
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onError(Response<ResponseData<List<UrgencyBean>>> response) {
+                            super.onError(response);
+                            dismissLoading();
+                        }
+                    });
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
@@ -111,10 +168,25 @@ public class AppointOrderActivity extends BaseActivity{
                 int star = data.getExtras().getInt("star");
                 String avatar = data.getExtras().getString("avatar");
                 userId = data.getExtras().getString("userId");
+                if (!TextUtils.isEmpty(userId)){
+                    mLlyEngineer.setVisibility(View.VISIBLE);
+                }
+                else {
+                    mLlyEngineer.setVisibility(View.GONE);
+                }
                 mTvName.setText(name);
                 ratingbar.setRating(star);
                 AppUtil.showPic(this, mIvAvatar, avatar);
             }
+        }
+    }
+
+    @Override
+    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+        mOrderUrgencyAdapter.setSelect(position);
+        mOrderUrgencyAdapter.notifyDataSetChanged();
+        if (Helper.isNotEmpty(mOrderUrgencyAdapter.getData()) && mOrderUrgencyAdapter.getData().size()>position){
+            urgency = mOrderUrgencyAdapter.getData().get(position).getDictId();
         }
     }
 }
