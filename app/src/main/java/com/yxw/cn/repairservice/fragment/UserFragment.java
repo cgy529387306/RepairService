@@ -23,6 +23,7 @@ import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.entity.ResponseData3;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.util.AppUtil;
+import com.yxw.cn.repairservice.util.Helper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +39,6 @@ import io.rong.imlib.RongIMClient;
  * Created by cgy on 2018/11/25
  */
 public class UserFragment extends BaseFragment {
-
     @BindView(R.id.iv_avatar)
     CircleImageView mIvAvatar;
     @BindView(R.id.tv_name)
@@ -65,50 +65,13 @@ public class UserFragment extends BaseFragment {
     public void notifyInfo() {
         if (CurrentUser.getInstance().isLogin()){
             LoginInfo loginInfo = CurrentUser.getInstance();
-            mTvName.setText(loginInfo.getNickname());
-            mTvPhone.setText(AppUtil.getStarPhone(loginInfo.getMobile()));
+            mTvName.setText(Helper.isEmpty(loginInfo.getRealName())?loginInfo.getUserName():loginInfo.getRealName());
+            mTvPhone.setText(loginInfo.getMobile());
             AppUtil.showPic(mContext, mIvAvatar, loginInfo.getAvatar());
+            mTvCarryAmount.setText(loginInfo.getCarryAmount());
+            mTvDeposit.setText(loginInfo.getDeposit());
+            mTvSettlementAmount.setText(loginInfo.getSettlementAmount());
         }
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        getAssets();
-    }
-
-    private void getAssets() {
-        OkGo.<ResponseData<Asset>>post(UrlConstant.GET_ASSETS)
-                .execute(new JsonCallback<ResponseData<Asset>>() {
-                             @Override
-                             public void onSuccess(ResponseData<Asset> response) {
-                                 if (response!=null && response.isSuccess()){
-                                     mTvCarryAmount.setText(response.getData().getCarryAmount() + "");
-                                     mTvDeposit.setText(response.getData().getDeposit() + "");
-                                     mTvSettlementAmount.setText(response.getData().getSettlementAmount() + "");
-                                     Map<String, String> map = new HashMap<>();
-                                     map.put("userId", response.getData().getUserId() + "");
-                                     map.put("userName", response.getData().getUsername());
-                                     map.put("portrait", response.getData().getAvatar());
-                                 }
-//                                 getRongCloudToken(map);
-                             }
-                         }
-                );
-    }
-
-    private void getRongCloudToken(Map<String, String> map) {
-        Logger.d("getRongCloudToken");
-        OkGo.<ResponseData3>post(UrlConstant.RONG_CLOUD_TOKEN)
-                .upJson(gson.toJson(map))
-                .execute(new JsonCallback<ResponseData3>() {
-                             @Override
-                             public void onSuccess(ResponseData3 response) {
-                                 connect(response.getToken());
-                             }
-                         }
-                );
     }
 
 
@@ -151,19 +114,24 @@ public class UserFragment extends BaseFragment {
     public void onEvent(MessageEvent event) {
         super.onEvent(event);
         switch (event.getId()) {
-            case MessageConstant.NOTIFY_CARRY_AMONUT:
-                OkGo.<ResponseData<Asset>>post(UrlConstant.GET_ASSETS)
-                        .execute(new JsonCallback<ResponseData<Asset>>() {
-                                     @Override
-                                     public void onSuccess(ResponseData<Asset> response) {
-                                         mTvCarryAmount.setText(response.getData().getCarryAmount() + "");
-                                         mTvDeposit.setText(response.getData().getDeposit() + "");
-                                         mTvSettlementAmount.setText(response.getData().getSettlementAmount() + "");
-                                     }
-                                 }
-                        );
+            case MessageConstant.NOTIFY_UPDATE_INFO:
+                notifyInfo();
                 break;
         }
+    }
+
+
+    private void getRongCloudToken(Map<String, String> map) {
+        Logger.d("getRongCloudToken");
+        OkGo.<ResponseData3>post(UrlConstant.RONG_CLOUD_TOKEN)
+                .upJson(gson.toJson(map))
+                .execute(new JsonCallback<ResponseData3>() {
+                             @Override
+                             public void onSuccess(ResponseData3 response) {
+                                 connect(response.getToken());
+                             }
+                         }
+                );
     }
 
     /**

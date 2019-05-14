@@ -58,7 +58,6 @@ public class CurrentUser extends LoginInfo{
             me.setUserId(entity.getUserId());
             me.setNickname(entity.getNickname());
             me.setCategory(entity.getCategory());
-            me.setTags(entity.getTags());
             me.setExpire(entity.getExpire());
             me.setRole(entity.getRole());
             me.setRegisterTime(entity.getRegisterTime());
@@ -66,13 +65,16 @@ public class CurrentUser extends LoginInfo{
             me.setIdCardFront(entity.getIdCardFront());
             me.setIdCardBack(entity.getIdCardBack());
             me.setIdCardHand(entity.getIdCardHand());
-            me.setResidentName(entity.getResidentName());
-            me.setResident(entity.getResident());
+            me.setResidentArea(entity.getResidentArea());
+            me.setResidentAreaName(entity.getResidentAreaName());
             me.setServiceDate(entity.getServiceDate());
             me.setServiceTime(entity.getServiceTime());
             me.setIdCardStatus(entity.getIdCardStatus());
             me.setAliplayAccount(entity.getAliplayAccount());
+            me.setCarryAmount(entity.getCarryAmount());
+            me.setDeposit(entity.getDeposit());
             me.setBindingCode(entity.getBindingCode());
+            me.setSettlementAmount(entity.getSettlementAmount());
             json = JsonHelper.toJson(me);
             born = me != null;
         }

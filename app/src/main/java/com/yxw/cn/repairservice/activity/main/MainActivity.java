@@ -7,10 +7,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.TextView;
 
+import com.baidu.location.BDAbstractLocationListener;
+import com.baidu.location.BDLocation;
 import com.gyf.immersionbar.ImmersionBar;
 import com.lzy.okgo.OkGo;
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
+import com.yxw.cn.repairservice.activity.LocationService;
 import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.CurrentUser;
@@ -20,7 +23,9 @@ import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.fragment.HomeFragment;
 import com.yxw.cn.repairservice.fragment.UserFragment;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
+import com.yxw.cn.repairservice.util.AppUtil;
 import com.yxw.cn.repairservice.util.EventBusUtil;
+import com.yxw.cn.repairservice.util.PreferencesHelper;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -39,6 +44,36 @@ public class MainActivity extends BaseActivity {
     private HomeFragment homeFragment;
     private UserFragment userFragment;
     private FragmentManager fragmentManager;
+    private LocationService mLocationService;
+
+    private BDAbstractLocationListener mLocationListener = new BDAbstractLocationListener() {
+        @Override
+        public void onReceiveLocation(BDLocation bdLocation) {
+            if (bdLocation!=null){
+                PreferencesHelper.getInstance().putString("latitude",String.valueOf(bdLocation.getLatitude()));
+                PreferencesHelper.getInstance().putString("longitude",String.valueOf(bdLocation.getLongitude()));
+            }
+        }
+    };
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mLocationService.stop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mLocationService.unregisterListener(mLocationListener);
+    }
+
+    private void startForLocation(){
+        mLocationService = new LocationService(this);
+        mLocationService.registerListener(mLocationListener);
+        mLocationService.start();
+    }
+
 
     @Override
     protected int getLayoutResId() {
@@ -49,7 +84,15 @@ public class MainActivity extends BaseActivity {
     public void initView() {
         fragmentManager = getSupportFragmentManager();
         showFragment(0);
-        getUserInfo();
+        boolean isCheck = AppUtil.checkStatus(MainActivity.this);
+        if (isCheck){
+            getUserInfo();
+            startForLocation();
+            AppUtil.initCategoryData();
+            AppUtil.initRegionTreeData();
+            AppUtil.initSignReasonData();
+            AppUtil.initReservationReasonData();
+        }
     }
 
     private void showFragment(int page) {
