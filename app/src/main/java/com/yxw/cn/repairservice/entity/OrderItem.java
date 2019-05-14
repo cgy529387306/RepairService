@@ -57,7 +57,7 @@ public class OrderItem implements Serializable {
     private String createTime;
     private String district;
     private String endTime;
-    private int fee;
+    private double fee;
     private String fixDesc;
     private int handleStatus;
     private double locationLat;
@@ -77,7 +77,7 @@ public class OrderItem implements Serializable {
     private String remark;
     private String serviceProvider;
     private int serviceStatus;
-    private int sfee;
+    private double sfee;
     private int source;
     private double totalPrice;
     private String userId;
@@ -184,14 +184,6 @@ public class OrderItem implements Serializable {
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
-    }
-
-    public int getFee() {
-        return fee;
-    }
-
-    public void setFee(int fee) {
-        this.fee = fee;
     }
 
     public String getFixDesc() {
@@ -346,13 +338,6 @@ public class OrderItem implements Serializable {
         this.serviceStatus = serviceStatus;
     }
 
-    public int getSfee() {
-        return sfee;
-    }
-
-    public void setSfee(int sfee) {
-        this.sfee = sfee;
-    }
 
     public int getSource() {
         return source;
@@ -376,5 +361,21 @@ public class OrderItem implements Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public double getFee() {
+        return fee;
+    }
+
+    public void setFee(double fee) {
+        this.fee = fee;
+    }
+
+    public double getSfee() {
+        return sfee;
+    }
+
+    public void setSfee(double sfee) {
+        this.sfee = sfee;
     }
 }

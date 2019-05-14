@@ -16,7 +16,7 @@
         android:layout_height="48dp"
         android:gravity="center_vertical"
         android:background="@color/white"
-        android:inputType="number"
+        android:inputType="numberDecimal"
         android:textColor="#666666"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"

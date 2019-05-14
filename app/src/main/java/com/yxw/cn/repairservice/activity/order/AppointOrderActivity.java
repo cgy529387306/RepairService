@@ -7,12 +7,12 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
 import com.yxw.cn.repairservice.BaseActivity;
@@ -60,8 +60,9 @@ public class AppointOrderActivity extends BaseActivity implements BaseQuickAdapt
     RecyclerView mRvUrgency;
     @BindView(R.id.lly_engineer)
     LinearLayout mLlyEngineer;
+    @BindView(R.id.et_remark)
+    EditText mEtRemark;
     private OrderItem orderItem;
-    private Gson mGson = new Gson();
     private String userId = "";
     private String urgency = "";
     private OrderUrgencyAdapter mOrderUrgencyAdapter;
@@ -77,7 +78,6 @@ public class AppointOrderActivity extends BaseActivity implements BaseQuickAdapt
         LoginInfo loginInfo = CurrentUser.getInstance();
         mTvName.setText(loginInfo.getRealName());
         AppUtil.showPic(this, mIvAvatar, loginInfo.getAvatar());
-        userId = loginInfo.getUserId();
         mOrderUrgencyAdapter = new OrderUrgencyAdapter(new ArrayList<>());
         mOrderUrgencyAdapter.setOnItemClickListener(this);
         mRvUrgency.setLayoutManager(new GridLayoutManager(this, 3));
@@ -98,14 +98,23 @@ public class AppointOrderActivity extends BaseActivity implements BaseQuickAdapt
     private void doAppointEngineer() {
         String fee = mEtFee.getText().toString().trim();
         if (TextUtils.isEmpty(fee)){
-            toast("金额不能为空");
+            toast("请输入金额");
+            return;
         }
+        if (TextUtils.isEmpty(urgency)){
+            toast("请选择紧急程度");
+            return;
+        }
+
         HashMap<String, Object> map = new HashMap<>();
         map.put("acceptServiceId",orderItem.getAcceptId());
         map.put("fee",fee);
         map.put("userId",userId);
+        map.put("urgency",urgency);
+        map.put("remark",mEtRemark.getText().toString().trim());
+
         OkGo.<ResponseData<List<OrderItem>>>post(UrlConstant.ORDER_SERVICE_ASSIGN)
-                .upJson(mGson.toJson(map))
+                .upJson(gson.toJson(map))
                 .execute(new JsonCallback<ResponseData<List<OrderItem>>>() {
 
                     @Override
