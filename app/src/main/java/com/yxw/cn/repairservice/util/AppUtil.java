@@ -35,6 +35,7 @@ import com.yxw.cn.repairservice.entity.ReasonBean;
 import com.yxw.cn.repairservice.entity.RegionTree;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.entity.TradeItem;
+import com.yxw.cn.repairservice.entity.UrgencyBean;
 import com.yxw.cn.repairservice.entity.UserOrder;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 
@@ -54,6 +55,7 @@ public class AppUtil {
     public static List<CityBean> cityItemList = new ArrayList<>();
     public static List<ReasonBean> signReasonList = new ArrayList<>();
     public static List<ReasonBean> reservationReasonList = new ArrayList<>();
+    public static List<UrgencyBean> reservationUrgencyList = new ArrayList<>();
     public static List<Abnormal> categoryItemList0 = new ArrayList<>();
     private static Gson gson = new Gson();
 
@@ -262,6 +264,24 @@ public class AppUtil {
                         if (response!=null){
                             if (response.isSuccess() && response.getData()!=null){
                                 AppUtil.reservationReasonList = response.getData();
+                            }
+                        }
+                    }
+                });
+    }
+
+    public static void initReservationUrgencyData() {
+        HashMap<String,String> map = new HashMap<>();
+        map.put("dictKey","URGENCY");
+        OkGo.<ResponseData<List<UrgencyBean>>>post(UrlConstant.GET_EXCEPTION_REASON)
+                .upJson(gson.toJson(map))
+                .execute(new JsonCallback<ResponseData<List<UrgencyBean>>>() {
+
+                    @Override
+                    public void onSuccess(ResponseData<List<UrgencyBean>> response) {
+                        if (response!=null){
+                            if (response.isSuccess() && response.getData()!=null){
+                                AppUtil.reservationUrgencyList = response.getData();
                             }
                         }
                     }

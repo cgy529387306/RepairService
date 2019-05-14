@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,7 +13,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
 import com.orhanobut.dialogplus.DialogPlus;
-import com.orhanobut.dialogplus.ViewHolder;
 import com.yxw.cn.repairservice.BaseRefreshFragment;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.activity.order.AppointAbnormalActivity;
@@ -183,7 +181,6 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
 
     @Override
     public void onOrderTaking(OrderItem orderItem) {
-        showOrderTakingDialog(orderItem);
     }
 
     @Override
@@ -363,53 +360,6 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
         });
     }
 
-    public void showOrderTakingDialog(OrderItem orderItem) {
-        if (mTakingDialog == null) {
-            mTakingDialog = DialogPlus.newDialog(getActivity())
-                    .setContentHolder(new ViewHolder(R.layout.dlg_confirm_order))
-                    .setGravity(Gravity.CENTER)
-                    .setCancelable(true)
-                    .create();
-            View dialogView = mTakingDialog.getHolderView();
-            dialogView.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mTakingDialog.dismiss();
-                }
-            });
-            dialogView.findViewById(R.id.dialog_confirm).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mTakingDialog.dismiss();
-                    showLoading();
-                    OkGo.<ResponseData<String>>post(UrlConstant.ORDER_RECEIVE+orderItem.getOrderId())
-                            .execute(new JsonCallback<ResponseData<String>>() {
-                                         @Override
-                                         public void onSuccess(ResponseData<String> response) {
-                                             dismissLoading();
-                                             if (response!=null){
-                                                 if (response.isSuccess()) {
-                                                     toast("抢单成功");
-                                                     EventBusUtil.post(MessageConstant.NOTIFY_UPDATE_ORDER);
-                                                 }else{
-                                                     toast(response.getMsg());
-                                                 }
-                                             }
-                                         }
-
-                                         @Override
-                                         public void onError(Response<ResponseData<String>> response) {
-                                             super.onError(response);
-                                             dismissLoading();
-                                         }
-                                     }
-                            );
-                }
-            });
-        }
-        mTakingDialog.show();
-    }
-
     @Override
     public void onComfirm(OrderItem orderItem) { //申请退单
         OkGo.<ResponseData<List<OrderItem>>>post(UrlConstant.ORDER_SERVICE_RETURN + orderItem.getAcceptId())
@@ -419,8 +369,8 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
                     @Override
                     public void onSuccess(ResponseData<List<OrderItem>> response) {
                         if (response!=null){
-                            if (response.isSuccess() && response.getData()!=null){
-                                mAdapter.setNewData(response.getData());
+                            if (response.isSuccess()){
+                                EventBusUtil.post(MessageConstant.NOTIFY_UPDATE_ORDER);
                             }else{
                                 toast(response.getMsg());
                             }

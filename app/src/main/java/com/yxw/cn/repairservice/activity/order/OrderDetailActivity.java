@@ -613,7 +613,7 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
     public void showOrderTakingDialog(OrderItem orderItem) {
         if (mTakingDialog == null) {
             mTakingDialog = DialogPlus.newDialog(this)
-                    .setContentHolder(new ViewHolder(R.layout.dlg_confirm_order))
+                    .setContentHolder(new ViewHolder(R.layout.pop_confirm_order))
                     .setGravity(Gravity.CENTER)
                     .setCancelable(true)
                     .create();

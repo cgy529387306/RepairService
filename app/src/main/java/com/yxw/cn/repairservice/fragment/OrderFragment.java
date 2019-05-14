@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -12,7 +11,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
 import com.orhanobut.dialogplus.DialogPlus;
-import com.orhanobut.dialogplus.ViewHolder;
 import com.yxw.cn.repairservice.BaseRefreshFragment;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.activity.order.OrderDetailActivity;
@@ -24,6 +22,7 @@ import com.yxw.cn.repairservice.entity.OrderItem;
 import com.yxw.cn.repairservice.entity.OrderListData;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
+import com.yxw.cn.repairservice.pop.ConfirmOrderPop;
 import com.yxw.cn.repairservice.pop.ContactPop;
 import com.yxw.cn.repairservice.util.EventBusUtil;
 import com.yxw.cn.repairservice.util.Helper;
@@ -40,7 +39,7 @@ import butterknife.BindView;
 /**
  * 订单列表
  */
-public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapter.OnItemClickListener , OrderAdapter.OnOrderOperateListener, ContactPop.SelectListener {
+public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapter.OnItemClickListener , OrderAdapter.OnOrderOperateListener, ContactPop.SelectListener,ConfirmOrderPop.SelectListener{
 
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
@@ -52,6 +51,7 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
     private int mOrderType;
     private String mBookingTime;
     private DialogPlus mTakingDialog;
+    private ConfirmOrderPop mConfirmOrderPop;
     /**
      * @param type 0:今天 1:明天 2:全部
      * @return
@@ -192,7 +192,10 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
 
     @Override
     public void onOrderTaking(OrderItem orderItem) {
-         showOrderTakingDialog(orderItem);
+        if (mConfirmOrderPop==null){
+            mConfirmOrderPop = new ConfirmOrderPop(getActivity(),orderItem,this);
+        }
+        mConfirmOrderPop.showPopupWindow(mRecyclerView);
     }
 
     @Override
@@ -231,50 +234,30 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
     public void onConfirm(OrderItem orderItem) {
     }
 
-    public void showOrderTakingDialog(OrderItem orderItem) {
-        if (mTakingDialog == null) {
-            mTakingDialog = DialogPlus.newDialog(getActivity())
-                    .setContentHolder(new ViewHolder(R.layout.dlg_confirm_order))
-                    .setGravity(Gravity.CENTER)
-                    .setCancelable(true)
-                    .create();
-            View dialogView = mTakingDialog.getHolderView();
-            dialogView.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mTakingDialog.dismiss();
-                }
-            });
-            dialogView.findViewById(R.id.dialog_confirm).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mTakingDialog.dismiss();
-                    showLoading();
-                    OkGo.<ResponseData<String>>post(UrlConstant.ORDER_RECEIVE+orderItem.getOrderId())
-                            .execute(new JsonCallback<ResponseData<String>>() {
-                                         @Override
-                                         public void onSuccess(ResponseData<String> response) {
-                                             dismissLoading();
-                                             if (response!=null){
-                                                 if (response.isSuccess()) {
-                                                     toast("抢单成功");
-                                                     EventBusUtil.post(MessageConstant.NOTIFY_UPDATE_ORDER);
-                                                 }else{
-                                                     toast(response.getMsg());
-                                                 }
-                                             }
-                                         }
-
-                                         @Override
-                                         public void onError(Response<ResponseData<String>> response) {
-                                             super.onError(response);
-                                             dismissLoading();
-                                         }
+    @Override
+    public void onOrderComfirm(OrderItem orderItem) {
+        showLoading();
+        OkGo.<ResponseData<String>>post(UrlConstant.ORDER_RECEIVE+orderItem.getOrderId())
+                .execute(new JsonCallback<ResponseData<String>>() {
+                             @Override
+                             public void onSuccess(ResponseData<String> response) {
+                                 dismissLoading();
+                                 if (response!=null){
+                                     if (response.isSuccess()) {
+                                         toast("抢单成功");
+                                         EventBusUtil.post(MessageConstant.NOTIFY_UPDATE_ORDER);
+                                     }else{
+                                         toast(response.getMsg());
                                      }
-                            );
-                }
-            });
-        }
-        mTakingDialog.show();
+                                 }
+                             }
+
+                             @Override
+                             public void onError(Response<ResponseData<String>> response) {
+                                 super.onError(response);
+                                 dismissLoading();
+                             }
+                         }
+                );
     }
 }
