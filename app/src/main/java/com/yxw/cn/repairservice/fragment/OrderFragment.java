@@ -50,7 +50,6 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
     private boolean isNext = false;
     private int mOrderType;
     private String mBookingTime;
-    private DialogPlus mTakingDialog;
     private ConfirmOrderPop mConfirmOrderPop;
     /**
      * @param type 0:今天 1:明天 2:全部
