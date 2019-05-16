@@ -1,5 +1,6 @@
 package com.yxw.cn.repairservice.adapter;
 
+import android.annotation.SuppressLint;
 import android.view.View;
 import android.widget.TextView;
 
@@ -10,8 +11,16 @@ import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.OrderItem;
 import com.yxw.cn.repairservice.util.AppUtil;
 import com.yxw.cn.repairservice.util.Helper;
+import com.yxw.cn.repairservice.util.TimeUtil;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by CY on 2018/11/25
@@ -37,13 +46,16 @@ public class OrderAdapter extends BaseQuickAdapter<OrderItem, BaseViewHolder> {
         this.mOperateListener = orderOperateListener;
     }
 
+    @SuppressLint("CheckResult")
     @Override
     protected void convert(BaseViewHolder helper, OrderItem item) {
         TextView tvOperate0 = helper.getView(R.id.tv_operate0);
         TextView tvOperate1 = helper.getView(R.id.tv_operate1);
         TextView tvOperate2 = helper.getView(R.id.tv_operate2);
+        TextView tvRestTime = helper.getView(R.id.tv_rest_time);
         int orderStatus = item.getOrderStatus();
         double price = orderStatus<=30?item.getTotalPrice():item.getFee();
+
         helper.setText(R.id.tv_ordre_name, item.getCategoryPName()+"/"+item.getCategoryCName())
                 .setText(R.id.tv_order_no,item.getOrderSn())
                 .setText(R.id.tv_order_time, item.getCreateTime())
@@ -88,6 +100,35 @@ public class OrderAdapter extends BaseQuickAdapter<OrderItem, BaseViewHolder> {
             });
         }else if (orderStatus<=40){
             //待预约
+            tvRestTime.setVisibility(View.VISIBLE);
+//            if (Helper.isEmpty(item.getReceiveTime())){
+//                tvRestTime.setVisibility(View.GONE);
+//            }else{
+//                if (TimeUtil.compareTime2(item.getReceiveTime())){
+//                    Observable.interval(0, 1, TimeUnit.SECONDS)
+//                            .takeWhile(new Predicate<Long>() {
+//                                @Override
+//                                public boolean test(Long aLong) throws Exception {
+//                                    return !mStop;
+//                                }
+//                            })
+//                            .subscribeOn(Schedulers.io())
+//                            .observeOn(AndroidSchedulers.mainThread())
+//                            .subscribe(new Consumer<Long>() {
+//                                @Override
+//                                public void accept(Long aLong) throws Exception {
+//                                    if (TimeUtil.reFreshTime2(item.getReceiveTime()) == null) {
+//                                        tvRestTime.setText("预约倒计时已结束");
+//                                    } else {
+//                                        tvRestTime.setText(String.format("预约倒计时：%s", TimeUtil.reFreshTime2(item.getReceiveTime())));
+//                                    }
+//                                }
+//                            });
+//                }else{
+//                    tvRestTime.setText("预约时间已过期");
+//                }
+//            }
+
             tvOperate0.setVisibility(View.GONE);
             tvOperate1.setVisibility(View.VISIBLE);
             tvOperate1.setText("异常反馈");
