@@ -22,7 +22,6 @@ import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.view.RecycleViewDivider;
 import com.yxw.cn.repairservice.view.TitleBar;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -41,7 +40,6 @@ public class ChooseEngineerActivity extends BaseActivity{
     RecyclerView mRecyclerView;
     ChooseEngineerAdapter mChooseEngineerAdapter;
     private LoginInfo loginInfo;
-    private List<EngineerInfo> mList = new ArrayList<>();
     @Override
     protected int getLayoutResId() {
         return R.layout.act_my_engineer;
@@ -58,10 +56,7 @@ public class ChooseEngineerActivity extends BaseActivity{
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent();
-                intent.putExtra("realName",mChooseEngineerAdapter.getData().get(position).getRealName());
-                intent.putExtra("star",mChooseEngineerAdapter.getData().get(position).getStar());
-                intent.putExtra("avatar",mChooseEngineerAdapter.getData().get(position).getAvatar());
-                intent.putExtra("userId",mChooseEngineerAdapter.getData().get(position).getUserId());
+                intent.putExtra("engineer",mChooseEngineerAdapter.getData().get(position));
                 setResult(RESULT_OK,intent);
                 finish();
             }
@@ -77,7 +72,6 @@ public class ChooseEngineerActivity extends BaseActivity{
     public void getData() {
         super.getData();
         getEngineerData();
-
     }
     private void getEngineerData() {
         loginInfo = CurrentUser.getInstance();

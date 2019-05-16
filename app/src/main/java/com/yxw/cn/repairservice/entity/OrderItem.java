@@ -75,6 +75,7 @@ public class OrderItem implements Serializable {
     private int receiveStatus;
     private String receiveTime;
     private String remark;
+    private String serviceId;
     private String serviceProvider;
     private int serviceStatus;
     private double sfee;
@@ -386,4 +387,12 @@ public class OrderItem implements Serializable {
     public void setFaultDesc(String faultDesc) {
         this.faultDesc = faultDesc;
     }
+
+    public String getServiceId() {
+        return serviceId == null ? "" : serviceId;
+    }
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
+    }
+
 }

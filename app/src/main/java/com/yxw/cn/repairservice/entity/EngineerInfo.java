@@ -1,6 +1,8 @@
 package com.yxw.cn.repairservice.entity;
 
-public class EngineerInfo {
+import java.io.Serializable;
+
+public class EngineerInfo implements Serializable {
 
 
     /**

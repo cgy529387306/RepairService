@@ -167,4 +167,5 @@ public class OrderAdapter extends BaseQuickAdapter<OrderItem, BaseViewHolder> {
             });
         }
     }
+
 }

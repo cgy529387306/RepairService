@@ -22,6 +22,7 @@ import com.yxw.cn.repairservice.adapter.OrderUrgencyAdapter;
 import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.CurrentUser;
+import com.yxw.cn.repairservice.entity.EngineerInfo;
 import com.yxw.cn.repairservice.entity.LoginInfo;
 import com.yxw.cn.repairservice.entity.OrderItem;
 import com.yxw.cn.repairservice.entity.ResponseData;
@@ -175,19 +176,18 @@ public class AppointOrderActivity extends BaseActivity implements BaseQuickAdapt
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == 600) {
-                String name = data.getExtras().getString("realName");
-                int star = data.getExtras().getInt("star");
-                String avatar = data.getExtras().getString("avatar");
-                userId = data.getExtras().getString("userId");
-                if (!TextUtils.isEmpty(userId)){
-                    mLlyEngineer.setVisibility(View.VISIBLE);
+                EngineerInfo engineerInfo = (EngineerInfo) data.getExtras().getSerializable("engineer");
+                if (engineerInfo!=null){
+                    mTvName.setText(engineerInfo.getRealName());
+                    ratingbar.setRating(engineerInfo.getStar());
+                    AppUtil.showPic(this, mIvAvatar, engineerInfo.getAvatar());
+                    userId = engineerInfo.getUserId();
+                    if (!TextUtils.isEmpty(userId)){
+                        mLlyEngineer.setVisibility(View.VISIBLE);
+                    } else {
+                        mLlyEngineer.setVisibility(View.GONE);
+                    }
                 }
-                else {
-                    mLlyEngineer.setVisibility(View.GONE);
-                }
-                mTvName.setText(name);
-                ratingbar.setRating(star);
-                AppUtil.showPic(this, mIvAvatar, avatar);
             }
         }
     }
