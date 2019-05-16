@@ -136,7 +136,7 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
     private MyLocationListener mLocationListener;
     private ContactPop mContactPop;
     private ConfirmOrderPop mConfirmOrderPop;
-    private  Disposable mDisposable;
+    private Disposable mDisposable;
     @Override
     protected int getLayoutResId() {
         return R.layout.act_order_detail;
