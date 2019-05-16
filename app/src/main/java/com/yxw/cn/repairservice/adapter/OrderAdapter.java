@@ -14,13 +14,6 @@ import com.yxw.cn.repairservice.util.Helper;
 import com.yxw.cn.repairservice.util.TimeUtil;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Predicate;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by CY on 2018/11/25
@@ -100,35 +93,7 @@ public class OrderAdapter extends BaseQuickAdapter<OrderItem, BaseViewHolder> {
             });
         }else if (orderStatus<=40){
             //待预约
-            tvRestTime.setVisibility(View.VISIBLE);
-//            if (Helper.isEmpty(item.getReceiveTime())){
-//                tvRestTime.setVisibility(View.GONE);
-//            }else{
-//                if (TimeUtil.compareTime2(item.getReceiveTime())){
-//                    Observable.interval(0, 1, TimeUnit.SECONDS)
-//                            .takeWhile(new Predicate<Long>() {
-//                                @Override
-//                                public boolean test(Long aLong) throws Exception {
-//                                    return !mStop;
-//                                }
-//                            })
-//                            .subscribeOn(Schedulers.io())
-//                            .observeOn(AndroidSchedulers.mainThread())
-//                            .subscribe(new Consumer<Long>() {
-//                                @Override
-//                                public void accept(Long aLong) throws Exception {
-//                                    if (TimeUtil.reFreshTime2(item.getReceiveTime()) == null) {
-//                                        tvRestTime.setText("预约倒计时已结束");
-//                                    } else {
-//                                        tvRestTime.setText(String.format("预约倒计时：%s", TimeUtil.reFreshTime2(item.getReceiveTime())));
-//                                    }
-//                                }
-//                            });
-//                }else{
-//                    tvRestTime.setText("预约时间已过期");
-//                }
-//            }
-
+            tvRestTime.setText(String.format("预约倒计时：%s", TimeUtil.reFreshTime2(item.getReceiveTime())));
             tvOperate0.setVisibility(View.GONE);
             tvOperate1.setVisibility(View.VISIBLE);
             tvOperate1.setText("异常反馈");
@@ -149,6 +114,7 @@ public class OrderAdapter extends BaseQuickAdapter<OrderItem, BaseViewHolder> {
             });
         }else if (orderStatus<=55){
             //待上门
+            tvRestTime.setText(String.format("上门倒计时：%s", TimeUtil.reFreshTime(item.getBookingStartTime())));
             tvOperate0.setVisibility(View.VISIBLE);
             tvOperate0.setText("改约");
             tvOperate0.setOnClickListener(new View.OnClickListener() {

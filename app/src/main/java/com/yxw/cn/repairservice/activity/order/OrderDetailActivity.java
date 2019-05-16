@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,8 +31,6 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
-import com.orhanobut.dialogplus.DialogPlus;
-import com.orhanobut.dialogplus.ViewHolder;
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.adapter.UserOrderDetailAdapter;
@@ -68,6 +65,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
@@ -138,6 +136,7 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
     private MyLocationListener mLocationListener;
     private ContactPop mContactPop;
     private ConfirmOrderPop mConfirmOrderPop;
+    private  Disposable mDisposable;
     @Override
     protected int getLayoutResId() {
         return R.layout.act_order_detail;
@@ -291,6 +290,9 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
         mBaiDuMap.clear();
         mMapView.onDestroy();
         mMapView = null;
+        if (mDisposable!=null){
+            mDisposable.dispose();
+        }
     }
 
     @Override
@@ -547,7 +549,7 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
                 tvRestTime.setText("预约时间异常");
             }else{
                 if (TimeUtil.compareTime2(orderItem.getReceiveTime())){
-                    Observable.interval(0, 1, TimeUnit.SECONDS)
+                    mDisposable = Observable.interval(0, 1, TimeUnit.SECONDS)
                             .takeWhile(new Predicate<Long>() {
                                 @Override
                                 public boolean test(Long aLong) throws Exception {
@@ -601,8 +603,8 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
             if (Helper.isEmpty(orderItem.getBookingStartTime())){
                 tvRestTime.setText("上门时间异常");
             }else{
-                if (TimeUtil.compareTime2(orderItem.getBookingStartTime())){
-                    Observable.interval(0, 1, TimeUnit.SECONDS)
+                if (TimeUtil.compareTime(orderItem.getBookingStartTime())){
+                    mDisposable = Observable.interval(0, 1, TimeUnit.SECONDS)
                             .takeWhile(new Predicate<Long>() {
                                 @Override
                                 public boolean test(Long aLong) throws Exception {
@@ -614,10 +616,10 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
                             .subscribe(new Consumer<Long>() {
                                 @Override
                                 public void accept(Long aLong) throws Exception {
-                                    if (TimeUtil.reFreshTime2(orderItem.getBookingStartTime()) == null) {
+                                    if (TimeUtil.reFreshTime(orderItem.getBookingStartTime()) == null) {
                                         tvRestTime.setText("上门倒计时已结束");
                                     } else {
-                                        tvRestTime.setText(String.format("上门倒计时：%s", TimeUtil.reFreshTime2(orderItem.getBookingStartTime())));
+                                        tvRestTime.setText(String.format("上门倒计时：%s", TimeUtil.reFreshTime(orderItem.getBookingStartTime())));
                                     }
                                 }
                             });

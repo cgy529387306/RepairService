@@ -138,6 +138,7 @@ public class AppointOrderActivity extends BaseActivity implements BaseQuickAdapt
 
     private void getReservationUrgencyData() {
         if (AppUtil.reservationReasonList != null && AppUtil.reservationUrgencyList.size() > 0) {
+            urgency = AppUtil.reservationUrgencyList.get(0).getDictId();
             mOrderUrgencyAdapter.setNewData(AppUtil.reservationUrgencyList);
         } else {
             showLoading();
@@ -153,6 +154,7 @@ public class AppointOrderActivity extends BaseActivity implements BaseQuickAdapt
                             if (response!=null){
                                 if (response.isSuccess() && response.getData()!=null){
                                     if (AppUtil.reservationUrgencyList != null && AppUtil.reservationUrgencyList.size() > 0) {
+                                        urgency = AppUtil.reservationUrgencyList.get(0).getDictId();
                                         mOrderUrgencyAdapter.setNewData(AppUtil.reservationUrgencyList);
                                     }
                                 }
