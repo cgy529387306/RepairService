@@ -148,12 +148,12 @@ public class ApplyServiceFragment extends BaseRefreshFragment implements ApplySe
         HashMap<String, Object> map = new HashMap<>();
         map.put("applyId",applyItem.getApplyId());
         map.put("applyStatus",type);
-        OkGo.<ResponseData<String>>post(UrlConstant.EXAMINE_APPLY)
+        OkGo.<ResponseData<Object>>post(UrlConstant.EXAMINE_APPLY)
                 .upJson(gson.toJson(map))
-                .execute(new JsonCallback<ResponseData<String>>() {
+                .execute(new JsonCallback<ResponseData<Object>>() {
 
                     @Override
-                    public void onSuccess(ResponseData<String> response) {
+                    public void onSuccess(ResponseData<Object> response) {
                         dismissLoading();
                         if (response!=null){
                             if (response.isSuccess()){
@@ -166,7 +166,7 @@ public class ApplyServiceFragment extends BaseRefreshFragment implements ApplySe
                     }
 
                     @Override
-                    public void onError(Response<ResponseData<String>> response) {
+                    public void onError(Response<ResponseData<Object>> response) {
                         super.onError(response);
                         dismissLoading();
                     }

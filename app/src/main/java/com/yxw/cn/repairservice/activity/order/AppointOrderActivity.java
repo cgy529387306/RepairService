@@ -24,6 +24,7 @@ import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.EngineerInfo;
 import com.yxw.cn.repairservice.entity.LoginInfo;
+import com.yxw.cn.repairservice.entity.OperateResult;
 import com.yxw.cn.repairservice.entity.OrderItem;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.entity.UrgencyBean;
@@ -106,27 +107,44 @@ public class AppointOrderActivity extends BaseActivity implements BaseQuickAdapt
             toast("请选择紧急程度");
             return;
         }
-
+        try {
+            if (Double.parseDouble(fee)>orderItem.getTotalPrice()){
+                toast("结算金额大于订单金额");
+                return;
+            }
+        }catch (Exception e){
+           e.printStackTrace();
+        }
+        showLoading();
         HashMap<String, Object> map = new HashMap<>();
-        map.put("acceptServiceId",orderItem.getAcceptId());
+        map.put("acceptServiceId",orderItem.getServiceId());
         map.put("fee",fee);
         map.put("userId",userId);
         map.put("urgency",urgency);
         map.put("remark",mEtRemark.getText().toString().trim());
 
-        OkGo.<ResponseData<List<OrderItem>>>post(UrlConstant.ORDER_SERVICE_ASSIGN)
+        OkGo.<ResponseData<OperateResult>>post(UrlConstant.ORDER_SERVICE_ASSIGN)
                 .upJson(gson.toJson(map))
-                .execute(new JsonCallback<ResponseData<List<OrderItem>>>() {
+                .execute(new JsonCallback<ResponseData<OperateResult>>() {
 
                     @Override
-                    public void onSuccess(ResponseData<List<OrderItem>> response) {
-                        AppointOrderActivity.this.finish();
-                        EventBusUtil.post(MessageConstant.NOTIFY_UPDATE_ORDER);
+                    public void onSuccess(ResponseData<OperateResult> response) {
+                        dismissLoading();
+                        if (response!=null){
+                            if (response.isSuccess() && response.getData()!=null){
+                                toast("指派成功");
+                                AppointOrderActivity.this.finish();
+                                EventBusUtil.post(MessageConstant.NOTIFY_DETAIL_STATUS,response.getData());
+                            }else{
+                                toast(response.getMsg());
+                            }
+                        }
                     }
 
                     @Override
-                    public void onError(Response<ResponseData<List<OrderItem>>> response) {
+                    public void onError(Response<ResponseData<OperateResult>> response) {
                         super.onError(response);
+                        dismissLoading();
                     }
                 });
     }

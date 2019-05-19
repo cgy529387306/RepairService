@@ -16,13 +16,10 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
-import com.yxw.cn.repairservice.activity.LocationService;
 import com.yxw.cn.repairservice.adapter.CityAdapter;
 import com.yxw.cn.repairservice.adapter.HotCityAdapter;
 import com.yxw.cn.repairservice.contast.UrlConstant;
-import com.yxw.cn.repairservice.entity.Category;
 import com.yxw.cn.repairservice.entity.CityBean;
-import com.yxw.cn.repairservice.entity.CityEntity;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.util.AppUtil;
@@ -49,8 +46,6 @@ public class SelectCityActivity extends BaseActivity {
     private HotCityAdapter mHotCityAdapter;
     private TextView mTvCurrentCity;
 
-    private LocationService mLocationService;
-
 
     @Override
     protected int getLayoutResId() {
@@ -65,9 +60,6 @@ public class SelectCityActivity extends BaseActivity {
         mIndexableLayout.setLayoutManager(new LinearLayoutManager(this));
         initAdapter();
         setListener();
-        mLocationService = new LocationService(this);
-        mLocationService.registerListener(mLocationListener);
-        mLocationService.start();
     }
 
     private BDAbstractLocationListener mLocationListener = new BDAbstractLocationListener() {
@@ -79,11 +71,6 @@ public class SelectCityActivity extends BaseActivity {
         }
     };
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mLocationService.stop();
-    }
 
     @Override
     public void getData() {
@@ -119,12 +106,6 @@ public class SelectCityActivity extends BaseActivity {
 
     private void initCityData(){
         mCityAdapter.setDatas(AppUtil.cityItemList);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mLocationService.unregisterListener(mLocationListener);
     }
 
     public void initAdapter(){

@@ -28,7 +28,6 @@ import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.yxw.cn.repairservice.BaseApplication;
 import com.yxw.cn.repairservice.R;
-import com.yxw.cn.repairservice.activity.LocationService;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.crash.CrashHandler;
 import com.yxw.cn.repairservice.entity.CurrentUser;
@@ -36,6 +35,7 @@ import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.util.AppUtil;
 import com.yxw.cn.repairservice.util.Helper;
+import com.yxw.cn.repairservice.util.LocationUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,8 +49,6 @@ public class InitService extends IntentService {
     private static final String ACTION_INIT = "com.yxw.cn.repairservice.action.Init";
 
     private MyTimeTask mTimeTask;
-
-    public LocationService mLocationService;
 
     public Gson mGson = new Gson();
 
@@ -95,7 +93,7 @@ public class InitService extends IntentService {
      */
     private void loadInit() {
         MultiDex.install(BaseApplication.getInstance());
-        mLocationService = new LocationService(BaseApplication.getInstance());
+        LocationUtils.instance().startLocation();
         SDKInitializer.initialize(BaseApplication.getInstance());
         SDKInitializer.setCoordType(CoordType.BD09LL);
 

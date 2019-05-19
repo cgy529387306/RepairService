@@ -1,7 +1,6 @@
 package com.yxw.cn.repairservice.fragment;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,7 +19,6 @@ import com.yxw.cn.repairservice.activity.order.InServiceActivity;
 import com.yxw.cn.repairservice.activity.order.MyOrderActivity;
 import com.yxw.cn.repairservice.adapter.HomeMsgAdapter;
 import com.yxw.cn.repairservice.adapter.OrderTypeAdapter;
-import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.OrderType;
 import com.yxw.cn.repairservice.util.ImageUtils;
 import com.yxw.cn.repairservice.view.RecycleViewDivider;
@@ -109,9 +107,9 @@ public class HomeFragment extends BaseRefreshFragment {
 
     private List<String> getImageList(){
         List<String> dataLsit = new ArrayList<>();
-        dataLsit.add("http://pic.58pic.com/58pic/15/68/59/71X58PICNjx_1024.jpg");
-        dataLsit.add("http://pic1.win4000.com/wallpaper/9/5450ae2fdef8a.jpg");
-        dataLsit.add("http://pic15.nipic.com/20110628/1369025_192645024000_2.jpg");
+        dataLsit.add("https://timgsa.baidu.com/timg?image&quality=80&size=b10000_10000&sec=1558272884&di=da63d7e99458ed81153d0181b4e9a163&src=http://pic40.photophoto.cn/20160731/1155116428420006_b.jpg");
+        dataLsit.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1558282603949&di=b7d884ed76be39e27be78642397757e2&imgtype=0&src=http%3A%2F%2Fwww.wkgogo.com%2Fuserfiles%2Fzzgg%2Fwk%2Ftask%2Fc%2F1%2F125%2F1%2F1.jpg");
+        dataLsit.add("https://timgsa.baidu.com/timg?image&quality=80&size=b10000_10000&sec=1558272590&di=d83d8fca1a0ff5cd246ff3a23e7b1170&src=http://imgmall.tg.com.cn/group2/M00/70/42/CgooeFn0g_j3ubxeAAj7CpF4_w8737.jpg");
         return dataLsit;
     }
 

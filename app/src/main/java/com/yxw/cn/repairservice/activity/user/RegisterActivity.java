@@ -94,11 +94,11 @@ public class RegisterActivity extends BaseActivity {
                             showLoading();
                             Map<String, String> map = new HashMap<>();
                             map.put("mobile", mEtPhone.getText().toString());
-                            OkGo.<ResponseData<String>>post(UrlConstant.GET_CODE_REGISTER)
+                            OkGo.<ResponseData<Object>>post(UrlConstant.GET_CODE_REGISTER)
                                     .upJson(gson.toJson(map))
-                                    .execute(new JsonCallback<ResponseData<String>>() {
+                                    .execute(new JsonCallback<ResponseData<Object>>() {
                                                  @Override
-                                                 public void onSuccess(ResponseData<String> response) {
+                                                 public void onSuccess(ResponseData<Object> response) {
                                                      dismissLoading();
                                                      if (response!=null){
                                                          if (response.isSuccess()){
@@ -111,7 +111,7 @@ public class RegisterActivity extends BaseActivity {
                                                  }
 
                                                  @Override
-                                                 public void onError(Response<ResponseData<String>> response) {
+                                                 public void onError(Response<ResponseData<Object>> response) {
                                                      super.onError(response);
                                                      dismissLoading();
                                                  }
@@ -153,11 +153,11 @@ public class RegisterActivity extends BaseActivity {
                     map.put("smsCode", mEtCode.getText().toString().trim());
                     map.put("appSign", UrlConstant.mRoleSign);
                     showLoading();
-                    OkGo.<ResponseData<String>>post(UrlConstant.REGISTER)
+                    OkGo.<ResponseData<Object>>post(UrlConstant.REGISTER)
                             .upJson(gson.toJson(map))
-                            .execute(new JsonCallback<ResponseData<String>>() {
+                            .execute(new JsonCallback<ResponseData<Object>>() {
                                          @Override
-                                         public void onSuccess(ResponseData<String> response) {
+                                         public void onSuccess(ResponseData<Object> response) {
                                              dismissLoading();
                                              if (response!=null){
                                                  if (response.isSuccess()) {
@@ -172,7 +172,7 @@ public class RegisterActivity extends BaseActivity {
                                          }
 
                                          @Override
-                                         public void onError(Response<ResponseData<String>> response) {
+                                         public void onError(Response<ResponseData<Object>> response) {
                                              super.onError(response);
                                              dismissLoading();
                                          }

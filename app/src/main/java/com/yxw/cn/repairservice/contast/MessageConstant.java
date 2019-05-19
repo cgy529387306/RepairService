@@ -1,7 +1,7 @@
 package com.yxw.cn.repairservice.contast;
 
 public class MessageConstant {
-
+    public final static String MY_LOCATION= "MY_LOCATION";
     public final static String LOGIN = "LOGIN";
     public final static String REGISTER= "REGISTER";
     public final static String LOGOUT= "LOGOUT";
@@ -12,7 +12,8 @@ public class MessageConstant {
     public final static String NOTIFY_UPDATE_ORDER= "NOTIFY_UPDATE_ORDER";
     public final static String NOTIFY_UPDATE_APPLY= "NOTIFY_UPDATE_APPLY";
     public final static String NOTIFY_UPDATE_ENGINEER= "NOTIFY_UPDATE_ENGINEER";
-
+    public final static String NOTIFY_DETAIL_STATUS= "NOTIFY_DETAIL_STATUS";
+    public final static String CLEAR_CACHE= "CLEAR_CACHE";
     public final static String MY_CATEGORY= "MY_CATEGORY";
     public final static String WORKER_UNORDER_COUNT= "WORKER_UNORDER_COUNT";
     public final static String WORKER_ORDERED_COUNT= "WORKER_ORDERED_COUNT";

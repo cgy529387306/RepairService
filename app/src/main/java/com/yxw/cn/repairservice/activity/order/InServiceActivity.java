@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
+import com.yxw.cn.repairservice.contast.MessageConstant;
+import com.yxw.cn.repairservice.entity.MessageEvent;
 import com.yxw.cn.repairservice.fragment.InServiceFragment;
 import com.yxw.cn.repairservice.view.TitleBar;
 
@@ -77,5 +79,16 @@ public class InServiceActivity extends BaseActivity{
         mTabLayout.setupWithViewPager(mViewPager);
     }
 
+    @Override
+    public void onEvent(MessageEvent event) {
+        super.onEvent(event);
+        switch (event.getId()) {
+            case MessageConstant.NOTIFY_DETAIL_STATUS:
+                if (mViewPager!=null){
+                    mViewPager.setCurrentItem(1);
+                }
+                break;
+        }
+    }
 
 }

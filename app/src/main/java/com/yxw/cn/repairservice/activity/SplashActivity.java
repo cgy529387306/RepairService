@@ -145,8 +145,9 @@ public class SplashActivity extends Activity{
                 startActivity(new Intent(SplashActivity.this,LoginActivity.class));
                 finish();
             }
-        }, 1000);
+        }, 2000);
     }
+
 
     @Override
     protected void onDestroy() {
@@ -156,5 +157,4 @@ public class SplashActivity extends Activity{
             handler = null;
         }
     }
-
 }

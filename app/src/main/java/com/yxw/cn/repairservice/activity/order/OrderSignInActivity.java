@@ -233,7 +233,7 @@ public class OrderSignInActivity extends BaseActivity {
             return;
         }
         HashMap<String, Object> map = new HashMap<>();
-        map.put("orderId", orderItem.getOrderId());
+        map.put("acceptId", orderItem.getAcceptId());
         map.put("locationLat", mLocation.getLatitude());
         map.put("locationLng", mLocation.getLongitude());
         map.put("shot", path);
@@ -243,11 +243,11 @@ public class OrderSignInActivity extends BaseActivity {
         }
         String requestUrl = type==1? UrlConstant.ORDER_FINISH:UrlConstant.ORDER_ARRIVAL;
         showLoading();
-        OkGo.<ResponseData<String>>post(requestUrl)
+        OkGo.<ResponseData<Object>>post(requestUrl)
                 .upJson(gson.toJson(map))
-                .execute(new JsonCallback<ResponseData<String>>() {
+                .execute(new JsonCallback<ResponseData<Object>>() {
                     @Override
-                    public void onSuccess(ResponseData<String> response) {
+                    public void onSuccess(ResponseData<Object> response) {
                         dismissLoading();
                         if (response!=null){
                             if (response.isSuccess()){
@@ -260,7 +260,7 @@ public class OrderSignInActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onError(Response<ResponseData<String>> response) {
+                    public void onError(Response<ResponseData<Object>> response) {
                         super.onError(response);
                         dismissLoading();
                     }

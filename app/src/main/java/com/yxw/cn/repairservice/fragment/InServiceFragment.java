@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
-import com.orhanobut.dialogplus.DialogPlus;
 import com.yxw.cn.repairservice.BaseRefreshFragment;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.activity.order.AppointAbnormalActivity;
@@ -60,7 +59,6 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
     private int mOrderType;
     private ApplyCancelOrderPop mApplyCancelOrderPop;
     private ContactPop mContactPop;
-    private DialogPlus mTakingDialog;
     /**
      * @param type 0（待接单） 1（待分派） 2（待预约） 3（待上门） 4（待完成） 5（已完成） 6（已退单）
      * @return
@@ -166,7 +164,6 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
 
     @Override
     public void onOrderCancel(OrderItem orderItem) {
-        //TODO 申请退单
         if (mApplyCancelOrderPop==null){
             mApplyCancelOrderPop = new ApplyCancelOrderPop(getActivity(),orderItem,this);
         }
@@ -187,11 +184,11 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
     public void onAbnormal(OrderItem orderItem,int type) {
         if (type==0){
             Bundle bundle = new Bundle();
-            bundle.putString("orderId",orderItem.getOrderId());
+            bundle.putString("acceptId",orderItem.getAcceptId());
             startActivity(AppointAbnormalActivity.class,bundle);
         }else{
             Bundle bundle = new Bundle();
-            bundle.putString("orderId",orderItem.getOrderId());
+            bundle.putString("acceptId",orderItem.getAcceptId());
             startActivity(SignAbnormalActivity.class,bundle);
         }
     }
@@ -216,11 +213,11 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
                 map.put("orderId", orderItem.getOrderId());
                 map.put("bookingStartTime", startTime);
                 map.put("bookingEndTime", endTime);
-                OkGo.<ResponseData<String>>post(UrlConstant.ORDER_TURN_RESERVATION)
+                OkGo.<ResponseData<Object>>post(UrlConstant.ORDER_TURN_RESERVATION)
                         .upJson(gson.toJson(map))
-                        .execute(new JsonCallback<ResponseData<String>>() {
+                        .execute(new JsonCallback<ResponseData<Object>>() {
                             @Override
-                            public void onSuccess(ResponseData<String> response) {
+                            public void onSuccess(ResponseData<Object> response) {
                                 dismissLoading();
                                 if (response!=null){
                                     if (response.isSuccess()) {
@@ -233,7 +230,7 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
                             }
 
                             @Override
-                            public void onError(Response<ResponseData<String>> response) {
+                            public void onError(Response<ResponseData<Object>> response) {
                                 super.onError(response);
                                 dismissLoading();
                             }
@@ -271,6 +268,9 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
             case MessageConstant.NOTIFY_UPDATE_ORDER:
                 getOrderData(1);
                 break;
+            case MessageConstant.NOTIFY_DETAIL_STATUS:
+                getOrderData(1);
+                break;
         }
     }
 
@@ -294,11 +294,11 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
                 map.put("orderId", orderItem.getOrderId());
                 map.put("bookingStartTime", startTime);
                 map.put("bookingEndTime", endTime);
-                OkGo.<ResponseData<String>>post(UrlConstant.ORDER_RESERVATION)
+                OkGo.<ResponseData<Object>>post(UrlConstant.ORDER_RESERVATION)
                         .upJson(gson.toJson(map))
-                        .execute(new JsonCallback<ResponseData<String>>() {
+                        .execute(new JsonCallback<ResponseData<Object>>() {
                             @Override
-                            public void onSuccess(ResponseData<String> response) {
+                            public void onSuccess(ResponseData<Object> response) {
                                 dismissLoading();
                                 if (response!=null){
                                     if (response.isSuccess()) {
@@ -311,7 +311,7 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
                             }
 
                             @Override
-                            public void onError(Response<ResponseData<String>> response) {
+                            public void onError(Response<ResponseData<Object>> response) {
                                 super.onError(response);
                                 dismissLoading();
                             }
@@ -333,11 +333,11 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
                 map.put("orderId", orderItem.getOrderId());
                 map.put("bookingStartTime", startTime);
                 map.put("bookingEndTime", endTime);
-                OkGo.<ResponseData<String>>post(UrlConstant.ORDER_RESERVATION)
+                OkGo.<ResponseData<Object>>post(UrlConstant.ORDER_RESERVATION)
                         .upJson(gson.toJson(map))
-                        .execute(new JsonCallback<ResponseData<String>>() {
+                        .execute(new JsonCallback<ResponseData<Object>>() {
                             @Override
-                            public void onSuccess(ResponseData<String> response) {
+                            public void onSuccess(ResponseData<Object> response) {
                                 dismissLoading();
                                 if (response!=null){
                                     if (response.isSuccess()) {
@@ -350,7 +350,7 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
                             }
 
                             @Override
-                            public void onError(Response<ResponseData<String>> response) {
+                            public void onError(Response<ResponseData<Object>> response) {
                                 super.onError(response);
                                 dismissLoading();
                             }
@@ -362,14 +362,17 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
 
     @Override
     public void onComfirm(OrderItem orderItem) { //申请退单
-        OkGo.<ResponseData<List<OrderItem>>>post(UrlConstant.ORDER_SERVICE_RETURN + orderItem.getAcceptId())
+        showLoading();
+        OkGo.<ResponseData<List<OrderItem>>>post(UrlConstant.ORDER_SERVICE_RETURN + orderItem.getServiceId())
                 .tag(this)
                 .execute(new JsonCallback<ResponseData<List<OrderItem>>>() {
 
                     @Override
                     public void onSuccess(ResponseData<List<OrderItem>> response) {
+                        dismissLoading();
                         if (response!=null){
                             if (response.isSuccess()){
+                                toast("退单成功");
                                 EventBusUtil.post(MessageConstant.NOTIFY_UPDATE_ORDER);
                             }else{
                                 toast(response.getMsg());
@@ -380,6 +383,7 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
                     @Override
                     public void onError(Response<ResponseData<List<OrderItem>>> response) {
                         super.onError(response);
+                        dismissLoading();
                     }
                 });
     }

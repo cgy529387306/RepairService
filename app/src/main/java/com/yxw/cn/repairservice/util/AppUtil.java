@@ -30,6 +30,7 @@ import com.yxw.cn.repairservice.entity.Category;
 import com.yxw.cn.repairservice.entity.CityBean;
 import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.LoginInfo;
+import com.yxw.cn.repairservice.entity.OrderItem;
 import com.yxw.cn.repairservice.entity.QueryListByMark;
 import com.yxw.cn.repairservice.entity.ReasonBean;
 import com.yxw.cn.repairservice.entity.RegionTree;
@@ -381,6 +382,33 @@ public class AppUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * 获取id
+     * @param orderItem
+     * @return
+     */
+    public static String getDetailId(OrderItem orderItem){
+        int orderStatus = orderItem.getOrderStatus();
+        if (orderStatus<=25){
+            return orderItem.getOrderId();
+        }else if (orderStatus<=30){
+            return orderItem.getServiceId();
+        }else{
+            return orderItem.getAcceptId();
+        }
+    }
+
+    public static String getDetailUrl(OrderItem orderItem){
+        int orderStatus = orderItem.getOrderStatus();
+        if (orderStatus<=25){
+            return UrlConstant.ORDER_DETAIL_DJD;
+        }else if (orderStatus<=30){
+            return UrlConstant.ORDER_DETAIL_DFP;
+        }else{
+            return UrlConstant.ORDER_DETAIL_YFP;
+        }
     }
 
 }

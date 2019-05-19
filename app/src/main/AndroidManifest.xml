@@ -115,7 +115,6 @@
         <activity android:name=".activity.order.OrderSignInActivity"/>
         <activity android:name=".activity.order.OrderDetailActivity"/>
 
-        <activity android:name=".activity.LocationActivity"/>
         <activity android:name=".activity.setting.UserFeedBackActivity"/>
         <activity android:name=".activity.setting.ClearCacheActivity"/>
         <activity android:name=".activity.setting.SettingActivity"/>

@@ -10,14 +10,15 @@ import android.view.ViewGroup;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
-import com.orhanobut.dialogplus.DialogPlus;
 import com.yxw.cn.repairservice.BaseRefreshFragment;
 import com.yxw.cn.repairservice.R;
+import com.yxw.cn.repairservice.activity.order.InServiceActivity;
 import com.yxw.cn.repairservice.activity.order.OrderDetailActivity;
 import com.yxw.cn.repairservice.adapter.OrderAdapter;
 import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.MessageEvent;
+import com.yxw.cn.repairservice.entity.OperateResult;
 import com.yxw.cn.repairservice.entity.OrderItem;
 import com.yxw.cn.repairservice.entity.OrderListData;
 import com.yxw.cn.repairservice.entity.ResponseData;
@@ -236,15 +237,16 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
     @Override
     public void onOrderComfirm(OrderItem orderItem) {
         showLoading();
-        OkGo.<ResponseData<String>>post(UrlConstant.ORDER_RECEIVE+orderItem.getOrderId())
-                .execute(new JsonCallback<ResponseData<String>>() {
+        OkGo.<ResponseData<OperateResult>>post(UrlConstant.ORDER_RECEIVE+orderItem.getOrderId())
+                .execute(new JsonCallback<ResponseData<OperateResult>>() {
                              @Override
-                             public void onSuccess(ResponseData<String> response) {
+                             public void onSuccess(ResponseData<OperateResult> response) {
                                  dismissLoading();
                                  if (response!=null){
                                      if (response.isSuccess()) {
                                          toast("抢单成功");
-                                         EventBusUtil.post(MessageConstant.NOTIFY_UPDATE_ORDER);
+                                         startActivity(InServiceActivity.class);
+                                         getActivity().finish();
                                      }else{
                                          toast(response.getMsg());
                                      }
@@ -252,7 +254,7 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
                              }
 
                              @Override
-                             public void onError(Response<ResponseData<String>> response) {
+                             public void onError(Response<ResponseData<OperateResult>> response) {
                                  super.onError(response);
                                  dismissLoading();
                              }

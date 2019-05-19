@@ -55,8 +55,6 @@ public class UrlConstant {
     public final static String ORDER_SERVICE_LIST = BASE_USER + "/ms60/api/fix/order/findServiceProviderOrderList/";//服务商端订单条件查询
     public final static String ORDER_SERVICE_ASSIGN = BASE_USER + "/ms60/api/fix/order/accept/serviceAssign/";//服务商指派工程师
     public final static String ORDER_RECEIVE = BASE_USER + "/ms60/api/fix/order/accept/serviceReceive/";//服务商确认接单
-
-
     public final static String ORDER_CANCEL = BASE_USER + "/ms60/api/fix/order/accept/cancelReceiveOrder/{orderId}";//工程师取消接单
     public final static String ORDER_ARRIVAL = BASE_USER + "/ms60/api/fix/order/accept/confirmArrival";//工程师确认到场
     public final static String ORDER_FINISH = BASE_USER + "/ms60/api/fix/order/accept/endServiceBycode";//工程师服务完成
@@ -69,6 +67,9 @@ public class UrlConstant {
     public final static String ORDER_EXEPTION_APPOINT = BASE_USER + "/ms60/api/fix/order/exception/appointment";//预约异常
     public final static String ORDER_EXEPTION_SIGN = BASE_USER + "/ms60/api/fix/order/exception/signIn";//签到异常
     public final static String ORDER_SERVICE_RETURN = BASE_USER + "/ms60/api/fix/order/accept/serviceReturn/";//服务商申请退单
+    public final static String ORDER_DETAIL_DFP = BASE_USER + "/ms60/api/fix/order/dfpOrderDetails/";//查询订单详情信息（待分派的订单）serviceId
+    public final static String ORDER_DETAIL_DJD = BASE_USER + "/ms60/api/fix/order/djdOrderDetails/";//查询订单详情信息(未接单的订单) orderId
+    public final static String ORDER_DETAIL_YFP = BASE_USER + "/ms60/api/fix/order/yfpOrderDetails/";//查询订单详情信息（已接单或已分派后的订单）acceptId
 
 
 
