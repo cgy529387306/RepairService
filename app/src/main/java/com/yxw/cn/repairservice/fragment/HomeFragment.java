@@ -46,7 +46,6 @@ public class HomeFragment extends BaseRefreshFragment {
     private HomeMsgAdapter mAdapter;
 
 
-
     @Override
     protected int getLayout() {
         return R.layout.frg_home;

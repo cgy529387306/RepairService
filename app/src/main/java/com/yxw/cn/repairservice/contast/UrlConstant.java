@@ -45,6 +45,7 @@ public class UrlConstant {
     public final static String UPDATE_ALIPAY_ACCOUNT = BASE_USER + "/ms70/api/user/info/saveAliplay/";//1015 - 用户 - 个人资料 - 修改支付宝账号
     public final static String APPLY_WITHDRAWAL = BASE_USER + "/ms70/api/user/info/destoonFinanceCash";//用户提现申请
     public final static String APPLY_WITHDRAWAL_LIST = BASE_USER + "/ms70/api/fix/user/transaction/record/findAll";//交易明细
+    public final static String USER_SETTLEMENT = BASE_USER + "/ms70/api/fix/user/settlement/center/settlementCenter";//结算中心
 
     public final static String GET_CODE = BASE_SERVICE + "/ms20/api/validateCode/code/ingnore-internal/getCode";
     public final static String GET_CODE_REGISTER = BASE_SERVICE + "/ms20/api/validateCode/code/ingnore-internal/getRegisterCode";
