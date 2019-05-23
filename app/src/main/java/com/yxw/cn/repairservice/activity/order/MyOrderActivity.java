@@ -36,6 +36,7 @@ public class MyOrderActivity extends BaseActivity{
     private List<Fragment> mFragmentList = new ArrayList<>();
     private String[] mTitles = {"今天","明天","全部"};
 
+
     @Override
     protected int getLayoutResId() {
         return R.layout.act_my_order;
@@ -43,12 +44,12 @@ public class MyOrderActivity extends BaseActivity{
 
     @Override
     public void initView() {
-        titlebar.setTitle("订单池");
-
+        int state = getIntent().getIntExtra("state",0);
+        titlebar.setTitle(state==0?"订单池":"已完成");
         mFragmentList = new ArrayList<>();
-        mFragmentList.add(OrderFragment.getInstance(0));
-        mFragmentList.add(OrderFragment.getInstance(1));
-        mFragmentList.add(OrderFragment.getInstance(2));
+        mFragmentList.add(OrderFragment.getInstance(0,state));
+        mFragmentList.add(OrderFragment.getInstance(1,state));
+        mFragmentList.add(OrderFragment.getInstance(2,state));
         mViewPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {

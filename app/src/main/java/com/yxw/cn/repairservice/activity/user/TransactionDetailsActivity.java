@@ -15,19 +15,16 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.adapter.TransactionDetailsAdapter;
-import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.entity.TradeListData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
-import com.yxw.cn.repairservice.util.EventBusUtil;
 import com.yxw.cn.repairservice.view.RecycleViewDivider;
 import com.yxw.cn.repairservice.view.TitleBar;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -81,9 +78,7 @@ public class TransactionDetailsActivity extends BaseActivity implements OnRefres
                                                  mRefreshLayout.finishLoadMoreWithNoMoreData();
                                              }
                                          }
-                                         mAdapter.notifyDataSetChanged();
                                          mAdapter.setEmptyView(R.layout.empty_data, (ViewGroup) mRecyclerView.getParent());
-                                         EventBusUtil.post(MessageConstant.WORKER_ORDERED_COUNT, mAdapter.getData().size());
                                      } else {
                                          toast(response.getMsg());
                                          if (p == 1) {

@@ -1,10 +1,12 @@
 package com.yxw.cn.repairservice.activity;
 
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -63,7 +65,9 @@ public class AccountCenterActivity extends BaseActivity implements OnRefreshList
         mAccountCenterAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                startActivity(AccountCenterDetailsActivity.class);
+                Bundle webBundle = new Bundle();
+                webBundle.putSerializable("userInfo",mAccountCenterAdapter.getData().get(position));
+                startActivity(AccountCenterDetailsActivity.class,webBundle);
             }
         });
     }
@@ -85,9 +89,10 @@ public class AccountCenterActivity extends BaseActivity implements OnRefreshList
                     @Override
                     public void onSuccess(ResponseData<List<SettlementCenterData>> response) {
                         mRefreshLayout.finishRefresh(true);
-                        if (response!=null && response.getData()!=null) {
-                            if (response.isSuccess()) {
-                                    mAccountCenterAdapter.setNewData(response.getData());
+                        if (response!=null) {
+                            mAccountCenterAdapter.setEmptyView(R.layout.empty_data, (ViewGroup) mRecyclerView.getParent());
+                            if (response.isSuccess() && response.getData()!=null) {
+                                mAccountCenterAdapter.setNewData(response.getData());
                             } else {
                                 toast(response.getMsg());
                             }

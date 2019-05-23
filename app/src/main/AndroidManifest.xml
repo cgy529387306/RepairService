@@ -131,6 +131,7 @@
         <activity android:name=".activity.order.InServiceActivity"/>
         <activity android:name=".activity.order.AppointOrderActivity"/>
         <activity android:name=".activity.ChooseEngineerActivity"/>
+        <activity android:name=".activity.MsgDetailActivity"/>
 
         <service
             android:name=".service.InitService"

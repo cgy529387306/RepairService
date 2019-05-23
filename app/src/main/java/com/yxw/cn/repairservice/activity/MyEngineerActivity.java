@@ -1,6 +1,7 @@
 package com.yxw.cn.repairservice.activity;
 
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,13 +12,17 @@ import android.widget.TextView;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.adapter.MyEngineerAdapter;
+import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.EngineerInfo;
-import com.yxw.cn.repairservice.entity.LoginInfo;
+import com.yxw.cn.repairservice.entity.MessageEvent;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.pop.DeleteEngineerPop;
@@ -32,7 +37,7 @@ import butterknife.OnClick;
 /**
  * 我的工程师
  */
-public class MyEngineerActivity extends BaseActivity implements MyEngineerAdapter.OnDeleteEngineerOperateListener,DeleteEngineerPop.SelectListener {
+public class MyEngineerActivity extends BaseActivity implements MyEngineerAdapter.OnDeleteEngineerOperateListener,DeleteEngineerPop.SelectListener ,OnRefreshListener, OnLoadMoreListener {
 
     @BindView(R.id.titlebar)
     TitleBar titleBar;
@@ -47,7 +52,6 @@ public class MyEngineerActivity extends BaseActivity implements MyEngineerAdapte
     MyEngineerAdapter mMyEngineerAdapter;
     boolean is_edit = true;
     boolean is_delete = false;
-    private LoginInfo loginInfo;
     private DeleteEngineerPop mDeleteEngineerPop;
     @Override
     protected int getLayoutResId() {
@@ -68,6 +72,9 @@ public class MyEngineerActivity extends BaseActivity implements MyEngineerAdapte
         mTvEdit = header.findViewById(R.id.tv_edit);
         mTvApply = header.findViewById(R.id.tv_apply);
         mMyEngineerAdapter.addHeaderView(header);
+        mRefreshLayout.setOnRefreshListener(this);
+        mRefreshLayout.setOnLoadMoreListener(this);
+        mRefreshLayout.setEnableLoadMore(false);
         mLlyEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,11 +112,9 @@ public class MyEngineerActivity extends BaseActivity implements MyEngineerAdapte
     public void getData() {
         super.getData();
         getEngineerData();
-
     }
     private void getEngineerData() {
-        loginInfo = CurrentUser.getInstance();
-        OkGo.<ResponseData<List<EngineerInfo>>>post(UrlConstant.CHILD_SERVICE+loginInfo.getBindingCode())
+        OkGo.<ResponseData<List<EngineerInfo>>>post(UrlConstant.CHILD_SERVICE+CurrentUser.getInstance().getBindingCode())
                 .tag(this)
                 .execute(new JsonCallback<ResponseData<List<EngineerInfo>>>() {
 
@@ -143,15 +148,18 @@ public class MyEngineerActivity extends BaseActivity implements MyEngineerAdapte
 
     @Override
     public void onComfirm(EngineerInfo mEngineerInfo) {
-        OkGo.<ResponseData<List<EngineerInfo>>>post(UrlConstant.DELETE_ENGINEER+mEngineerInfo.getMobile())
+        showLoading();
+        OkGo.<ResponseData<Object>>post(UrlConstant.DELETE_ENGINEER+mEngineerInfo.getUserId())
                 .tag(this)
-                .execute(new JsonCallback<ResponseData<List<EngineerInfo>>>() {
+                .execute(new JsonCallback<ResponseData<Object>>() {
 
                     @Override
-                    public void onSuccess(ResponseData<List<EngineerInfo>> response) {
+                    public void onSuccess(ResponseData<Object> response) {
+                        dismissLoading();
                         if (response!=null){
-                            if (response.isSuccess() && response.getData()!=null){
-                                mMyEngineerAdapter.setNewData(response.getData());
+                            if (response.isSuccess()){
+                                toast("删除成功");
+                                getEngineerData();
                             }else{
                                 toast(response.getMsg());
                             }
@@ -159,9 +167,30 @@ public class MyEngineerActivity extends BaseActivity implements MyEngineerAdapte
                     }
 
                     @Override
-                    public void onError(Response<ResponseData<List<EngineerInfo>>> response) {
+                    public void onError(Response<ResponseData<Object>> response) {
                         super.onError(response);
+                        dismissLoading();
                     }
                 });
     }
+    @Override
+    public void onEvent(MessageEvent event) {
+        super.onEvent(event);
+        switch (event.getId()) {
+            case MessageConstant.NOTIFY_UPDATE_APPLY:
+                getEngineerData();
+                break;
+        }
+    }
+
+    @Override
+    public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+
+    }
+
+    @Override
+    public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+        getEngineerData();
+    }
+
 }

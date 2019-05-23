@@ -51,7 +51,6 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
-    private static final String KEY_STATE = "key_state";
     private static final String KEY_TYPE = "key_type";
     private OrderAdapter mAdapter;
     private int mPage = 2;
@@ -101,8 +100,8 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
                 .execute(new JsonCallback<ResponseData<OrderListData>>() {
                     @Override
                     public void onSuccess(ResponseData<OrderListData> response) {
-                        if (response!=null && response.getData()!=null){
-                            if (response.isSuccess()) {
+                        if (response!=null){
+                            if (response.isSuccess() && response.getData()!=null) {
                                 if (p == 1) {
                                     mPage = 2;
                                     mAdapter.setNewData(response.getData().getItems());
@@ -117,9 +116,7 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
                                         mRefreshLayout.finishLoadMoreWithNoMoreData();
                                     }
                                 }
-                                mAdapter.notifyDataSetChanged();
                                 mAdapter.setEmptyView(R.layout.empty_data, (ViewGroup) mRecyclerView.getParent());
-                                EventBusUtil.post(MessageConstant.WORKER_ORDERED_COUNT, mAdapter.getData().size());
                             } else {
                                 toast(response.getMsg());
                                 if (p == 1) {

@@ -25,8 +25,8 @@ import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.pop.ConfirmOrderPop;
 import com.yxw.cn.repairservice.pop.ContactPop;
-import com.yxw.cn.repairservice.util.EventBusUtil;
 import com.yxw.cn.repairservice.util.Helper;
+import com.yxw.cn.repairservice.util.PreferencesHelper;
 import com.yxw.cn.repairservice.util.SpaceItemDecoration;
 
 import java.util.ArrayList;
@@ -46,20 +46,23 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
     RecyclerView mRecyclerView;
 
     private static final String KEY_TYPE = "key_type";
+    private static final String KEY_STATE = "key_state";
     private OrderAdapter mAdapter;
     private int mPage = 2;
     private boolean isNext = false;
     private int mOrderType;
     private String mBookingTime;
     private ConfirmOrderPop mConfirmOrderPop;
+    private int mState;
     /**
      * @param type 0:今天 1:明天 2:全部
      * @return
      */
-    public static Fragment getInstance(int type) {
+    public static Fragment getInstance(int type,int state) {
         Fragment fragment = new OrderFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(KEY_TYPE, type);
+        bundle.putInt(KEY_STATE, state);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -72,6 +75,7 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
     @Override
     protected void initView() {
         mOrderType = (int) getArguments().get(KEY_TYPE);
+        mState = (int) getArguments().get(KEY_STATE);
         if (mOrderType==0){
             mBookingTime = Helper.date2String(new Date(),"yyyy-MM-dd");
         }else if (mOrderType==1){
@@ -96,9 +100,13 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
         if (mOrderType!=2){
             requestMap.put("customerBookingTime",mBookingTime);
         }
-        requestMap.put("locationLat",26.088114);
-        requestMap.put("locationLng",119.310492);
-        requestMap.put("status",0);
+        if (mState == 0){
+            String locationLat = PreferencesHelper.getInstance().getString("latitude","26.088114");
+            String locationLng = PreferencesHelper.getInstance().getString("longitude","119.310492");
+            requestMap.put("locationLat",locationLat);
+            requestMap.put("locationLng",locationLng);
+        }
+        requestMap.put("status",mState);
         Map<String, Object> map = new HashMap<>();
         map.put("filter", requestMap);
         map.put("pageIndex", p);
@@ -108,8 +116,8 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
                 .execute(new JsonCallback<ResponseData<OrderListData>>() {
                     @Override
                     public void onSuccess(ResponseData<OrderListData> response) {
-                        if (response!=null && response.getData()!=null){
-                            if (response.isSuccess()) {
+                        if (response!=null){
+                            if (response.isSuccess() && response.getData()!=null) {
                                 if (p == 1) {
                                     mPage = 2;
                                     mAdapter.setNewData(response.getData().getItems());
@@ -124,9 +132,7 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
                                         mRefreshLayout.finishLoadMoreWithNoMoreData();
                                     }
                                 }
-                                mAdapter.notifyDataSetChanged();
                                 mAdapter.setEmptyView(R.layout.empty_data, (ViewGroup) mRecyclerView.getParent());
-                                EventBusUtil.post(MessageConstant.WORKER_ORDERED_COUNT, mAdapter.getData().size());
                             } else {
                                 toast(response.getMsg());
                                 if (p == 1) {

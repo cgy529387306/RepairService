@@ -62,6 +62,19 @@ public class MainActivity extends BaseActivity {
             LocationUtils.instance().startLocation();
         }
     }
+    public void sort(int []arr){
+        int temp;
+        for (int i=0,size=arr.length-1;i<size;i++){
+            for (int j = arr.length-1;j>i;j--){
+                if (arr[j] < arr[j-1]){
+                    temp = arr[j-1];
+                    arr[j-1] = arr[j];
+                    arr[j] = temp;
+
+                }
+            }
+        }
+    }
 
     private void showFragment(int page) {
         switch (page) {

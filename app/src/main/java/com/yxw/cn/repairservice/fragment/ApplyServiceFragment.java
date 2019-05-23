@@ -15,7 +15,6 @@ import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.ApplyItem;
 import com.yxw.cn.repairservice.entity.ApplyListData;
-import com.yxw.cn.repairservice.entity.MessageEvent;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.util.EventBusUtil;
@@ -79,8 +78,8 @@ public class ApplyServiceFragment extends BaseRefreshFragment implements ApplySe
                 .execute(new JsonCallback<ResponseData<ApplyListData>>() {
                     @Override
                     public void onSuccess(ResponseData<ApplyListData> response) {
-                        if (response!=null && response.getData()!=null){
-                            if (response.isSuccess()) {
+                        if (response!=null){
+                            if (response.isSuccess() && response.getData()!=null) {
                                 if (i == 1) {
                                     mPage = 2;
                                     mAdapter.setNewData(response.getData().getItems());
@@ -95,9 +94,7 @@ public class ApplyServiceFragment extends BaseRefreshFragment implements ApplySe
                                         mRefreshLayout.finishLoadMoreWithNoMoreData();
                                     }
                                 }
-                                mAdapter.notifyDataSetChanged();
                                 mAdapter.setEmptyView(R.layout.empty_data, (ViewGroup) mRecyclerView.getParent());
-                                EventBusUtil.post(MessageConstant.WORKER_ORDERED_COUNT, mAdapter.getData().size());
                             } else {
                                 toast(response.getMsg());
                                 if (i== 1) {
@@ -157,6 +154,7 @@ public class ApplyServiceFragment extends BaseRefreshFragment implements ApplySe
                         dismissLoading();
                         if (response!=null){
                             if (response.isSuccess()){
+                                getApplyData(1);
                                 EventBusUtil.post(MessageConstant.NOTIFY_UPDATE_APPLY);
                                 toast("审核成功");
                             }else{
@@ -173,13 +171,4 @@ public class ApplyServiceFragment extends BaseRefreshFragment implements ApplySe
                 });
     }
 
-    @Override
-    public void onEvent(MessageEvent event) {
-        super.onEvent(event);
-        switch (event.getId()) {
-            case MessageConstant.NOTIFY_UPDATE_APPLY:
-                getApplyData(1);
-                break;
-        }
-    }
 }
