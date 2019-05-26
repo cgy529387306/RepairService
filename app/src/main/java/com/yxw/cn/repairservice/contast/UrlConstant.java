@@ -4,8 +4,8 @@ public class UrlConstant {
 
     public final static int mRoleSign = 2;  // 1工程师端 2服务商端
 
-    public final static String AK = "YZxIz9BCNyejHURWGXHTTG1F";
-    public final static String SK = "Ti8CVA67sykNwX6wYUbne1e5jozP427O";
+    public final static String AK = "SMTljHPI6DOnmoYdE1s0ZL24";
+    public final static String SK = "YLD5Ff3ncjmGZOoVrgA6A9cfYje0zh4P";
 
     public final static String BASE_USER = "http://114.115.184.217:28010";
     public final static String BASE_SERVICE = "http://114.115.184.217:28020";
