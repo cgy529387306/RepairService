@@ -20,14 +20,15 @@ import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.adapter.AccountCenterDetailsAdapter;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.ResponseData;
-import com.yxw.cn.repairservice.entity.SettlementCenterData;
-import com.yxw.cn.repairservice.entity.SettlementCenterDetail;
+import com.yxw.cn.repairservice.entity.SettlementBean;
+import com.yxw.cn.repairservice.entity.SettlementDetailData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.util.AppUtil;
 import com.yxw.cn.repairservice.view.RecycleViewDivider;
 import com.yxw.cn.repairservice.view.TitleBar;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -46,9 +47,11 @@ public class AccountCenterDetailsActivity extends BaseActivity implements OnRefr
     RecyclerView mRecyclerView;
     CircleImageView mIvAvatar;
     TextView mTvName;
-    AccountCenterDetailsAdapter mAccountCenterDetailsAdapter;
-    private SettlementCenterData userInfo;
-
+    AccountCenterDetailsAdapter mAdapter;
+    private SettlementBean userInfo;
+    private int mPage = 2;
+    private boolean isNext = false;
+    public static final int loadCount = 10;
     @Override
     protected int getLayoutResId() {
         return R.layout.act_account_center_details;
@@ -57,47 +60,72 @@ public class AccountCenterDetailsActivity extends BaseActivity implements OnRefr
     @Override
     public void initView() {
         titleBar.setTitle("结算明细");
-        userInfo = (SettlementCenterData) getIntent().getSerializableExtra("userInfo");
+        userInfo = (SettlementBean) getIntent().getSerializableExtra("userInfo");
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.addItemDecoration(new RecycleViewDivider(LinearLayoutManager.VERTICAL,1,getResources().getColor(R.color.gray_divider)));
-        mAccountCenterDetailsAdapter = new AccountCenterDetailsAdapter();
-        mRecyclerView.setAdapter(mAccountCenterDetailsAdapter);
+        mAdapter = new AccountCenterDetailsAdapter();
+        mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout.setOnRefreshListener(this);
         mRefreshLayout.setOnLoadMoreListener(this);
         mRefreshLayout.setEnableLoadMore(false);
+        addHeader();
     }
 
     @Override
     public void getData() {
         super.getData();
-        getDetails();
+        getDetails(1);
     }
 
-    private void getDetails() {
-        OkGo.<ResponseData<List<SettlementCenterDetail>>>post(UrlConstant.USER_SETTLEMENT_DETAIL+userInfo.getUserId())
-                .tag(this)
-                .execute(new JsonCallback<ResponseData<List<SettlementCenterDetail>>>() {
+    private void getDetails(int p) {
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("userId", userInfo.getUserId());
 
+        Map<String, Object> map = new HashMap<>();
+        map.put("filter", requestMap);
+        map.put("pageIndex", p);
+        map.put("pageSize", loadCount);
+        OkGo.<ResponseData<SettlementDetailData>>post(UrlConstant.USER_SETTLEMENT_DETAIL)
+                .upJson(gson.toJson(map))
+                .execute(new JsonCallback<ResponseData<SettlementDetailData>>() {
                     @Override
-                    public void onSuccess(ResponseData<List<SettlementCenterDetail>> response) {
-                        dismissLoading();
-                        mRefreshLayout.finishRefresh(true);
+                    public void onSuccess(ResponseData<SettlementDetailData> response) {
                         if (response!=null){
-                            if (response.isSuccess() && response.getData()!=null){
-                                addHeader();
-                                mAccountCenterDetailsAdapter.setNewData(response.getData());
-                                mAccountCenterDetailsAdapter.setEmptyView(R.layout.empty_data, (ViewGroup) mRecyclerView.getParent());
-                            }else{
+                            if (response.isSuccess() && response.getData()!=null) {
+                                if (p == 1) {
+                                    mPage = 2;
+                                    mAdapter.setNewData(response.getData().getItems());
+
+                                    mRefreshLayout.finishRefresh();
+                                } else {
+                                    mAdapter.addData(response.getData().getItems());
+                                    isNext = response.getData().isHasNext();
+                                    if (isNext) {
+                                        mPage++;
+                                        mRefreshLayout.finishLoadMore();
+                                    } else {
+                                        mRefreshLayout.finishLoadMoreWithNoMoreData();
+                                    }
+                                }
+                                mAdapter.setEmptyView(R.layout.empty_data, (ViewGroup) mRecyclerView.getParent());
+                            } else {
                                 toast(response.getMsg());
+                                if (p == 1) {
+                                    mRefreshLayout.finishRefresh(false);
+                                } else {
+                                    mRefreshLayout.finishLoadMore(false);
+                                }
                             }
                         }
                     }
-
                     @Override
-                    public void onError(Response<ResponseData<List<SettlementCenterDetail>>> response) {
+                    public void onError(Response<ResponseData<SettlementDetailData>> response) {
                         super.onError(response);
-                        dismissLoading();
-                        mRefreshLayout.finishRefresh(false);
+                        if (p == 1) {
+                            mRefreshLayout.finishRefresh(false);
+                        } else {
+                            mRefreshLayout.finishLoadMore(false);
+                        }
                     }
                 });
     }
@@ -109,12 +137,12 @@ public class AccountCenterDetailsActivity extends BaseActivity implements OnRefr
 
     @Override
     public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-
+        getDetails(mPage);
     }
 
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-        getDetails();
+        getDetails(1);
     }
 
     private void addHeader(){
@@ -123,7 +151,7 @@ public class AccountCenterDetailsActivity extends BaseActivity implements OnRefr
             View header = LayoutInflater.from(this).inflate(R.layout.item_account_center_details_head, mRecyclerView, false);
             mIvAvatar = header.findViewById(R.id.iv_avatar);
             mTvName = header.findViewById(R.id.tv_name);
-            mAccountCenterDetailsAdapter.addHeaderView(header);
+            mAdapter.addHeaderView(header);
             AppUtil.showPic(AccountCenterDetailsActivity.this, mIvAvatar,userInfo.getAvatar());
             mTvName.setText(userInfo.getRealName());
         }

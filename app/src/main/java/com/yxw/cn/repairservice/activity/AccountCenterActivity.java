@@ -22,13 +22,12 @@ import com.yxw.cn.repairservice.adapter.AccountCenterAdapter;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.ResponseData;
-import com.yxw.cn.repairservice.entity.SettlementCenterData;
+import com.yxw.cn.repairservice.entity.SettlementData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.view.RecycleViewDivider;
 import com.yxw.cn.repairservice.view.TitleBar;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -46,7 +45,11 @@ public class AccountCenterActivity extends BaseActivity implements OnRefreshList
     RecyclerView mRecyclerView;
     @BindView(R.id.tv_month)
     TextView mTvMonth;
-    private AccountCenterAdapter mAccountCenterAdapter;
+    private AccountCenterAdapter mAdapter;
+    private int mPage = 2;
+    private boolean isNext = false;
+    public static final int loadCount = 10;
+
     @Override
     protected int getLayoutResId() {
         return R.layout.act_account_center;
@@ -57,16 +60,15 @@ public class AccountCenterActivity extends BaseActivity implements OnRefreshList
         titleBar.setTitle("结算中心");
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.addItemDecoration(new RecycleViewDivider(LinearLayoutManager.VERTICAL,1,getResources().getColor(R.color.gray_divider)));
-        mAccountCenterAdapter = new AccountCenterAdapter();
-        mRecyclerView.setAdapter(mAccountCenterAdapter);
+        mAdapter = new AccountCenterAdapter();
+        mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout.setOnRefreshListener(this);
         mRefreshLayout.setOnLoadMoreListener(this);
-        mRefreshLayout.setEnableLoadMore(false);
-        mAccountCenterAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+        mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Bundle webBundle = new Bundle();
-                webBundle.putSerializable("userInfo",mAccountCenterAdapter.getData().get(position));
+                webBundle.putSerializable("userInfo",mAdapter.getData().get(position));
                 startActivity(AccountCenterDetailsActivity.class,webBundle);
             }
         });
@@ -75,44 +77,70 @@ public class AccountCenterActivity extends BaseActivity implements OnRefreshList
     @Override
     public void getData() {
         super.getData();
-        getSettlementCenterData();
+        getSettlementCenterData(1);
     }
 
 
-    private void getSettlementCenterData() {
+    private void getSettlementCenterData(int p) {
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("settlementDate", "2019-05");
+        requestMap.put("bindingCode", CurrentUser.getInstance().getBindingCode());
+
         Map<String, Object> map = new HashMap<>();
-        map.put("settlementDate", "2019-05");
-        map.put("bindingCode", CurrentUser.getInstance().getBindingCode());
-        OkGo.<ResponseData<List<SettlementCenterData>>>post(UrlConstant.USER_SETTLEMENT)
+        map.put("filter", requestMap);
+        map.put("pageIndex", p);
+        map.put("pageSize", loadCount);
+        OkGo.<ResponseData<SettlementData>>post(UrlConstant.USER_SETTLEMENT)
                 .upJson(gson.toJson(map))
-                .execute(new JsonCallback<ResponseData<List<SettlementCenterData>>>() {
+                .execute(new JsonCallback<ResponseData<SettlementData>>() {
                     @Override
-                    public void onSuccess(ResponseData<List<SettlementCenterData>> response) {
-                        mRefreshLayout.finishRefresh(true);
-                        if (response!=null) {
-                            mAccountCenterAdapter.setEmptyView(R.layout.empty_data, (ViewGroup) mRecyclerView.getParent());
+                    public void onSuccess(ResponseData<SettlementData> response) {
+                        if (response!=null){
                             if (response.isSuccess() && response.getData()!=null) {
-                                mAccountCenterAdapter.setNewData(response.getData());
+                                if (p == 1) {
+                                    mPage = 2;
+                                    mAdapter.setNewData(response.getData().getItems());
+                                    mRefreshLayout.finishRefresh();
+                                } else {
+                                    mAdapter.addData(response.getData().getItems());
+                                    isNext = response.getData().isHasNext();
+                                    if (isNext) {
+                                        mPage++;
+                                        mRefreshLayout.finishLoadMore();
+                                    } else {
+                                        mRefreshLayout.finishLoadMoreWithNoMoreData();
+                                    }
+                                }
+                                mAdapter.setEmptyView(R.layout.empty_data, (ViewGroup) mRecyclerView.getParent());
                             } else {
                                 toast(response.getMsg());
+                                if (p == 1) {
+                                    mRefreshLayout.finishRefresh(false);
+                                } else {
+                                    mRefreshLayout.finishLoadMore(false);
+                                }
                             }
                         }
                     }
                     @Override
-                    public void onError(Response<ResponseData<List<SettlementCenterData>>> response) {
+                    public void onError(Response<ResponseData<SettlementData>> response) {
                         super.onError(response);
-                        mRefreshLayout.finishRefresh(false);
+                        if (p == 1) {
+                            mRefreshLayout.finishRefresh(false);
+                        } else {
+                            mRefreshLayout.finishLoadMore(false);
+                        }
                     }
                 });
     }
 
     @Override
     public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-
+        getSettlementCenterData(mPage);
     }
 
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-        getSettlementCenterData();
+        getSettlementCenterData(1);
     }
 }

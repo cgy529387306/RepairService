@@ -56,7 +56,6 @@ import com.yxw.cn.repairservice.util.Helper;
 import com.yxw.cn.repairservice.util.MapUtil;
 import com.yxw.cn.repairservice.util.TimePickerUtil;
 import com.yxw.cn.repairservice.util.TimeUtil;
-import com.yxw.cn.repairservice.util.ToastUtil;
 import com.yxw.cn.repairservice.view.TitleBar;
 
 import java.util.ArrayList;
@@ -359,24 +358,6 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
         mLocationClient.start();
     }
 
-
-    private void reservationTime(String bookingDate, String bookingTime) {
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("orderId", orderId);
-        map.put("bookingDate", bookingDate);
-        map.put("bookingTime", bookingTime);
-        OkGo.<ResponseData<Object>>post(UrlConstant.RESERVATION_TIME)
-                .upJson(gson.toJson(map))
-                .execute(new JsonCallback<ResponseData<Object>>() {
-                    @Override
-                    public void onSuccess(ResponseData<Object> response) {
-                        ToastUtil.show(response.getMsg());
-                        if (response.isSuccess()) {
-                            getData();
-                        }
-                    }
-                });
-    }
 
     @Override
     public void onCall(OrderItem orderItem) {

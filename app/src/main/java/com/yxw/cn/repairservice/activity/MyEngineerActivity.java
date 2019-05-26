@@ -120,7 +120,7 @@ public class MyEngineerActivity extends BaseActivity implements MyEngineerAdapte
 
                     @Override
                     public void onSuccess(ResponseData<List<EngineerInfo>> response) {
-                        dismissLoading();
+                        mRefreshLayout.finishRefresh(true);
                         if (response!=null){
                             if (response.isSuccess() && response.getData()!=null){
                                 mMyEngineerAdapter.setNewData(response.getData());

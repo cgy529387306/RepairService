@@ -17,7 +17,6 @@ import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.SpConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
-import com.yxw.cn.repairservice.entity.MessageEvent;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.util.AppUtil;
@@ -164,7 +163,7 @@ public class RegisterActivity extends BaseActivity {
                                                      toast("注册成功");
                                                      SpUtil.putStr(SpConstant.LOGIN_MOBILE, mEtPhone.getText().toString().trim());
                                                      EventBusUtil.post(MessageConstant.REGISTER);
-                                                     startActivity(ChooseCategoryActivity.class);
+                                                     finish();
                                                  }else{
                                                      toast(response.getMsg());
                                                  }
@@ -183,15 +182,4 @@ public class RegisterActivity extends BaseActivity {
         }
     }
 
-
-    @Override
-    public void onEvent(MessageEvent event) {
-        super.onEvent(event);
-        switch (event.getId()) {
-            case MessageConstant.LOGIN:
-            case MessageConstant.REGISTER:
-                finish();
-                break;
-        }
-    }
 }

@@ -27,6 +27,7 @@ import com.yxw.cn.repairservice.adapter.OrderTypeAdapter;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.BannerBean;
 import com.yxw.cn.repairservice.entity.BannerListData;
+import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.NoticeListData;
 import com.yxw.cn.repairservice.entity.OrderType;
 import com.yxw.cn.repairservice.entity.ResponseData;
@@ -69,13 +70,6 @@ public class HomeFragment extends BaseRefreshFragment implements BaseQuickAdapte
     protected void initView() {
         titlebar.setTitle("工作台");
         titlebar.setLeftVisible(false);
-        titlebar.addAction(new TitleBar.ImageAction(R.drawable.icon_remind) {
-            @Override
-            public void performAction(View view) {
-
-            }
-        });
-
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new RecycleViewDivider(LinearLayoutManager.VERTICAL,1,getResources().getColor(R.color.gray_divider)));
         mAdapter = new HomeMsgAdapter(new ArrayList());
@@ -92,21 +86,25 @@ public class HomeFragment extends BaseRefreshFragment implements BaseQuickAdapte
         mGridCate.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i == 0) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("state",0);
-                    startActivity(MyOrderActivity.class,bundle);
-                }else if (i == 1) {
-                    startActivity(InServiceActivity.class);
-                }else if (i == 2){
-                    //已完成
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("state",5);
-                    startActivity(MyOrderActivity.class,bundle);
-                }else if (i == 3){
-                    startActivity(AccountCenterActivity.class);
-                }else if (i ==4){
-                    startActivity(MyEngineerActivity.class);
+                if(CurrentUser.getInstance().isLogin() && CurrentUser.getInstance().getIdCardStatus()==3){
+                    if (i == 0) {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("state",0);
+                        startActivity(MyOrderActivity.class,bundle);
+                    }else if (i == 1) {
+                        startActivity(InServiceActivity.class);
+                    }else if (i == 2){
+                        //已完成
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("state",5);
+                        startActivity(MyOrderActivity.class,bundle);
+                    }else if (i == 3){
+                        startActivity(AccountCenterActivity.class);
+                    }else if (i ==4){
+                        startActivity(MyEngineerActivity.class);
+                    }
+                }else{
+                    toast("工程师身份审核未通过!");
                 }
             }
         });

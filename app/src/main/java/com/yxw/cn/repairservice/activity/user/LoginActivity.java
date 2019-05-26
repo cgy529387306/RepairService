@@ -21,7 +21,6 @@ import com.yxw.cn.repairservice.entity.LoginInfo;
 import com.yxw.cn.repairservice.entity.MessageEvent;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
-import com.yxw.cn.repairservice.util.EventBusUtil;
 import com.yxw.cn.repairservice.util.SpUtil;
 
 import java.util.HashMap;
@@ -102,7 +101,6 @@ public class LoginActivity extends BaseActivity {
                                              headers.put("Authorization", "Bearer "+response.getData().getToken());
                                              OkGo.getInstance().addCommonHeaders(headers);
                                              startActivityFinish(MainActivity.class);
-                                             EventBusUtil.post(MessageConstant.LOGIN);
                                          }else {
                                              toast(response.getMsg());
                                          }
@@ -131,17 +129,6 @@ public class LoginActivity extends BaseActivity {
 
     }
 
-    @Override
-    public void onEvent(MessageEvent event) {
-        super.onEvent(event);
-        switch (event.getId()) {
-            case MessageConstant.LOGIN:
-            case MessageConstant.REGISTER:
-                finish();
-                break;
-        }
-    }
-
     private static final long DOUBLE_CLICK_INTERVAL = 2000;
     private long mLastClickTimeMills = 0;
 
@@ -153,5 +140,15 @@ public class LoginActivity extends BaseActivity {
             return;
         }
         finish();
+    }
+
+    @Override
+    public void onEvent(MessageEvent event) {
+        super.onEvent(event);
+        switch (event.getId()) {
+            case MessageConstant.REGISTER:
+                initView();
+                break;
+        }
     }
 }
