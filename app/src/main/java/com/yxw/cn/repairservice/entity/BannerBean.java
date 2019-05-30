@@ -18,13 +18,13 @@ public class BannerBean {
     private String createTime;
     private String createUser;
     private int isShow;//状态 0：隐藏 1：显示
-    private String path;
+    private String path;//图片链接
     private String pictureId;
     private String pictureName;
     private int place;//图片所属位置0：用户端 1：工程师端 2：服务商端，例:0、1、2
     private String remark;
     private int site;//图片位置1：启动页 2：工作台轮播
-    private String url;//图片链接
+    private String url;
 
     public String getCreateTime() {
         return createTime == null ? "" : createTime;
