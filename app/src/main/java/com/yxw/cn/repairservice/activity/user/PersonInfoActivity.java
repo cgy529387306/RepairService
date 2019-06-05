@@ -174,11 +174,7 @@ public class PersonInfoActivity extends BaseActivity {
                 RegionPickerUtil.showPicker(this, mTvResident, true);
                 break;
             case R.id.ll_service_provider:
-                if (loginInfo!=null && !TextUtils.isEmpty(loginInfo.getParentId())){
-                    startActivity(JoinServiceProviderActivity.class);
-                }else{
-                    startActivity(ServiceProviderEmptyActivity.class);
-                }
+                startActivity(MyBindingCodeActivity.class);
                 break;
         }
     }

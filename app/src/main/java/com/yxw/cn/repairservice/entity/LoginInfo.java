@@ -32,6 +32,7 @@ public class LoginInfo {
     private String deposit;//押金
     private String settlementAmount;//待结算金额
     private String bindingCode;
+    private int isRest;//是否休息(0工作中1休息中）
 
 
     public String getToken() {
@@ -257,5 +258,13 @@ public class LoginInfo {
 
     public void setBindingCode(String bindingCode) {
         this.bindingCode = bindingCode;
+    }
+
+    public int getIsRest() {
+        return isRest;
+    }
+
+    public void setIsRest(int isRest) {
+        this.isRest = isRest;
     }
 }

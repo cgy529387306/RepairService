@@ -36,6 +36,7 @@ public class UrlConstant {
     public final static String APPLY_WITHDRAWAL_LIST = BASE_USER + "/ms70/api/fix/user/transaction/record/findAll";//交易明细
     public final static String USER_SETTLEMENT = BASE_USER + "/ms70/api/fix/user/settlement/center/settlementCenter";//结算中心
     public final static String USER_SETTLEMENT_DETAIL = BASE_USER + "/ms70/api/fix/user/settlement/center/settlementDetail/";//结算明细
+    public final static String CHANGE_USER_STATE = BASE_USER + "/ms70/api/user/info/updateRest/";
 
     public final static String GET_CODE = BASE_SERVICE + "/ms20/api/validateCode/code/ingnore-internal/getCode";
     public final static String GET_CODE_REGISTER = BASE_SERVICE + "/ms20/api/validateCode/code/ingnore-internal/getRegisterCode";
@@ -69,6 +70,6 @@ public class UrlConstant {
 
     public final static String H5_URL_ABOUT = "http://39.98.73.166:8080/center/about_us.html";
     public final static String H5_URL_HELP = "http://39.98.73.166:8080/center/help.html";
-    public final static String CUSTOMER_TEL = "0591-8888888";
+    public final static String CUSTOMER_TEL = "13763878621";
 
 }
