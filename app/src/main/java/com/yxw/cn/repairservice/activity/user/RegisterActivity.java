@@ -44,6 +44,8 @@ public class RegisterActivity extends BaseActivity {
     EditText mEtCode;
     @BindView(R.id.et_password)
     EditText mEtPassword;
+    @BindView(R.id.et_invite_code)
+    EditText mEtInviteCode;
     @BindView(R.id.iv_show)
     ImageView mIvShow;
     @BindView(R.id.bt_code)
@@ -151,6 +153,9 @@ public class RegisterActivity extends BaseActivity {
                     map.put("password", mEtPassword.getText().toString().trim());
                     map.put("smsCode", mEtCode.getText().toString().trim());
                     map.put("appSign", UrlConstant.mRoleSign);
+                    if (!TextUtils.isEmpty(mEtInviteCode.getText().toString().trim())){
+                        map.put("invitationCode", mEtInviteCode.getText().toString().trim());
+                    }
                     showLoading();
                     OkGo.<ResponseData<Object>>post(UrlConstant.REGISTER)
                             .upJson(gson.toJson(map))
