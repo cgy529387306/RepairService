@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.gyf.immersionbar.ImmersionBar;
 import com.lzy.okgo.OkGo;
+import com.pgyersdk.update.PgyUpdateManager;
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.contast.MessageConstant;
@@ -51,6 +52,8 @@ public class MainActivity extends BaseActivity {
         homeFragment = new HomeFragment();
         userFragment = new UserFragment();
         showFragment(0);
+        PgyUpdateManager.setIsForced(false); //设置是否强制更新。true为强制更新；false为不强制更新（默认值）。
+        PgyUpdateManager.register(this);
         boolean isCheck = AppUtil.checkStatus(MainActivity.this);
         if (isCheck){
             getUserInfo();
@@ -62,18 +65,11 @@ public class MainActivity extends BaseActivity {
             LocationUtils.instance().startLocation();
         }
     }
-    public void sort(int []arr){
-        int temp;
-        for (int i=0,size=arr.length-1;i<size;i++){
-            for (int j = arr.length-1;j>i;j--){
-                if (arr[j] < arr[j-1]){
-                    temp = arr[j-1];
-                    arr[j-1] = arr[j];
-                    arr[j] = temp;
 
-                }
-            }
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PgyUpdateManager.unregister();
     }
 
     private void showFragment(int page) {
