@@ -9,10 +9,12 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Build;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.ImageView;
 
@@ -22,6 +24,7 @@ import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
 import com.yxw.cn.repairservice.BaseApplication;
 import com.yxw.cn.repairservice.R;
+import com.yxw.cn.repairservice.activity.user.ChooseCategoryActivity;
 import com.yxw.cn.repairservice.activity.user.IdCardInfoActivity;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.Category;
@@ -54,6 +57,24 @@ public class AppUtil {
     public static List<UrgencyBean> reservationUrgencyList = new ArrayList<>();
     private static Gson gson = new Gson();
 
+    /**
+     * 防止控件被连续点击
+     * @param view
+     */
+    public static void disableViewDoubleClick(final View view) {
+        if(view == null) {
+            return;
+        }
+        view.setEnabled(false);
+        view.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                view.setEnabled(true);
+            }
+        }, 2000);
+    }
+
     public static String getVerName() {
         String verName = "";
         try {
@@ -77,15 +98,19 @@ public class AppUtil {
         return versionCode;
     }
 
-    public static boolean checkStatus(Context context){
+    public static void checkStatus(Context context){
         LoginInfo loginInfo = CurrentUser.getInstance();
         Intent intent;
         if(loginInfo.getIdCardStatus() == 0 || loginInfo.getIdCardStatus() == 2){
             intent = new Intent(context,IdCardInfoActivity.class);
             context.startActivity(intent);
-            return false;
-        }else {
-            return true;
+        }else if (TextUtils.isEmpty(loginInfo.getCategory())){
+            intent = new Intent(context,ChooseCategoryActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("cateList", new ArrayList<>());
+            bundle.putBoolean("canBack",false);
+            intent.putExtras(bundle);
+            context.startActivity(intent);
         }
     }
 

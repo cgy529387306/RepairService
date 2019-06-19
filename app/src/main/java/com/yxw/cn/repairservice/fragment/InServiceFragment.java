@@ -207,7 +207,7 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
                 String endTime = TimeUtil.getAfterHourTime(date);
                 showLoading();
                 HashMap<String, Object> map = new HashMap<>();
-                map.put("orderId", orderItem.getOrderId());
+                map.put("acceptId", orderItem.getAcceptId());
                 map.put("bookingStartTime", startTime);
                 map.put("bookingEndTime", endTime);
                 OkGo.<ResponseData<Object>>post(UrlConstant.ORDER_TURN_RESERVATION)
@@ -288,7 +288,7 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
                 String endTime = TimeUtil.getAfterHourTime(date);
                 showLoading();
                 HashMap<String, Object> map = new HashMap<>();
-                map.put("orderId", orderItem.getOrderId());
+                map.put("acceptId", orderItem.getAcceptId());
                 map.put("bookingStartTime", startTime);
                 map.put("bookingEndTime", endTime);
                 OkGo.<ResponseData<Object>>post(UrlConstant.ORDER_RESERVATION)
@@ -327,7 +327,7 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
                 String endTime = TimeUtil.getAfterHourTime(date);
                 showLoading();
                 HashMap<String, Object> map = new HashMap<>();
-                map.put("orderId", orderItem.getOrderId());
+                map.put("acceptId", orderItem.getAcceptId());
                 map.put("bookingStartTime", startTime);
                 map.put("bookingEndTime", endTime);
                 OkGo.<ResponseData<Object>>post(UrlConstant.ORDER_RESERVATION)

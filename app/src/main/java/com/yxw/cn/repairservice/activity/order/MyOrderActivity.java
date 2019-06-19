@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.fragment.OrderFragment;
+import com.yxw.cn.repairservice.util.LocationUtils;
 import com.yxw.cn.repairservice.view.TitleBar;
 
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ public class MyOrderActivity extends BaseActivity{
 
     @Override
     public void initView() {
+        LocationUtils.instance().startLocation();
         int state = getIntent().getIntExtra("state",0);
         titlebar.setTitle(state==0?"订单池":"已完成");
         mFragmentList = new ArrayList<>();

@@ -22,6 +22,7 @@ import com.yxw.cn.repairservice.activity.MsgDetailActivity;
 import com.yxw.cn.repairservice.activity.MyEngineerActivity;
 import com.yxw.cn.repairservice.activity.order.InServiceActivity;
 import com.yxw.cn.repairservice.activity.order.MyOrderActivity;
+import com.yxw.cn.repairservice.activity.user.IdCardInfoActivity;
 import com.yxw.cn.repairservice.adapter.HomeMsgAdapter;
 import com.yxw.cn.repairservice.adapter.OrderTypeAdapter;
 import com.yxw.cn.repairservice.contast.UrlConstant;
@@ -102,6 +103,9 @@ public class HomeFragment extends BaseRefreshFragment implements BaseQuickAdapte
                     }else if (i ==4){
                         startActivity(MyEngineerActivity.class);
                     }
+                }else if(CurrentUser.getInstance().isLogin() && CurrentUser.getInstance().getIdCardStatus()==0){
+                    toast("工程师身份信息未提交!");
+                    startActivity(IdCardInfoActivity.class);
                 }else{
                     toast("工程师身份审核未通过!");
                 }

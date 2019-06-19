@@ -18,6 +18,7 @@ import com.yxw.cn.repairservice.activity.MsgListActivity;
 import com.yxw.cn.repairservice.activity.WebActivity;
 import com.yxw.cn.repairservice.activity.setting.SettingActivity;
 import com.yxw.cn.repairservice.activity.setting.UserFeedBackActivity;
+import com.yxw.cn.repairservice.activity.user.IdCardInfoActivity;
 import com.yxw.cn.repairservice.activity.user.PersonInfoActivity;
 import com.yxw.cn.repairservice.activity.user.WalletActivity;
 import com.yxw.cn.repairservice.contast.MessageConstant;
@@ -36,6 +37,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -106,6 +108,9 @@ public class UserFragment extends BaseFragment {
                     walletBundle.putString("deposit",mTvDeposit.getText().toString());
                     walletBundle.putString("settlementAmount",mTvSettlementAmount.getText().toString());
                     startActivity(WalletActivity.class, walletBundle);
+                }else if(CurrentUser.getInstance().isLogin() && CurrentUser.getInstance().getIdCardStatus()==0){
+                    toast("工程师身份信息未提交!");
+                    startActivity(IdCardInfoActivity.class);
                 }else{
                     toast("工程师身份审核未通过!");
                 }
@@ -155,6 +160,12 @@ public class UserFragment extends BaseFragment {
                                  dismissLoading();
                                  if (response!=null){
                                      if (response.isSuccess()) {
+                                         SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(getActivity(), SweetAlertDialog.SUCCESS_TYPE)
+                                                 .setTitleText("提示")
+                                                 .setContentText("状态切换成功")
+                                                 .setConfirmText("确定");
+                                         sweetAlertDialog.setCancelable(true);
+                                         sweetAlertDialog.show();
                                          EventBusUtil.post(MessageConstant.NOTIFY_GET_INFO);
                                      }else{
                                          toast(response.getMsg());

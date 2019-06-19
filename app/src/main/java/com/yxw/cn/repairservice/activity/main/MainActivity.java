@@ -54,16 +54,13 @@ public class MainActivity extends BaseActivity {
         showFragment(0);
         PgyUpdateManager.setIsForced(false); //设置是否强制更新。true为强制更新；false为不强制更新（默认值）。
         PgyUpdateManager.register(this);
-        boolean isCheck = AppUtil.checkStatus(MainActivity.this);
-        if (isCheck){
-            getUserInfo();
-            AppUtil.initCategoryData();
-            AppUtil.initRegionTreeData();
-            AppUtil.initSignReasonData();
-            AppUtil.initReservationReasonData();
-            AppUtil.initReservationUrgencyData();
-            LocationUtils.instance().startLocation();
-        }
+        getUserInfo();
+        AppUtil.initCategoryData();
+        AppUtil.initRegionTreeData();
+        AppUtil.initSignReasonData();
+        AppUtil.initReservationReasonData();
+        AppUtil.initReservationUrgencyData();
+        LocationUtils.instance().startLocation();
     }
 
     @Override

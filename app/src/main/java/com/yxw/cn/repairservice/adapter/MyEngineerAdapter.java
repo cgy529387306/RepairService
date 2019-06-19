@@ -1,6 +1,5 @@
 package com.yxw.cn.repairservice.adapter;
 
-import android.app.Activity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;

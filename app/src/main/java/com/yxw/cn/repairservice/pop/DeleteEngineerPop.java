@@ -66,7 +66,7 @@ public class DeleteEngineerPop extends PopupWindow implements View.OnClickListen
         mTvEngineer = mContentView.findViewById(R.id.tv_engineer);
         mTvCancel = mContentView.findViewById(R.id.tv_cancel);
         mTvConfirm = mContentView.findViewById(R.id.tv_confirm);
-        mTvEngineer.setText("删除工程师" + engineerInfo.getRealName() + "，确定吗?");
+        mTvEngineer.setText("确定与工程师“" + engineerInfo.getRealName() + "”解除绑定吗?");
     }
 
     private void initListener() {

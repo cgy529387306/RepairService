@@ -44,7 +44,7 @@ public class ApplyServiceActivity extends BaseActivity{
     @Override
     public void initView() {
 //        OrderType orderType = (OrderType) getIntent().getSerializableExtra("type");
-        titlebar.setTitle("加入服务商申请");
+        titlebar.setTitle("申请记录");
 
         mFragmentList = new ArrayList<>();
         mFragmentList.add(ApplyServiceFragment.getInstance(0));

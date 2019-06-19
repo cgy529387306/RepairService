@@ -1,6 +1,7 @@
 package com.yxw.cn.repairservice.activity.user;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
@@ -33,11 +34,14 @@ import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.LoginInfo;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
+import com.yxw.cn.repairservice.util.AppUtil;
 import com.yxw.cn.repairservice.util.Base64Util;
 import com.yxw.cn.repairservice.util.ImageUtils;
 import com.yxw.cn.repairservice.view.TitleBar;
 
 import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -153,6 +157,7 @@ public class IdCardInfoActivity extends BaseActivity {
                         .forResult(33);
                 break;
             case R.id.confirm:
+                AppUtil.disableViewDoubleClick(view);
                 if (idCardBack == null || idCardFront == null || icCardBoth == null) {
                     toast("请上传齐全证件图片！");
                 }else {
@@ -172,7 +177,16 @@ public class IdCardInfoActivity extends BaseActivity {
                                         if (response.isSuccess()){
                                             try {
                                                 toast("提交成功");
-                                                startActivity(WaitCheckActivity.class);
+                                                if(CurrentUser.getInstance().isLogin() && TextUtils.isEmpty(CurrentUser.getInstance().getCategory())){
+                                                    Intent intent = new Intent(IdCardInfoActivity.this, ChooseCategoryActivity.class);
+                                                    Bundle bundle = new Bundle();
+                                                    bundle.putSerializable("cateList", (Serializable) new ArrayList<>());
+                                                    bundle.putBoolean("canBack",false);
+                                                    intent.putExtras(bundle);
+                                                    startActivity(intent);
+                                                }else{
+                                                    startActivityFinish(WaitCheckActivity.class);
+                                                }
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }

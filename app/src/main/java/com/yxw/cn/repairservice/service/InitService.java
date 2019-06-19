@@ -101,8 +101,6 @@ public class InitService extends IntentService {
      * 初始化操作数据
      */
     private void loadInit() {
-        PgyCrashManager.register(this);
-
         MultiDex.install(BaseApplication.getInstance());
         LocationUtils.instance().startLocation();
         SDKInitializer.initialize(BaseApplication.getInstance());
