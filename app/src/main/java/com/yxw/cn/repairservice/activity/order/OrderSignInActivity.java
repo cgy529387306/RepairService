@@ -2,6 +2,8 @@ package com.yxw.cn.repairservice.activity.order;
 
 import android.content.Intent;
 import android.location.Location;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,6 +37,7 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
+import com.yxw.cn.repairservice.adapter.GridImageAdapter;
 import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.OrderItem;
@@ -43,8 +46,10 @@ import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.util.Base64Util;
 import com.yxw.cn.repairservice.util.EventBusUtil;
 import com.yxw.cn.repairservice.util.Helper;
+import com.yxw.cn.repairservice.view.FullyGridLayoutManager;
 import com.yxw.cn.repairservice.view.TitleBar;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -70,6 +75,8 @@ public class OrderSignInActivity extends BaseActivity {
     TextView tvLocation;
     @BindView(R.id.mapView)
     MapView mMapView;
+    @BindView(R.id.recyclerView)
+    RecyclerView mRecyclerView;
 
     private OrderItem orderItem;
     private boolean flag;
@@ -79,7 +86,8 @@ public class OrderSignInActivity extends BaseActivity {
     private BaiduMap mBaiDuMap;
     private LocationClient mLocationClient;
     private MyLocationListener mLocationListener;
-
+    private GridImageAdapter mImageAdapter;
+    private List<LocalMedia> mSelectImageList = new ArrayList<>();
     @Override
     protected int getLayoutResId() {
         return R.layout.act_order_sign_in;
@@ -90,8 +98,36 @@ public class OrderSignInActivity extends BaseActivity {
         orderItem = (OrderItem) getIntent().getSerializableExtra("order");
         type = getIntent().getIntExtra("type", 0);
         initTitle();
+        initRecycleView();
         initMyLocation();
         initOrderLocation();
+    }
+
+    private void initRecycleView(){
+        FullyGridLayoutManager gridLayoutManager = new FullyGridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+        mImageAdapter = new GridImageAdapter(this, new GridImageAdapter.onAddPicClickListener() {
+            @Override
+            public void onAddPicClick() {
+
+            }
+        });
+        mImageAdapter.setList(mSelectImageList);
+        mImageAdapter.setSelectMax(9);
+        mRecyclerView.setAdapter(mImageAdapter);
+        mImageAdapter.setOnItemClickListener(new GridImageAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                if (mSelectImageList.size() > 0) {
+                    LocalMedia media = mSelectImageList.get(position);
+                    String pictureType = media.getPictureType();
+                    int mediaType = PictureMimeType.pictureToVideo(pictureType);
+                    if (mediaType == 1){
+                        PictureSelector.create(OrderSignInActivity.this).externalPicturePreview(position, mSelectImageList);
+                    }
+                }
+            }
+        });
     }
 
     private void initTitle(){

@@ -71,7 +71,12 @@
                 android:text="福建省仓山区金山大道"
                 android:textColor="#666666"
                 android:textSize="12sp" />
-
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:overScrollMode="never"/>
             <ImageView
                 android:id="@+id/iv_picture"
                 android:layout_width="70dp"
