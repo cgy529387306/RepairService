@@ -24,6 +24,9 @@ public class Base64Util {
      * @CreateTime:
      */
     public static String getBase64ImageStr(String imgFile) {
+        if (Helper.isEmpty(imgFile)){
+            return "";
+        }
         InputStream inputStream = null;
         byte[] data = null;
         try {
