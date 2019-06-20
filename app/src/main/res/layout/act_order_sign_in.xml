@@ -75,17 +75,7 @@
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:overScrollMode="never"/>
-            <ImageView
-                android:id="@+id/iv_picture"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_marginLeft="15dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/icon_camera_add" />
-
-
             <RelativeLayout
                 android:layout_margin="15dp"
                 android:background="@drawable/corner_gray_rect"
