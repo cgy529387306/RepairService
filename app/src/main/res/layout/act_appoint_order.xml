@@ -83,7 +83,7 @@
             android:id="@+id/ratingbar"
             style="@style/Custom_Ratingbar"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
+            android:layout_height="16dp"
             android:layout_marginRight="15dp"
             android:isIndicator="true"
             android:layout_gravity="center"

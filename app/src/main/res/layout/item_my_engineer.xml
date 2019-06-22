@@ -41,9 +41,9 @@
             android:id="@+id/ratingbar"
             style="@style/Custom_Ratingbar"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
+            android:layout_height="16dp"
             android:isIndicator="true"
-            android:layout_gravity="center"
+            android:layout_gravity="center_vertical"
             android:numStars="5"
             android:stepSize="1" />
 

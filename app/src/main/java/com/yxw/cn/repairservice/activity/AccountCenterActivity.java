@@ -1,6 +1,7 @@
 package com.yxw.cn.repairservice.activity;
 
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,13 +25,16 @@ import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.entity.SettlementData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
+import com.yxw.cn.repairservice.util.Helper;
 import com.yxw.cn.repairservice.view.RecycleViewDivider;
 import com.yxw.cn.repairservice.view.TitleBar;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 /**
  * 结算中心
@@ -45,6 +49,10 @@ public class AccountCenterActivity extends BaseActivity implements OnRefreshList
     RecyclerView mRecyclerView;
     @BindView(R.id.tv_month)
     TextView mTvMonth;
+    @BindView(R.id.tv_total_money)
+    TextView mTvTotalMoney;
+    @BindView(R.id.tv_order_count)
+    TextView mTvOrderCount;
     private AccountCenterAdapter mAdapter;
     private int mPage = 2;
     private boolean isNext = false;
@@ -82,8 +90,9 @@ public class AccountCenterActivity extends BaseActivity implements OnRefreshList
 
 
     private void getSettlementCenterData(int p) {
+        String dateStr = Helper.date2String(new Date(),"yyyy-MM");
         Map<String, Object> requestMap = new HashMap<>();
-        requestMap.put("settlementDate", "2019-05");
+        requestMap.put("settlementDate", dateStr);
         requestMap.put("bindingCode", CurrentUser.getInstance().getBindingCode());
 
         Map<String, Object> map = new HashMap<>();
@@ -142,5 +151,27 @@ public class AccountCenterActivity extends BaseActivity implements OnRefreshList
     @Override
     public void onRefresh(@NonNull RefreshLayout refreshLayout) {
         getSettlementCenterData(1);
+    }
+
+    @OnClick({R.id.ll_month, R.id.ll_order_count,R.id.ll_total_money})
+    public void click(View view) {
+        switch (view.getId()) {
+            case R.id.ll_month:
+                initTabType(0);
+                break;
+            case R.id.ll_order_count:
+                initTabType(1);
+                break;
+            case R.id.ll_total_money:
+                initTabType(2);
+                break;
+        }
+    }
+
+    private void initTabType(int type){
+        mTvMonth.setTextColor(type==0?Color.parseColor("#E82B2D"):Color.parseColor("#666666"));
+        mTvOrderCount.setTextColor(type==1?Color.parseColor("#E82B2D"):Color.parseColor("#666666"));
+        mTvTotalMoney.setTextColor(type==2?Color.parseColor("#E82B2D"):Color.parseColor("#666666"));
+        mRefreshLayout.autoRefresh();
     }
 }

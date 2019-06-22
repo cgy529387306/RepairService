@@ -24,6 +24,7 @@ import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.util.AppUtil;
 import com.yxw.cn.repairservice.util.EventBusUtil;
 import com.yxw.cn.repairservice.util.LocationUtils;
+import com.yxw.cn.repairservice.util.RegionPickerUtil;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -153,6 +154,9 @@ public class MainActivity extends BaseActivity {
         switch (event.getId()) {
             case MessageConstant.NOTIFY_GET_INFO:
                 getUserInfo();
+                break;
+            case MessageConstant.SELECT_AREA:
+                RegionPickerUtil.showPicker(this, findViewById(R.id.tv_tag), true);
                 break;
         }
     }
