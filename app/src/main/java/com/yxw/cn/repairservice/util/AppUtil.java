@@ -212,7 +212,7 @@ public class AppUtil {
                         if (response!=null){
                             if (response.isSuccess() && response.getData()!=null){
                                 AppUtil.regionTreeList = response.getData();
-                                if (CurrentUser.getInstance().isLogin() && Helper.isEmpty(CurrentUser.getInstance().getResidentArea())){
+                                if (Helper.isNotEmpty(AppUtil.regionTreeList) && CurrentUser.getInstance().isLogin() && Helper.isEmpty(CurrentUser.getInstance().getResidentArea())){
                                     EventBusUtil.post(MessageConstant.SELECT_AREA);
                                 }
                             }

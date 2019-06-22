@@ -76,6 +76,12 @@ public class IdCardInfoActivity extends BaseActivity {
     @Override
     public void initView() {
         titlebar.setTitle("身份证信息");
+        titlebar.setLeftClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         initOcrCamera();
         if (CurrentUser.getInstance().isLogin()){
             LoginInfo loginInfo = CurrentUser.getInstance();
@@ -272,5 +278,10 @@ public class IdCardInfoActivity extends BaseActivity {
                 }).show();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 }

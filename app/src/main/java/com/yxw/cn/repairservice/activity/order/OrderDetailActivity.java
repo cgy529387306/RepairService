@@ -255,7 +255,7 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
                 });
     }
 
-    @OnClick({R.id.bt_copy, R.id.tv_call})
+    @OnClick({R.id.bt_copy, R.id.tv_call,R.id.tv_nav})
     public void click(View view) {
         switch (view.getId()) {
             case R.id.tv_call:
