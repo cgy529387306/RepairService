@@ -49,12 +49,17 @@ import com.yxw.cn.repairservice.util.Helper;
 import com.yxw.cn.repairservice.view.FullyGridLayoutManager;
 import com.yxw.cn.repairservice.view.TitleBar;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 /**
  * 签到
@@ -338,5 +343,27 @@ public class OrderSignInActivity extends BaseActivity {
                 mLocationClient.stop();
             }
         }
+    }
+
+    private void testOkhttp(){
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Request request = new Request.Builder().url("url").build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+
+            }
+        });
+    }
+
+    private void testGlide(){
+        Glide.with(this)
+                .load("http://www.baidu.com/img/bdlogo.png")
+                .into(new ImageView(this));
     }
 }

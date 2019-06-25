@@ -33,7 +33,7 @@ public class LoginInfo {
     private String settlementAmount;//待结算金额
     private String bindingCode;
     private int isRest;//是否休息(0工作中1休息中）
-
+    private String idCardNo;
 
     public String getToken() {
         return token == null ? "" : token;
@@ -266,5 +266,13 @@ public class LoginInfo {
 
     public void setIsRest(int isRest) {
         this.isRest = isRest;
+    }
+
+    public String getIdCardNo() {
+        return idCardNo == null ? "" : idCardNo;
+    }
+
+    public void setIdCardNo(String idCardNo) {
+        this.idCardNo = idCardNo;
     }
 }
