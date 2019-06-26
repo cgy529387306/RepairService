@@ -37,6 +37,8 @@ public class UrlConstant {
     public final static String USER_SETTLEMENT = BASE_USER + "/ms70/api/fix/user/settlement/center/settlementCenter";//结算中心
     public final static String USER_SETTLEMENT_DETAIL = BASE_USER + "/ms70/api/fix/user/settlement/center/settlementDetail/";//结算明细
     public final static String CHANGE_USER_STATE = BASE_USER + "/ms70/api/user/info/updateRest/";
+    public final static String UPDATE_LOCATION = BASE_USER + "/ms70/api/user/info/updateCurrent";
+    public final static String UPDATE_VERSION = BASE_USER + "/ms70/api/user/info/updateSoftVersion/";
 
     public final static String GET_CODE = BASE_SERVICE + "/ms20/api/validateCode/code/ingnore-internal/getCode";
     public final static String GET_CODE_REGISTER = BASE_SERVICE + "/ms20/api/validateCode/code/ingnore-internal/getRegisterCode";
