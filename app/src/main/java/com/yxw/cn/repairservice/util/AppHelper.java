@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -23,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.Context.ACTIVITY_SERVICE;
 
 /**
  * Application助手类
@@ -231,7 +234,7 @@ public class AppHelper {
      * @return true if api is running
      */
     public static boolean isServiceRunning(Context context, String serviceFullName) {
-        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager manager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
         List<ActivityManager.RunningServiceInfo> runningServices = manager.getRunningServices(40);
         if (Helper.isNotEmpty(runningServices)) {
             for (ActivityManager.RunningServiceInfo runningService : runningServices) {
@@ -453,7 +456,26 @@ public class AppHelper {
         }
     }
 
-
+    /**
+     * 判断某个界面是否在前台
+     *
+     * @param context   Context
+     * @param className 界面的类名
+     * @return 是否在前台显示
+     */
+    public static boolean isForeground(String className) {
+        if (TextUtils.isEmpty(className)){
+            return false;
+        }
+        ActivityManager am = (ActivityManager) BaseApplication.getInstance().getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> list = am.getRunningTasks(1);
+        for (ActivityManager.RunningTaskInfo taskInfo : list) {
+            if (taskInfo.topActivity.getShortClassName().contains(className)) { // 说明它已经启动了
+                return true;
+            }
+        }
+        return false;
+    }
 
 
 }

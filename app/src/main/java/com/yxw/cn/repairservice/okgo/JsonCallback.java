@@ -9,6 +9,7 @@ import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.request.base.Request;
 import com.yxw.cn.repairservice.BaseApplication;
 import com.yxw.cn.repairservice.activity.user.LoginActivity;
+import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.util.ActivityManager;
 import com.yxw.cn.repairservice.util.ToastUtil;
@@ -23,6 +24,7 @@ public abstract class JsonCallback<T> extends AbsCallback<T> {
 
     private Type type;
     private Class<T> clazz;
+    private boolean isToLogin;
 
     public JsonCallback() {
     }
@@ -84,11 +86,13 @@ public abstract class JsonCallback<T> extends AbsCallback<T> {
             //token 问题
             if (responseData.getStatus()==401) {
                 ToastUtil.show("登录失效，请重新登录");
-                Intent intent = new Intent(BaseApplication.getInstance(), LoginActivity.class);
-                // Calling startActivity() from outside of an Activity  context requires the FLAG_ACTIVITY_NEW_TASK flag
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                BaseApplication.getInstance().startActivity(intent);
-                ActivityManager.getInstance().closeAllActivityExceptOne(LoginActivity.class.getName());
+                if (CurrentUser.getInstance().isLogin()){
+                    CurrentUser.getInstance().loginOut();
+                    Intent intent = new Intent(BaseApplication.getInstance(), LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    BaseApplication.getInstance().startActivity(intent);
+                    ActivityManager.getInstance().closeAllActivityExceptOne(LoginActivity.class.getName());
+                }
             } else {
                 onSuccess(response.body());
             }
