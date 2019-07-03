@@ -125,9 +125,6 @@
 
         <service
             android:name=".service.InitService"
-            android:exported="false" />
-        <service
-            android:name=".service.SyncLocationService"
-            android:exported="false" />
+            />
     </application>
 </manifest>
