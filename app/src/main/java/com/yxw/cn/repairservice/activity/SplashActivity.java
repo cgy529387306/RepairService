@@ -17,6 +17,9 @@ import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.activity.main.MainActivity;
 import com.yxw.cn.repairservice.activity.user.LoginActivity;
 import com.yxw.cn.repairservice.entity.CurrentUser;
+import com.yxw.cn.repairservice.timetask.SimpleTimerTask;
+import com.yxw.cn.repairservice.timetask.SimpleTimerTaskHandler;
+import com.yxw.cn.repairservice.util.MyTaskUtil;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -31,14 +34,15 @@ public class SplashActivity extends Activity{
 
     private SweetAlertDialog dialog;
     private Handler handler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_splash);
+        MyTaskUtil.refreshToken();
     }
-
 
     private void requestPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)

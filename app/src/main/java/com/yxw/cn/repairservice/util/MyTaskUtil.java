@@ -10,14 +10,17 @@ import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
+import com.yxw.cn.repairservice.timetask.SimpleTimerTask;
+import com.yxw.cn.repairservice.timetask.SimpleTimerTaskHandler;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MyTaskUtil {
 
-    private static final String TAG = "MyTimeTask";
+    private static final String TAG = "MyTaskUtil";
 
+    private static long REFRESH_TIME = 60*60*1000;
     public static void refreshToken(){
         Log.d(TAG,"start refreshToken");
         if (CurrentUser.getInstance().isLogin() && Helper.isNotEmpty(CurrentUser.getInstance().getRefreshToken())){
@@ -30,7 +33,7 @@ public class MyTaskUtil {
                                  public void onSuccess(ResponseData<String> response) {
                                      if (response!=null){
                                          if (response.isSuccess()) {
-                                             Log.d("refreshToken","myToken:"+response.getData());
+                                             Log.d(TAG,"myToken:"+response.getData());
                                              HttpHeaders headers = new HttpHeaders();
                                              CurrentUser.getInstance().setToken(response.getData());
                                              headers.put("Authorization", "Bearer "+ response.getData());
@@ -47,15 +50,15 @@ public class MyTaskUtil {
         if (CurrentUser.getInstance().isLogin()){
             Map<String, Object> requestMap = new HashMap<>();
             requestMap.put("userId", CurrentUser.getInstance().getUserId());
-            requestMap.put("locationLat", bdLocation.getLatitude());
-            requestMap.put("locationLng", bdLocation.getLongitude());
+            requestMap.put("currentLat", bdLocation.getLatitude());
+            requestMap.put("currentLng", bdLocation.getLongitude());
             OkGo.<ResponseData<Object>>post(UrlConstant.UPDATE_LOCATION)
                     .upJson(new Gson().toJson(requestMap))
                     .execute(new JsonCallback<ResponseData<Object>>() {
                                  @Override
                                  public void onSuccess(ResponseData<Object> response) {
                                      if (response!=null && response.isSuccess()){
-                                         Log.d("refreshLocation","locationLat:"+bdLocation.getLatitude()+",locationLng:"+bdLocation.getLongitude());
+                                         Log.d(TAG,"locationLat:"+bdLocation.getLatitude()+",locationLng:"+bdLocation.getLongitude());
                                      }
                                  }
                              }
@@ -70,10 +73,27 @@ public class MyTaskUtil {
                              @Override
                              public void onSuccess(ResponseData<Object> response) {
                                  if (response!=null && response.isSuccess()){
-                                     Log.d("setVersion","version:"+AppHelper.getCurrentVersionName());
+                                     Log.d(TAG,"version:"+AppHelper.getCurrentVersionName());
                                  }
                              }
                          }
                 );
     }
+
+    public static void doTimeTask(){
+        if (CurrentUser.getInstance().isLogin() && CurrentUser.getInstance().getRefreshTime()>30){
+            REFRESH_TIME = CurrentUser.getInstance().getRefreshTime()*1000;
+        }
+        SimpleTimerTask refreshTokenTask = new SimpleTimerTask(REFRESH_TIME) {
+            @Override
+            public void run() {
+                LocationUtils.instance().startLocation();
+                MyTaskUtil.refreshToken();
+            }
+        };
+        SimpleTimerTaskHandler refreshTokenHandler = SimpleTimerTaskHandler.getInstance();
+        refreshTokenHandler.sendTask(0, refreshTokenTask);
+    }
+
+
 }

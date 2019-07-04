@@ -22,6 +22,7 @@ public class BaseApplication extends Application {
     }
 
     private Handler mDelivery;              //用于在主线程执行的调度器
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -29,21 +30,8 @@ public class BaseApplication extends Application {
         mInstance = this;
         Log.d("InitService","start InitService");
         InitService.startActionInit(this);
-        doTimeTask();
     }
 
-
-
-    private void doTimeTask(){
-        SimpleTimerTask loopTask = new SimpleTimerTask(1000) {
-            @Override
-            public void run() {
-                MyTaskUtil.refreshToken();
-            }
-        };
-        SimpleTimerTaskHandler handler = SimpleTimerTaskHandler.getInstance();
-        handler.sendTask(0, loopTask);
-    }
 
     public Handler getDelivery() {
         return mDelivery;
