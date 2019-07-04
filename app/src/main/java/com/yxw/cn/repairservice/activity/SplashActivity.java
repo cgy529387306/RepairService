@@ -17,8 +17,6 @@ import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.activity.main.MainActivity;
 import com.yxw.cn.repairservice.activity.user.LoginActivity;
 import com.yxw.cn.repairservice.entity.CurrentUser;
-import com.yxw.cn.repairservice.timetask.SimpleTimerTask;
-import com.yxw.cn.repairservice.timetask.SimpleTimerTaskHandler;
 import com.yxw.cn.repairservice.util.MyTaskUtil;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;

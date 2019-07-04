@@ -19,7 +19,7 @@ public class AccountCenterDetailsAdapter extends BaseQuickAdapter<SettlementDeta
 
     @Override
     protected void convert(BaseViewHolder helper, SettlementDetail item) {
-        helper.setText(R.id.tv_change,String.valueOf(item.getAmountBeforeSettlement()-item.getAmountAfterSettlement()));
+        helper.setText(R.id.tv_change,"+"+(item.getAmountAfterSettlement()-item.getAmountBeforeSettlement()));
         helper.setText(R.id.tv_name,item.getRealName());
         helper.setText(R.id.tv_date,item.getSettlementDate());
         helper.setText(R.id.tv_rest,"余"+String.valueOf(item.getAmountAfterSettlement())+"元");
