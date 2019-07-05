@@ -50,7 +50,6 @@ public class SplashActivity extends Activity{
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_splash);
-        MyTaskUtil.refreshToken();
     }
 
     private void requestPermission() {
