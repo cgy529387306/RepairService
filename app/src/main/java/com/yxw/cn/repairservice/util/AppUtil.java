@@ -415,8 +415,12 @@ public class AppUtil {
     }
 
     public static void vibrate(final Activity activity, long milliseconds) {
-        Vibrator vib = (Vibrator) activity.getSystemService(Service.VIBRATOR_SERVICE);
-        vib.vibrate(milliseconds);
+        try {
+            Vibrator vib = (Vibrator) activity.getSystemService(Service.VIBRATOR_SERVICE);
+            vib.vibrate(milliseconds);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }
