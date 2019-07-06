@@ -22,6 +22,7 @@ import com.yxw.cn.repairservice.activity.MsgDetailActivity;
 import com.yxw.cn.repairservice.activity.MyEngineerActivity;
 import com.yxw.cn.repairservice.activity.order.InServiceActivity;
 import com.yxw.cn.repairservice.activity.order.MyOrderActivity;
+import com.yxw.cn.repairservice.activity.order.MyOrderFinishActivity;
 import com.yxw.cn.repairservice.activity.user.IdCardInfoActivity;
 import com.yxw.cn.repairservice.adapter.HomeMsgAdapter;
 import com.yxw.cn.repairservice.adapter.OrderTypeAdapter;
@@ -95,9 +96,7 @@ public class HomeFragment extends BaseRefreshFragment implements BaseQuickAdapte
                         startActivity(InServiceActivity.class);
                     }else if (i == 2){
                         //已完成
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("state",5);
-                        startActivity(MyOrderActivity.class,bundle);
+                        startActivity(MyOrderFinishActivity.class);
                     }else if (i == 3){
                         startActivity(AccountCenterActivity.class);
                     }else if (i ==4){

@@ -3,6 +3,7 @@ package com.yxw.cn.repairservice.util;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,6 +11,7 @@ import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.text.TextUtils;
 import android.view.Display;
 import android.view.KeyCharacterMap;
@@ -410,6 +412,11 @@ public class AppUtil {
         }else{
             return UrlConstant.ORDER_DETAIL_YFP;
         }
+    }
+
+    public static void vibrate(final Activity activity, long milliseconds) {
+        Vibrator vib = (Vibrator) activity.getSystemService(Service.VIBRATOR_SERVICE);
+        vib.vibrate(milliseconds);
     }
 
 }

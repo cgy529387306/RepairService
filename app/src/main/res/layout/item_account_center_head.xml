@@ -46,11 +46,12 @@
             android:text="订单数"/>
 
         <ImageView
+            android:id="@+id/iv_sort_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="5dp"
-            android:src="@drawable/icon_arrow_down"/>
+            android:src="@drawable/icon_down"/>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/ll_total_money"
@@ -69,11 +70,12 @@
             android:text="总金额"/>
 
         <ImageView
+            android:id="@+id/iv_sort_money"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="5dp"
-            android:src="@drawable/icon_arrow_down"/>
+            android:src="@drawable/icon_down"/>
     </LinearLayout>
 
 </LinearLayout>
