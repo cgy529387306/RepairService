@@ -65,13 +65,13 @@ public class ApplyServiceFragment extends BaseRefreshFragment implements ApplySe
         getApplyData(1);
     }
 
-    private void getApplyData(int i) {
+    private void getApplyData(int p) {
 
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> requestMap = new HashMap<>();
         requestMap.put("serviceStatus",mApplyType);
         map.put("filter", requestMap);
-        map.put("pageIndex", i);
+        map.put("pageIndex", p);
         map.put("pageSize", loadCount);
         OkGo.<ResponseData<ApplyListData>>post(UrlConstant.FIND_ALL_APPLY)
                 .upJson(gson.toJson(map))
@@ -80,13 +80,18 @@ public class ApplyServiceFragment extends BaseRefreshFragment implements ApplySe
                     public void onSuccess(ResponseData<ApplyListData> response) {
                         if (response!=null){
                             if (response.isSuccess() && response.getData()!=null) {
-                                if (i == 1) {
-                                    mPage = 2;
+                                isNext = response.getData().isHasNext();
+                                if (p == 1) {
                                     mAdapter.setNewData(response.getData().getItems());
+                                    mAdapter.setEmptyView(R.layout.empty_data, (ViewGroup) mRecyclerView.getParent());
                                     mRefreshLayout.finishRefresh();
+                                    if (isNext){
+                                        mPage = 2;
+                                    }else{
+                                        mRefreshLayout.finishLoadMoreWithNoMoreData();
+                                    }
                                 } else {
                                     mAdapter.addData(response.getData().getItems());
-                                    isNext = response.getData().isHasNext();
                                     if (isNext) {
                                         mPage++;
                                         mRefreshLayout.finishLoadMore();
@@ -94,10 +99,9 @@ public class ApplyServiceFragment extends BaseRefreshFragment implements ApplySe
                                         mRefreshLayout.finishLoadMoreWithNoMoreData();
                                     }
                                 }
-                                mAdapter.setEmptyView(R.layout.empty_data, (ViewGroup) mRecyclerView.getParent());
                             } else {
                                 toast(response.getMsg());
-                                if (i== 1) {
+                                if (p== 1) {
                                     mRefreshLayout.finishRefresh(false);
                                 } else {
                                     mRefreshLayout.finishLoadMore(false);
@@ -109,7 +113,7 @@ public class ApplyServiceFragment extends BaseRefreshFragment implements ApplySe
                     @Override
                     public void onError(Response<ResponseData<ApplyListData>> response) {
                         super.onError(response);
-                        if (i == 1) {
+                        if (p == 1) {
                             mRefreshLayout.finishRefresh(false);
                         } else {
                             mRefreshLayout.finishLoadMore(false);

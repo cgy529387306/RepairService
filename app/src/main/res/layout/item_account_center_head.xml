@@ -47,11 +47,11 @@
 
         <ImageView
             android:id="@+id/iv_sort_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
             android:layout_gravity="center"
             android:layout_marginLeft="5dp"
-            android:src="@drawable/icon_down"/>
+            android:src="@drawable/icon_sort_normal"/>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/ll_total_money"
@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="5dp"
-            android:src="@drawable/icon_down"/>
+            android:src="@drawable/icon_sort_normal"/>
     </LinearLayout>
 
 </LinearLayout>

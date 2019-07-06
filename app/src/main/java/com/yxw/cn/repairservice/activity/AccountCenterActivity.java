@@ -123,13 +123,18 @@ public class AccountCenterActivity extends BaseActivity implements OnRefreshList
                     public void onSuccess(ResponseData<SettlementData> response) {
                         if (response!=null){
                             if (response.isSuccess() && response.getData()!=null) {
+                                isNext = response.getData().isHasNext();
                                 if (p == 1) {
-                                    mPage = 2;
                                     mAdapter.setNewData(response.getData().getItems());
+                                    mAdapter.setEmptyView(R.layout.empty_data, (ViewGroup) mRecyclerView.getParent());
                                     mRefreshLayout.finishRefresh();
+                                    if (isNext){
+                                        mPage = 2;
+                                    }else{
+                                        mRefreshLayout.finishLoadMoreWithNoMoreData();
+                                    }
                                 } else {
                                     mAdapter.addData(response.getData().getItems());
-                                    isNext = response.getData().isHasNext();
                                     if (isNext) {
                                         mPage++;
                                         mRefreshLayout.finishLoadMore();
@@ -137,7 +142,6 @@ public class AccountCenterActivity extends BaseActivity implements OnRefreshList
                                         mRefreshLayout.finishLoadMoreWithNoMoreData();
                                     }
                                 }
-                                mAdapter.setEmptyView(R.layout.empty_data, (ViewGroup) mRecyclerView.getParent());
                             } else {
                                 toast(response.getMsg());
                                 if (p == 1) {
@@ -198,10 +202,12 @@ public class AccountCenterActivity extends BaseActivity implements OnRefreshList
         mTvTotalMoney.setTextColor(type==2?Color.parseColor("#E82B2D"):Color.parseColor("#666666"));
         if (type == 1){
             isCountDesc = !isCountDesc;
-            mIvCount.setImageResource(isCountDesc?R.drawable.icon_down:R.drawable.icon_up);
+            mIvMoney.setImageResource(R.drawable.icon_sort_normal);
+            mIvCount.setImageResource(isCountDesc?R.drawable.icon_sort_down:R.drawable.icon_sort_up);
         }else if (type == 2){
             isMoneyDesc = !isMoneyDesc;
-            mIvMoney.setImageResource(isMoneyDesc?R.drawable.icon_down:R.drawable.icon_up);
+            mIvCount.setImageResource(R.drawable.icon_sort_normal);
+            mIvMoney.setImageResource(isMoneyDesc?R.drawable.icon_sort_down:R.drawable.icon_sort_up);
         }
         mRefreshLayout.autoRefresh();
     }
