@@ -15,6 +15,7 @@ import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.activity.order.InServiceActivity;
 import com.yxw.cn.repairservice.activity.order.OrderDetailActivity;
 import com.yxw.cn.repairservice.adapter.OrderAdapter;
+import com.yxw.cn.repairservice.adapter.OrderFinishedAdapter;
 import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.MessageEvent;
@@ -36,16 +37,15 @@ import butterknife.BindView;
 /**
  * 订单列表
  */
-public class FinishedFragment extends BaseRefreshFragment implements BaseQuickAdapter.OnItemClickListener , OrderAdapter.OnOrderOperateListener, ContactPop.SelectListener,ConfirmOrderPop.SelectListener{
+public class FinishedFragment extends BaseRefreshFragment implements BaseQuickAdapter.OnItemClickListener{
 
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
     private static final String KEY_STATE = "key_state";
-    private OrderAdapter mAdapter;
+    private OrderFinishedAdapter mAdapter;
     private int mPage = 2;
     private boolean isNext = false;
-    private ConfirmOrderPop mConfirmOrderPop;
     private int mState;
     /**
      * @param state 0:全部 1:已审核 2:已结算
@@ -67,7 +67,7 @@ public class FinishedFragment extends BaseRefreshFragment implements BaseQuickAd
     @Override
     protected void initView() {
         mState = (int) getArguments().get(KEY_STATE);
-        mAdapter = new OrderAdapter(new ArrayList<>(),this);
+        mAdapter = new OrderFinishedAdapter(new ArrayList<>());
         mAdapter.setOnItemClickListener(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(20));
@@ -164,88 +164,5 @@ public class FinishedFragment extends BaseRefreshFragment implements BaseQuickAd
                 getOrderData(1);
                 break;
         }
-    }
-
-
-    @Override
-    public void onOrderCancel(OrderItem orderItem) {
-
-    }
-
-    @Override
-    public void onOrderAppoint(OrderItem orderItem) {
-
-    }
-
-    @Override
-    public void onOrderTaking(OrderItem orderItem) {
-        if (mConfirmOrderPop==null){
-            mConfirmOrderPop = new ConfirmOrderPop(getActivity(),orderItem,this);
-        }
-        mConfirmOrderPop.showPopupWindow(mRecyclerView);
-    }
-
-    @Override
-    public void onAbnormal(OrderItem orderItem,int type) {
-    }
-
-    @Override
-    public void onContact(OrderItem orderItem) {
-    }
-
-    @Override
-    public void onTurnReservation(OrderItem orderItem) {
-    }
-
-    @Override
-    public void onSign(OrderItem orderItem) {
-    }
-
-    @Override
-    public void onFinish(OrderItem orderItem) {
-    }
-
-    @Override
-    public void onView(OrderItem orderItem) {
-    }
-
-    @Override
-    public void onCall(OrderItem orderItem) {
-    }
-
-    @Override
-    public void onTime(OrderItem orderItem) {
-    }
-
-    @Override
-    public void onConfirm(OrderItem orderItem) {
-    }
-
-    @Override
-    public void onOrderComfirm(OrderItem orderItem) {
-        showLoading();
-        OkGo.<ResponseData<OperateResult>>post(UrlConstant.ORDER_RECEIVE+orderItem.getOrderId())
-                .execute(new JsonCallback<ResponseData<OperateResult>>() {
-                             @Override
-                             public void onSuccess(ResponseData<OperateResult> response) {
-                                 dismissLoading();
-                                 if (response!=null){
-                                     if (response.isSuccess()) {
-                                         toast("抢单成功");
-                                         startActivity(InServiceActivity.class);
-                                         getActivity().finish();
-                                     }else{
-                                         toast(response.getMsg());
-                                     }
-                                 }
-                             }
-
-                             @Override
-                             public void onError(Response<ResponseData<OperateResult>> response) {
-                                 super.onError(response);
-                                 dismissLoading();
-                             }
-                         }
-                );
     }
 }
