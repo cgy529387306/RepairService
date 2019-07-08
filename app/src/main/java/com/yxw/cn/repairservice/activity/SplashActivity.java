@@ -25,7 +25,6 @@ import com.yxw.cn.repairservice.entity.CurrentUser;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.util.Helper;
-import com.yxw.cn.repairservice.util.MyTaskUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -187,6 +186,7 @@ public class SplashActivity extends Activity{
                                  @Override
                                  public void onError(Response<ResponseData<String>> response) {
                                      super.onError(response);
+                                     CurrentUser.getInstance().loginOut();
                                      startActivity(new Intent(SplashActivity.this,LoginActivity.class));
                                      finish();
                                  }
