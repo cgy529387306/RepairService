@@ -130,7 +130,7 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:gravity="top"
-            android:hint="请输入您的宝贵意见或举报内容"
+            android:hint="备注"
             android:lines="6"
             android:maxLength="3000"
             android:textColor="#333333"
