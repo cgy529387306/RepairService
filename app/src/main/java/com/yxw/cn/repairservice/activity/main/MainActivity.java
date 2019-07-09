@@ -21,6 +21,7 @@ import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.fragment.HomeFragment;
 import com.yxw.cn.repairservice.fragment.UserFragment;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
+import com.yxw.cn.repairservice.util.ActivityManager;
 import com.yxw.cn.repairservice.util.AppUtil;
 import com.yxw.cn.repairservice.util.EventBusUtil;
 import com.yxw.cn.repairservice.util.MyTaskUtil;
@@ -95,6 +96,7 @@ public class MainActivity extends BaseActivity {
             mLastClickTimeMills = System.currentTimeMillis();
             return;
         }
+        ActivityManager.getInstance().closeAllActivity();
         finish();
     }
 
