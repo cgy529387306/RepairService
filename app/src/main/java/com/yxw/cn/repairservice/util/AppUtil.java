@@ -58,6 +58,7 @@ public class AppUtil {
     public static List<ReasonBean> signReasonList = new ArrayList<>();
     public static List<ReasonBean> reservationReasonList = new ArrayList<>();
     public static List<UrgencyBean> reservationUrgencyList = new ArrayList<>();
+    public static List<ReasonBean> returnReasonList = new ArrayList<>();
     private static Gson gson = new Gson();
 
     /**
@@ -297,6 +298,24 @@ public class AppUtil {
                         if (response!=null){
                             if (response.isSuccess() && response.getData()!=null){
                                 AppUtil.reservationUrgencyList = response.getData();
+                            }
+                        }
+                    }
+                });
+    }
+
+    public static void initReturnData() {
+        HashMap<String,String> map = new HashMap<>();
+        map.put("dictKey","TURN_CANCELORDR_REASON");
+        OkGo.<ResponseData<List<ReasonBean>>>post(UrlConstant.GET_EXCEPTION_REASON)
+                .upJson(gson.toJson(map))
+                .execute(new JsonCallback<ResponseData<List<ReasonBean>>>() {
+
+                    @Override
+                    public void onSuccess(ResponseData<List<ReasonBean>> response) {
+                        if (response!=null){
+                            if (response.isSuccess() && response.getData()!=null){
+                                AppUtil.returnReasonList = response.getData();
                             }
                         }
                     }

@@ -24,6 +24,7 @@ public class OrderAdapter extends BaseQuickAdapter<OrderItem, BaseViewHolder> {
 
     public interface OnOrderOperateListener{
         void onOrderCancel(OrderItem orderItem);//取消接单
+        void onOrderCancelSer(OrderItem orderItem);//取消接单
         void onOrderAppoint(OrderItem orderItem);//订单指派
         void onOrderTaking(OrderItem orderItem);//接单
         void onAbnormal(OrderItem orderItem, int type);//异常反馈
@@ -51,7 +52,7 @@ public class OrderAdapter extends BaseQuickAdapter<OrderItem, BaseViewHolder> {
 
         helper.setText(R.id.tv_ordre_name, item.getCategoryPName()+"/"+item.getCategoryCName())
                 .setText(R.id.tv_order_no,item.getOrderSn())
-                .setText(R.id.tv_order_time, item.getCustomerBookingTime())
+                .setText(R.id.tv_order_time, orderStatus<=40?item.getCustomerBookingTime():item.getBookingStartTime())
                 .setText(R.id.tv_order_address, item.getAddress())
                 .setText(R.id.tv_order_content, item.getFaultDesc())
                 .setText(R.id.tv_order_state, AppUtil.getOrderStatus(item.getOrderStatus()))
@@ -79,7 +80,7 @@ public class OrderAdapter extends BaseQuickAdapter<OrderItem, BaseViewHolder> {
             tvOperate1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOperateListener.onOrderCancel(item);
+                    mOperateListener.onOrderCancelSer(item);
                 }
             });
 
@@ -98,11 +99,11 @@ public class OrderAdapter extends BaseQuickAdapter<OrderItem, BaseViewHolder> {
             }
             tvOperate0.setVisibility(View.GONE);
             tvOperate1.setVisibility(View.VISIBLE);
-            tvOperate1.setText("异常反馈");
+            tvOperate1.setText("取消订单");
             tvOperate1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOperateListener.onAbnormal(item,0);
+                    mOperateListener.onOrderCancel(item);
                 }
             });
 
@@ -126,7 +127,7 @@ public class OrderAdapter extends BaseQuickAdapter<OrderItem, BaseViewHolder> {
             tvOperate0.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOperateListener.onTurnReservation(item);
+                    mOperateListener.onAbnormal(item,0);
                 }
             });
 

@@ -196,6 +196,11 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
     }
 
     @Override
+    public void onOrderCancelSer(OrderItem orderItem) {
+
+    }
+
+    @Override
     public void onOrderAppoint(OrderItem orderItem) {
 
     }

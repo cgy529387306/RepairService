@@ -16,6 +16,8 @@ import com.yxw.cn.repairservice.BaseRefreshFragment;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.activity.order.AppointAbnormalActivity;
 import com.yxw.cn.repairservice.activity.order.AppointOrderActivity;
+import com.yxw.cn.repairservice.activity.order.CancelOrderActivity;
+import com.yxw.cn.repairservice.activity.order.CancelOrderSerActivity;
 import com.yxw.cn.repairservice.activity.order.OrderDetailActivity;
 import com.yxw.cn.repairservice.activity.order.OrderSignInActivity;
 import com.yxw.cn.repairservice.activity.order.SignAbnormalActivity;
@@ -165,6 +167,13 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
 
     @Override
     public void onOrderCancel(OrderItem orderItem) {
+        Bundle bundle = new Bundle();
+        bundle.putString("acceptId",orderItem.getAcceptId());
+        startActivity(CancelOrderActivity.class,bundle);
+    }
+
+    @Override
+    public void onOrderCancelSer(OrderItem orderItem) {
         if (mApplyCancelOrderPop==null){
             mApplyCancelOrderPop = new ApplyCancelOrderPop(getActivity(),orderItem,this);
         }
@@ -363,29 +372,8 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
 
     @Override
     public void onComfirm(OrderItem orderItem) { //申请退单
-        showLoading();
-        OkGo.<ResponseData<List<OrderItem>>>post(UrlConstant.ORDER_SERVICE_RETURN + orderItem.getServiceId())
-                .tag(this)
-                .execute(new JsonCallback<ResponseData<List<OrderItem>>>() {
-
-                    @Override
-                    public void onSuccess(ResponseData<List<OrderItem>> response) {
-                        dismissLoading();
-                        if (response!=null){
-                            if (response.isSuccess()){
-                                toast("退单成功");
-                                EventBusUtil.post(MessageConstant.NOTIFY_UPDATE_ORDER);
-                            }else{
-                                toast(response.getMsg());
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onError(Response<ResponseData<List<OrderItem>>> response) {
-                        super.onError(response);
-                        dismissLoading();
-                    }
-                });
+        Bundle bundle = new Bundle();
+        bundle.putString("acceptId",orderItem.getServiceId());
+        startActivity(CancelOrderSerActivity.class,bundle);
     }
 }

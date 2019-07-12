@@ -488,30 +488,10 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
 
     @Override
     public void onComfirm(OrderItem orderItem) {
-        showLoading();
-        OkGo.<ResponseData<List<OrderItem>>>post(UrlConstant.ORDER_SERVICE_RETURN + orderItem.getServiceId())
-                .tag(this)
-                .execute(new JsonCallback<ResponseData<List<OrderItem>>>() {
-
-                    @Override
-                    public void onSuccess(ResponseData<List<OrderItem>> response) {
-                        dismissLoading();
-                        if (response!=null){
-                            if (response.isSuccess()){
-                                toast("退单成功");
-                                EventBusUtil.post(MessageConstant.NOTIFY_UPDATE_ORDER);
-                            }else{
-                                toast(response.getMsg());
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onError(Response<ResponseData<List<OrderItem>>> response) {
-                        super.onError(response);
-                        dismissLoading();
-                    }
-                });
+        Bundle bundle = new Bundle();
+        bundle.putString("acceptId",orderItem.getServiceId());
+        startActivity(CancelOrderSerActivity.class,bundle);
+        finish();
     }
 
 
@@ -628,14 +608,14 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
 
             tvOperate0.setVisibility(View.GONE);
             tvOperate1.setVisibility(View.VISIBLE);
-            tvOperate1.setText("异常反馈");
+            tvOperate1.setText("取消订单");
             tvOperate1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Bundle bundle = new Bundle();
-                    bundle.putInt("type",0);
                     bundle.putString("acceptId",orderItem.getAcceptId());
-                    startActivity(AppointAbnormalActivity.class,bundle);
+                    startActivity(CancelOrderActivity.class,bundle);
+                    finish();
                 }
             });
 
@@ -685,41 +665,10 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
             tvOperate0.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    TimePickerUtil.showYearPicker(OrderDetailActivity.this, new OnChooseDateListener() {
-                        @Override
-                        public void getDate(Date date) {
-                            String startTime = TimeUtil.dateToString(date, "yyyy-MM-dd HH:mm:00");
-                            String endTime = TimeUtil.getAfterHourTime(date);
-                            showLoading();
-                            HashMap<String, Object> map = new HashMap<>();
-                            map.put("acceptId", orderItem.getAcceptId());
-                            map.put("bookingStartTime", startTime);
-                            map.put("bookingEndTime", endTime);
-                            OkGo.<ResponseData<Object>>post(UrlConstant.ORDER_TURN_RESERVATION)
-                                    .upJson(gson.toJson(map))
-                                    .execute(new JsonCallback<ResponseData<Object>>() {
-                                        @Override
-                                        public void onSuccess(ResponseData<Object> response) {
-                                            dismissLoading();
-                                            if (response!=null){
-                                                if (response.isSuccess()) {
-                                                    toast("预约成功");
-                                                    EventBusUtil.post(MessageConstant.NOTIFY_UPDATE_ORDER);
-                                                }else{
-                                                    toast(response.getMsg());
-                                                }
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onError(Response<ResponseData<Object>> response) {
-                                            super.onError(response);
-                                            dismissLoading();
-                                        }
-                                    });
-
-                        }
-                    });
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("type",0);
+                    bundle.putString("acceptId",orderItem.getAcceptId());
+                    startActivity(AppointAbnormalActivity.class,bundle);
                 }
             });
 
