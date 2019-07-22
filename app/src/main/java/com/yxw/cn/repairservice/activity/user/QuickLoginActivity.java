@@ -20,6 +20,8 @@ import com.yxw.cn.repairservice.entity.LoginInfo;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.util.AppUtil;
+import com.yxw.cn.repairservice.util.Helper;
+import com.yxw.cn.repairservice.util.PreferencesHelper;
 import com.yxw.cn.repairservice.util.SpUtil;
 import com.yxw.cn.repairservice.view.CountDownTextView;
 import com.yxw.cn.repairservice.view.TitleBar;
@@ -29,6 +31,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.jpush.android.api.JPushInterface;
 
 /**
  * 验证码登录
@@ -142,6 +145,11 @@ public class QuickLoginActivity extends BaseActivity {
                     map.put("userName", mEtTel.getText().toString());
                     map.put("smsCode", mEtPassword.getText().toString().trim());
                     map.put("appSign", UrlConstant.mRoleSign);
+                    String rid = PreferencesHelper.getInstance().getString(SpConstant.REGISTER_ID);
+                    if (Helper.isEmpty(rid)){
+                        rid = JPushInterface.getRegistrationID(getApplicationContext());
+                    }
+                    map.put("regId", rid);
                     OkGo.<ResponseData<LoginInfo>>post(UrlConstant.QUICK_LOGIN)
                             .upJson(gson.toJson(map))
                             .execute(new JsonCallback<ResponseData<LoginInfo>>() {

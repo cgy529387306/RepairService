@@ -25,6 +25,8 @@ import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.util.AppUtil;
 import com.yxw.cn.repairservice.util.EventBusUtil;
+import com.yxw.cn.repairservice.util.Helper;
+import com.yxw.cn.repairservice.util.PreferencesHelper;
 import com.yxw.cn.repairservice.util.SpUtil;
 import com.yxw.cn.repairservice.view.CountDownTextView;
 import com.yxw.cn.repairservice.view.TitleBar;
@@ -34,6 +36,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.jpush.android.api.JPushInterface;
 
 /**
  * 注册
@@ -157,6 +160,11 @@ public class RegisterActivity extends BaseActivity {
                     map.put("password", mEtPassword.getText().toString().trim());
                     map.put("smsCode", mEtCode.getText().toString().trim());
                     map.put("appSign", UrlConstant.mRoleSign);
+                    String rid = PreferencesHelper.getInstance().getString(SpConstant.REGISTER_ID);
+                    if (Helper.isEmpty(rid)){
+                        rid = JPushInterface.getRegistrationID(getApplicationContext());
+                    }
+                    map.put("regId", rid);
                     if (!TextUtils.isEmpty(mEtInviteCode.getText().toString().trim())){
                         map.put("invitationCode", mEtInviteCode.getText().toString().trim());
                     }
