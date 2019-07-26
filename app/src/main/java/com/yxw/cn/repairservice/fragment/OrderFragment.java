@@ -38,7 +38,7 @@ import java.util.Map;
 import butterknife.BindView;
 
 /**
- * 订单列表
+ * 订单列表（订单池）
  */
 public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapter.OnItemClickListener , OrderAdapter.OnOrderOperateListener, ContactPop.SelectListener,ConfirmOrderPop.SelectListener{
 
@@ -54,6 +54,8 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
     private String mBookingTime;
     private ConfirmOrderPop mConfirmOrderPop;
     private int mState;
+
+    private String mLocationLat,mLocationLng;
     /**
      * @param type 0:今天 1:明天 2:全部
      * @return
@@ -91,6 +93,7 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(20));
         mRecyclerView.setAdapter(mAdapter);
+        initLatLng();
         getOrderData(1);
     }
 
@@ -101,10 +104,8 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
             requestMap.put("customerBookingTime",mBookingTime);
         }
         if (mState==0){
-            String locationLat = PreferencesHelper.getInstance().getString("latitude","26.088114");
-            String locationLng = PreferencesHelper.getInstance().getString("longitude","119.310492");
-            requestMap.put("locationLat",locationLat);
-            requestMap.put("locationLng",locationLng);
+            requestMap.put("locationLat",mLocationLat);
+            requestMap.put("locationLng",mLocationLng);
         }
         requestMap.put("status",mState);
         Map<String, Object> map = new HashMap<>();
@@ -121,7 +122,7 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
                                 isNext = response.getData().isHasNext();
                                 if (p == 1) {
                                     mAdapter.setNewData(response.getData().getItems());
-                                    mAdapter.setEmptyView(R.layout.empty_data, (ViewGroup) mRecyclerView.getParent());
+                                    mAdapter.setEmptyView(R.layout.empty_order, (ViewGroup) mRecyclerView.getParent());
                                     mRefreshLayout.finishRefresh();
                                     if (isNext){
                                         mPage = 2;
@@ -185,6 +186,9 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
         switch (event.getId()) {
             case MessageConstant.NOTIFY_UPDATE_ORDER:
                 getOrderData(1);
+                break;
+            case MessageConstant.MY_LOCATION:
+                initLatLng();
                 break;
         }
     }
@@ -275,5 +279,10 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
                              }
                          }
                 );
+    }
+
+    private void initLatLng(){
+        mLocationLat = PreferencesHelper.getInstance().getString("latitude","26.088114");
+        mLocationLng = PreferencesHelper.getInstance().getString("longitude","119.310492");
     }
 }

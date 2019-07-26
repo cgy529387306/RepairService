@@ -46,7 +46,7 @@ import java.util.Map;
 import butterknife.BindView;
 
 /**
- * 订单列表
+ * 订单列表（待处理）
  */
 public class InServiceFragment extends BaseRefreshFragment implements BaseQuickAdapter.OnItemClickListener,OrderAdapter.OnOrderOperateListener, ContactPop.SelectListener,ApplyCancelOrderPop.SelectListener {
 
@@ -107,7 +107,7 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
                                 isNext = response.getData().isHasNext();
                                 if (p == 1) {
                                     mAdapter.setNewData(response.getData().getItems());
-                                    mAdapter.setEmptyView(R.layout.empty_data, (ViewGroup) mRecyclerView.getParent());
+                                    mAdapter.setEmptyView(R.layout.empty_order, (ViewGroup) mRecyclerView.getParent());
                                     mRefreshLayout.finishRefresh();
                                     if (isNext){
                                         mPage = 2;

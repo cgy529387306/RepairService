@@ -35,7 +35,7 @@ import java.util.Map;
 import butterknife.BindView;
 
 /**
- * 订单列表
+ * 订单列表（已完成）
  */
 public class FinishedFragment extends BaseRefreshFragment implements BaseQuickAdapter.OnItemClickListener{
 
@@ -98,7 +98,7 @@ public class FinishedFragment extends BaseRefreshFragment implements BaseQuickAd
                                 isNext = response.getData().isHasNext();
                                 if (p == 1) {
                                     mAdapter.setNewData(response.getData().getItems());
-                                    mAdapter.setEmptyView(R.layout.empty_data, (ViewGroup) mRecyclerView.getParent());
+                                    mAdapter.setEmptyView(R.layout.empty_order, (ViewGroup) mRecyclerView.getParent());
                                     mRefreshLayout.finishRefresh();
                                     if (isNext){
                                         mPage = 2;
