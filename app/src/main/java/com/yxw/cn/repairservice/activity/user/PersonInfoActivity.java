@@ -64,12 +64,16 @@ public class PersonInfoActivity extends BaseActivity {
     TextView mTvResident;
     @BindView(R.id.tv_service_provider)
     TextView mTvServiceProvider;
+    @BindView(R.id.tv_person_code)
+    TextView mTvPersonCode;
     @BindView(R.id.rv_category)
     RecyclerView mRvCate;
     @BindView(R.id.ll_good)
     LinearLayout mLlGood;
     @BindView(R.id.img_back)
     ImageView mImgBack;
+    @BindView(R.id.iv_gender)
+    ImageView mIvGender;
 
     private List<String> mCateList = new ArrayList<String>();
     private MyCategoryAdapter mCateAdapter;
@@ -101,9 +105,11 @@ public class PersonInfoActivity extends BaseActivity {
                 mTvName.setText(loginInfo.getRealName());
                 mTvPhone.setText(loginInfo.getMobile());
                 mTvIdCardStatus.setText(AppUtil.getIdCardStatus(loginInfo.getIdCardStatus()));
-                mTvServiceProvider.setText(TextUtils.isEmpty(loginInfo.getParentId())?"":"服务商ID"+loginInfo.getParentId());
+                mTvServiceProvider.setText(TextUtils.isEmpty(loginInfo.getBindingCode())?"":loginInfo.getBindingCode());
                 mTvIdCardNo.setText(loginInfo.getIdCardNo());
                 mTvResident.setText(loginInfo.getResidentAreaName());
+                mIvGender.setImageResource("女".equals(loginInfo.getSex())?R.drawable.icon_gender_female:R.drawable.icon_gender_man);
+                mTvPersonCode.setText(loginInfo.getJobNumber());
                 if (Helper.isNotEmpty(loginInfo.getCategory())){
                     String[] dataArray = loginInfo.getCategory().split(",");
                     if (Helper.isNotEmpty(dataArray)){
@@ -139,9 +145,6 @@ public class PersonInfoActivity extends BaseActivity {
 
                 break;
             case R.id.ll_idCardStatus: //身份证认证
-                if (loginInfo!=null && (loginInfo.getIdCardStatus()==0 || loginInfo.getIdCardStatus()==2)){
-                    startActivity(IdCardInfoActivity.class);
-                }
                 break;
             case R.id.iv_avatar:
                 PictureSelector.create(this)
@@ -231,9 +234,6 @@ public class PersonInfoActivity extends BaseActivity {
         switch (event.getId()) {
             case MessageConstant.NOTIFY_UPDATE_INFO:
                 notifyInfo();
-                break;
-            case MessageConstant.MY_CATEGORY:
-                mCateAdapter.notifyDataSetChanged();
                 break;
         }
     }

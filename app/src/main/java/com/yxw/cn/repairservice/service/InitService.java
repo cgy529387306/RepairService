@@ -31,6 +31,7 @@ import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.crash.CrashHandler;
 import com.yxw.cn.repairservice.util.LocationUtils;
+import com.yxw.cn.repairservice.view.MRefreshHeader;
 
 import java.util.logging.Level;
 
@@ -106,7 +107,7 @@ public class InitService extends IntentService {
             @Override
             public RefreshHeader createRefreshHeader(Context context, RefreshLayout layout) {
                 layout.setPrimaryColorsId(R.color.colorPrimary, android.R.color.darker_gray);//全局设置主题颜色
-                return new ClassicsHeader(context);//.setTimeFormat(new DynamicTimeFormat("更新于 %s"));//指定为经典Header，默认是 贝塞尔雷达Header
+                return new MRefreshHeader(context);//.setTimeFormat(new DynamicTimeFormat("更新于 %s"));//指定为经典Header，默认是 贝塞尔雷达Header
             }
         });
         //设置全局的Footer构建器

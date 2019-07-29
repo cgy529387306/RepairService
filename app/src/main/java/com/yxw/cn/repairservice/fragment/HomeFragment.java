@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.lzy.okgo.OkGo;
@@ -26,14 +27,19 @@ import com.yxw.cn.repairservice.activity.order.MyOrderFinishActivity;
 import com.yxw.cn.repairservice.activity.user.IdCardInfoActivity;
 import com.yxw.cn.repairservice.adapter.HomeMsgAdapter;
 import com.yxw.cn.repairservice.adapter.OrderTypeAdapter;
+import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.BannerBean;
 import com.yxw.cn.repairservice.entity.CurrentUser;
+import com.yxw.cn.repairservice.entity.MessageEvent;
 import com.yxw.cn.repairservice.entity.NoticeListData;
 import com.yxw.cn.repairservice.entity.OrderType;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
+import com.yxw.cn.repairservice.util.Helper;
 import com.yxw.cn.repairservice.util.ImageUtils;
+import com.yxw.cn.repairservice.util.LocationUtils;
+import com.yxw.cn.repairservice.util.PreferencesHelper;
 import com.yxw.cn.repairservice.view.RecycleViewDivider;
 import com.yxw.cn.repairservice.view.TitleBar;
 
@@ -50,8 +56,8 @@ import butterknife.BindView;
  */
 public class HomeFragment extends BaseRefreshFragment implements BaseQuickAdapter.OnItemClickListener {
 
-    @BindView(R.id.titlebar)
-    TitleBar titlebar;
+    @BindView(R.id.tv_location)
+    TextView mTvLocation;
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
@@ -69,8 +75,6 @@ public class HomeFragment extends BaseRefreshFragment implements BaseQuickAdapte
 
     @Override
     protected void initView() {
-        titlebar.setTitle("工作台");
-        titlebar.setLeftVisible(false);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new RecycleViewDivider(LinearLayoutManager.VERTICAL,1,getResources().getColor(R.color.gray_divider)));
         mAdapter = new HomeMsgAdapter(new ArrayList());
@@ -117,6 +121,8 @@ public class HomeFragment extends BaseRefreshFragment implements BaseQuickAdapte
         super.getData();
         getLunboData();
         getNoticeData(1);
+        LocationUtils.instance().startLocation();
+        showLoading();
     }
 
     private void getLunboData(){
@@ -128,6 +134,7 @@ public class HomeFragment extends BaseRefreshFragment implements BaseQuickAdapte
                 .execute(new JsonCallback<ResponseData<List<BannerBean>>>() {
                     @Override
                     public void onSuccess(ResponseData<List<BannerBean>> response) {
+                        dismissLoading();
                         if (response!=null){
                             if (response.isSuccess() && mBanner!=null && response.getData()!=null){
                                 mBanner.setImageLoader(new GlideImageLoader());
@@ -137,6 +144,12 @@ public class HomeFragment extends BaseRefreshFragment implements BaseQuickAdapte
                                 toast(response.getMsg());
                             }
                         }
+                    }
+
+                    @Override
+                    public void onError(Response<ResponseData<List<BannerBean>>> response) {
+                        super.onError(response);
+                        dismissLoading();
                     }
                 });
     }
@@ -153,6 +166,7 @@ public class HomeFragment extends BaseRefreshFragment implements BaseQuickAdapte
                 .execute(new JsonCallback<ResponseData<NoticeListData>>() {
                     @Override
                     public void onSuccess(ResponseData<NoticeListData> response) {
+                        dismissLoading();
                         if (response!=null){
                             if (response.isSuccess() && response.getData()!=null) {
                                 isNext = response.getData().isHasNext();
@@ -186,6 +200,7 @@ public class HomeFragment extends BaseRefreshFragment implements BaseQuickAdapte
 
                     @Override
                     public void onError(Response<ResponseData<NoticeListData>> response) {
+                        dismissLoading();
                         super.onError(response);
                         if (p == 1) {
                             mRefreshLayout.finishRefresh(false);
@@ -210,6 +225,7 @@ public class HomeFragment extends BaseRefreshFragment implements BaseQuickAdapte
     public void onRefresh() {
         super.onRefresh();
         getNoticeData(1);
+        LocationUtils.instance().startLocation();
     }
 
     @Override
@@ -229,6 +245,22 @@ public class HomeFragment extends BaseRefreshFragment implements BaseQuickAdapte
         @Override
         public void displayImage(Context context, Object path, ImageView imageView) {
             ImageUtils.loadImageUrl(imageView,((BannerBean)path).getPath());
+        }
+    }
+
+    @Override
+    public void onEvent(MessageEvent event) {
+        super.onEvent(event);
+        switch (event.getId()) {
+            case MessageConstant.MY_LOCATION:
+                String city = PreferencesHelper.getInstance().getString("city","");
+                if (Helper.isEmpty(city)||city.contains("null")){
+                    mTvLocation.setVisibility(View.GONE);
+                }else{
+                    mTvLocation.setVisibility(View.VISIBLE);
+                    mTvLocation.setText(city);
+                }
+                break;
         }
     }
 

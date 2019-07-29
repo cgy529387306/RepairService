@@ -35,6 +35,9 @@ public class LoginInfo {
     private int isRest;//是否休息(0工作中1休息中）
     private String idCardNo;
     private long refreshTime;
+    private String sex;
+    private String pName;
+    private String jobNumber;
 
     public String getToken() {
         return token == null ? "" : token;
@@ -283,5 +286,29 @@ public class LoginInfo {
 
     public void setRefreshTime(long refreshTime) {
         this.refreshTime = refreshTime;
+    }
+
+    public String getSex() {
+        return sex == null ? "" : sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getpName() {
+        return pName == null ? "" : pName;
+    }
+
+    public void setpName(String pName) {
+        this.pName = pName;
+    }
+
+    public String getJobNumber() {
+        return jobNumber == null ? "" : jobNumber;
+    }
+
+    public void setJobNumber(String jobNumber) {
+        this.jobNumber = jobNumber;
     }
 }

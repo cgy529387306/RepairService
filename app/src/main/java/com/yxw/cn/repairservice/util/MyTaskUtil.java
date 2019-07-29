@@ -6,8 +6,10 @@ import com.baidu.location.BDLocation;
 import com.google.gson.Gson;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.HttpHeaders;
+import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.CurrentUser;
+import com.yxw.cn.repairservice.entity.LoginInfo;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
 import com.yxw.cn.repairservice.timetask.SimpleTimerTask;
@@ -95,5 +97,23 @@ public class MyTaskUtil {
         refreshTokenHandler.sendTask(0, refreshTokenTask);
     }
 
+
+    public static void getUserInfo(){
+        if (CurrentUser.getInstance().isLogin()){
+            OkGo.<ResponseData<LoginInfo>>get(UrlConstant.GET_WORKER_INFO)
+                    .execute(new JsonCallback<ResponseData<LoginInfo>>() {
+                                 @Override
+                                 public void onSuccess(ResponseData<LoginInfo> response) {
+                                     if (response!=null){
+                                         if (response.isSuccess()) {
+                                             CurrentUser.getInstance().login(response.getData());
+                                             EventBusUtil.post(MessageConstant.NOTIFY_UPDATE_INFO);
+                                         }
+                                     }
+                                 }
+                             }
+                    );
+        }
+    }
 
 }

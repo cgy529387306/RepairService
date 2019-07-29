@@ -130,6 +130,9 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.user.MyBindingCodeActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".activity.user.RegisterStepActivity"
+            android:screenOrientation="portrait"/>
+
 
 
         <activity android:name=".activity.order.MyOrderActivity"
@@ -152,6 +155,7 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.order.CancelOrderSerActivity"
             android:screenOrientation="portrait"/>
+
 
         <activity android:name=".activity.setting.UserFeedBackActivity"
             android:screenOrientation="portrait"/>
@@ -185,6 +189,7 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.AccountCenterDetailsActivity"
             android:screenOrientation="portrait"/>
+
 
         <service
             android:name=".service.InitService"
