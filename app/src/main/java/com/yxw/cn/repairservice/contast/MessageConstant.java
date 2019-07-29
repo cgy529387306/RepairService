@@ -3,6 +3,7 @@ package com.yxw.cn.repairservice.contast;
 public class MessageConstant {
     public final static String MY_LOCATION= "MY_LOCATION";
     public final static String REGISTER= "REGISTER";
+    public final static String REGISTER_OUT= "REGISTER_OUT";
     public final static String LOGOUT= "LOGOUT";
     public final static String LOCATION= "LOCATION";
     public final static String CHOOSE_CATEGORY_SERVICE= "CHOOSE_CATEGORY_SERVICE";
