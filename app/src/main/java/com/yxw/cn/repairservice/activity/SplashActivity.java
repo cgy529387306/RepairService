@@ -184,8 +184,10 @@ public class SplashActivity extends Activity{
                                              CurrentUser.getInstance().setToken(response.getData());
                                              headers.put("Authorization", "Bearer "+ response.getData());
                                              OkGo.getInstance().addCommonHeaders(headers);
-                                             startActivity(new Intent(SplashActivity.this,MainActivity.class));
-                                             finish();
+                                             handler.postDelayed(() -> {
+                                                 startActivity(new Intent(SplashActivity.this,MainActivity.class));
+                                                 finish();
+                                             }, 1000);
                                          }
                                      }
                                  }

@@ -23,6 +23,7 @@ public class OrderAdapter extends BaseQuickAdapter<OrderItem, BaseViewHolder> {
     private OnOrderOperateListener mOperateListener;
 
     public interface OnOrderOperateListener{
+        void onOrderConfirm(OrderItem orderItem);//确认接单
         void onOrderCancel(OrderItem orderItem);//取消接单
         void onOrderCancelSer(OrderItem orderItem);//取消接单
         void onOrderAppoint(OrderItem orderItem);//订单指派
@@ -61,18 +62,28 @@ public class OrderAdapter extends BaseQuickAdapter<OrderItem, BaseViewHolder> {
         boolean isShowOperate = orderStatus<40 || (Helper.isNotEmpty(item.getOperaterId()) && item.getOperaterId().equals(CurrentUser.getInstance().getUserId()));
         helper.getView(R.id.lly_operate).setVisibility(isShowOperate?View.VISIBLE:View.GONE);
 
-        if (orderStatus<=20){
+        if (orderStatus==20 || orderStatus==25 || orderStatus==27){
             //待接单
             tvOperate0.setVisibility(View.GONE);
             tvOperate1.setVisibility(View.GONE);
             tvOperate2.setVisibility(View.VISIBLE);
-            tvOperate2.setText("我要接单");
-            tvOperate2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mOperateListener.onOrderTaking(item);
-                }
-            });
+            if (orderStatus == 27){
+                tvOperate2.setText("确认接单");
+                tvOperate2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mOperateListener.onOrderConfirm(item);
+                    }
+                });
+            }else{
+                tvOperate2.setText("我要接单");
+                tvOperate2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mOperateListener.onOrderTaking(item);
+                    }
+                });
+            }
         }else if (orderStatus<=30){
             //待分派
             tvOperate0.setVisibility(View.GONE);

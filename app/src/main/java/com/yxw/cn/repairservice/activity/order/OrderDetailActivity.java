@@ -6,6 +6,7 @@ import android.content.ClipboardManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
@@ -539,19 +542,40 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
         int orderStatus = orderItem.getOrderStatus();
         boolean isShowOperate = orderItem.getOrderStatus()<40 || (Helper.isNotEmpty(orderItem.getOperaterId()) && orderItem.getOperaterId().equals(CurrentUser.getInstance().getUserId()));
         llBottom.setVisibility(isShowOperate?View.VISIBLE:View.GONE);
-        if (orderStatus<=20){
+        if (orderStatus==20 || orderStatus==25 || orderStatus==27){
             //待接单
             tvRestTime.setVisibility(View.GONE);
             tvOperate0.setVisibility(View.GONE);
             tvOperate1.setVisibility(View.GONE);
             tvOperate2.setVisibility(View.VISIBLE);
-            tvOperate2.setText("我要接单");
-            tvOperate2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showOrderTakingDialog(orderItem);
-                }
-            });
+            if (orderStatus == 27){
+                tvOperate2.setText("确认接单");
+                tvOperate2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new MaterialDialog.Builder(OrderDetailActivity.this).title("确认接单").content("是否接取该订单?")
+                                .positiveText("是").onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                confirmReceiveOrder(orderItem,1);
+                            }
+                        }).negativeText("否").onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                confirmReceiveOrder(orderItem,0);
+                            }
+                        }).show();
+                    }
+                });
+            }else{
+                tvOperate2.setText("我要接单");
+                tvOperate2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showOrderTakingDialog(orderItem);
+                    }
+                });
+            }
         }else if (orderStatus<=30){
             //待分配
             tvRestTime.setVisibility(View.GONE);
@@ -730,5 +754,33 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
         mConfirmOrderPop.showPopupWindow(mMapView);
     }
 
+    private void confirmReceiveOrder(OrderItem orderItem,int type){
+        showLoading();
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("orderId", orderItem.getOrderId());
+        map.put("type", type);
+        OkGo.<ResponseData<Object>>post(UrlConstant.ORDER_CONFIRM_RECEIVE)
+                .upJson(gson.toJson(map))
+                .execute(new JsonCallback<ResponseData<Object>>() {
+                    @Override
+                    public void onSuccess(ResponseData<Object> response) {
+                        dismissLoading();
+                        if (response!=null){
+                            if (response.isSuccess()) {
+                                toast("操作成功");
+                                EventBusUtil.post(MessageConstant.NOTIFY_UPDATE_ORDER);
+                            }else{
+                                toast(response.getMsg());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Response<ResponseData<Object>> response) {
+                        super.onError(response);
+                        dismissLoading();
+                    }
+                });
+    }
 
 }

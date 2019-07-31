@@ -1,9 +1,13 @@
 package com.yxw.cn.repairservice.adapter;
 
+import android.graphics.Color;
+import android.widget.TextView;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.entity.NoticeBean;
+import com.yxw.cn.repairservice.util.MsgUtils;
 
 import java.util.List;
 
@@ -20,9 +24,11 @@ public class HomeMsgAdapter extends BaseQuickAdapter<NoticeBean, BaseViewHolder>
 
     @Override
     protected void convert(BaseViewHolder helper, NoticeBean item) {
-        helper.setText(R.id.tv_title,item.getTitle());
         helper.setText(R.id.tv_time,item.getCreateTime());
         helper.setText(R.id.tv_content,item.getContent());
+        TextView tvTitle = helper.getView(R.id.tv_title);
+        tvTitle.setText(item.getTitle());
+        tvTitle.setTextColor(MsgUtils.hasRead(item.getNoticeId()) ? Color.parseColor("#999999"):Color.parseColor("#333333"));
     }
 }
 

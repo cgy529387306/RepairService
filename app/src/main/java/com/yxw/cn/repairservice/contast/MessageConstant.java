@@ -16,6 +16,8 @@ public class MessageConstant {
     public final static String CLEAR_CACHE= "CLEAR_CACHE";
     public final static String MY_CATEGORY= "MY_CATEGORY";
     public final static String SELECT_AREA = "SELECT_AREA";
+    public final static String GET_MSG_COUNT= "GET_MSG_COUNT";
+
     public final static String WORKER_UNORDER_COUNT= "WORKER_UNORDER_COUNT";
     public final static String WORKER_ORDERED_COUNT= "WORKER_ORDERED_COUNT";
     public final static String NOTIFY_ORDER= "NOTIFY_ORDER";

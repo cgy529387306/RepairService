@@ -166,6 +166,11 @@ public class InServiceFragment extends BaseRefreshFragment implements BaseQuickA
     }
 
     @Override
+    public void onOrderConfirm(OrderItem orderItem) {
+
+    }
+
+    @Override
     public void onOrderCancel(OrderItem orderItem) {
         Bundle bundle = new Bundle();
         bundle.putString("acceptId",orderItem.getAcceptId());

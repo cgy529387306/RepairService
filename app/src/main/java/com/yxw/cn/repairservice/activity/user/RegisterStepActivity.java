@@ -12,6 +12,7 @@ import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.fragment.register.IdCardFragment;
 import com.yxw.cn.repairservice.fragment.register.RegisterFragment;
 import com.yxw.cn.repairservice.fragment.register.UserInfoFragment;
+import com.yxw.cn.repairservice.util.AppUtil;
 import com.yxw.cn.repairservice.util.EventBusUtil;
 import com.yxw.cn.repairservice.view.TitleBar;
 
@@ -66,6 +67,8 @@ public class RegisterStepActivity extends BaseActivity {
         mIdCardFragment = new IdCardFragment();
         mUserInfoFragment = new UserInfoFragment();
         showFragment(step);
+        AppUtil.initCategoryData();
+        AppUtil.initRegionTreeData();
     }
 
 

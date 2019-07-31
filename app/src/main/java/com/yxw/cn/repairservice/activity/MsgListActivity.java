@@ -18,7 +18,9 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.adapter.HomeMsgAdapter;
+import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
+import com.yxw.cn.repairservice.entity.MessageEvent;
 import com.yxw.cn.repairservice.entity.NoticeListData;
 import com.yxw.cn.repairservice.entity.ResponseData;
 import com.yxw.cn.repairservice.okgo.JsonCallback;
@@ -136,4 +138,15 @@ public class MsgListActivity extends BaseActivity implements OnRefreshListener, 
             startActivity(MsgDetailActivity.class, bundle);
         }
     }
+
+    @Override
+    public void onEvent(MessageEvent event) {
+        super.onEvent(event);
+        switch (event.getId()) {
+            case MessageConstant.GET_MSG_COUNT:
+                mAdapter.notifyDataSetChanged();
+                break;
+        }
+    }
+
 }

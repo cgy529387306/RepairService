@@ -4,7 +4,10 @@ import android.widget.TextView;
 
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
+import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.entity.NoticeBean;
+import com.yxw.cn.repairservice.util.EventBusUtil;
+import com.yxw.cn.repairservice.util.MsgUtils;
 import com.yxw.cn.repairservice.view.TitleBar;
 
 import butterknife.BindView;
@@ -33,11 +36,11 @@ public class MsgDetailActivity extends BaseActivity {
         super.initView();
         titleBar.setTitle("消息详情");
         NoticeBean noticeBean = (NoticeBean) getIntent().getSerializableExtra("data");
-        if (noticeBean!=null){
-            mTvTitle.setText(noticeBean.getTitle());
-            mTvTime.setText(noticeBean.getCreateTime());
-            mTvContent.setText(noticeBean.getContent());
-        }
+        MsgUtils.deleteMsg(noticeBean.getNoticeId());
+        EventBusUtil.post(MessageConstant.GET_MSG_COUNT);
+        mTvTitle.setText(noticeBean.getTitle());
+        mTvTime.setText(noticeBean.getCreateTime());
+        mTvContent.setText(noticeBean.getContent());
     }
 
 }

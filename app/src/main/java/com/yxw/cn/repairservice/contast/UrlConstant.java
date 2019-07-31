@@ -55,6 +55,7 @@ public class UrlConstant {
     public final static String ORDER_SERVICE_LIST = BASE_USER + "/ms60/api/fix/order/findServiceProviderOrderList/";//服务商端订单条件查询
     public final static String ORDER_SERVICE_ASSIGN = BASE_USER + "/ms60/api/fix/order/accept/serviceAssign/";//服务商指派工程师
     public final static String ORDER_RECEIVE = BASE_USER + "/ms60/api/fix/order/accept/serviceReceive/";//服务商确认接单
+    public final static String ORDER_CONFIRM_RECEIVE = BASE_USER + "/ms60/api/fix/order/confirmOrder";//工程师确认接单
     public final static String ORDER_CANCEL = BASE_USER + "/ms60/api/fix/order/accept/cancelReceiveOrder/{orderId}";//工程师取消接单
     public final static String ORDER_ARRIVAL = BASE_USER + "/ms60/api/fix/order/accept/confirmArrival";//工程师确认到场
     public final static String ORDER_FINISH = BASE_USER + "/ms60/api/fix/order/accept/endServiceBycode";//工程师服务完成
