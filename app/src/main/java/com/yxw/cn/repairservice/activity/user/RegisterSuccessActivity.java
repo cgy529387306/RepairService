@@ -22,7 +22,7 @@ public class RegisterSuccessActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_perfect:
-                startActivity(IdCardInfoActivity.class);
+                finish();
                 break;
         }
     }

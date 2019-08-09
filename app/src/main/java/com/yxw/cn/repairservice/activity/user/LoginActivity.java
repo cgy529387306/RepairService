@@ -90,6 +90,7 @@ public class LoginActivity extends BaseActivity {
             map.put("userName", mEtTel.getText().toString().trim());
             map.put("password", mEtPassword.getText().toString().trim());
             map.put("appSign", UrlConstant.mRoleSign);
+            map.put("lastLoginSystem", "Android");
             String rid = PreferencesHelper.getInstance().getString(SpConstant.REGISTER_ID);
             if (Helper.isEmpty(rid)){
                 rid = JPushInterface.getRegistrationID(getApplicationContext());
@@ -103,7 +104,6 @@ public class LoginActivity extends BaseActivity {
                                      dismissLoading();
                                      if (response!=null){
                                          if (response.isSuccess()) {
-                                             toast("登录成功");
                                              SpUtil.putStr(SpConstant.LOGIN_MOBILE, mEtTel.getText().toString().trim());
                                              CurrentUser.getInstance().login(response.getData());
                                              HttpHeaders headers = new HttpHeaders();
@@ -170,7 +170,7 @@ public class LoginActivity extends BaseActivity {
         super.onEvent(event);
         switch (event.getId()) {
             case MessageConstant.REGISTER:
-                finish();
+                initView();
                 break;
             case MessageConstant.REGISTER_OUT:
                 CurrentUser.getInstance().loginOut();
