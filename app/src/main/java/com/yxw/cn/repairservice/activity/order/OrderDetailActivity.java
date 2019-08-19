@@ -36,6 +36,7 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
 import com.yxw.cn.repairservice.BaseActivity;
 import com.yxw.cn.repairservice.R;
+import com.yxw.cn.repairservice.adapter.RemarkAdapter;
 import com.yxw.cn.repairservice.adapter.UserOrderDetailAdapter;
 import com.yxw.cn.repairservice.adapter.UserOrderPicAdapter;
 import com.yxw.cn.repairservice.adapter.UserOrderStatusAdapter;
@@ -125,8 +126,8 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
     RecyclerView orderRv;
     @BindView(R.id.rv_order_status)
     RecyclerView statusRv;
-    @BindView(R.id.rv_pic)
-    RecyclerView picRv;
+    @BindView(R.id.rv_remark)
+    RecyclerView remarkRv;
     @BindView(R.id.mapView)
     MapView mMapView;
     @BindView(R.id.ll_bottom)
@@ -143,6 +144,7 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
     private List<UserOrder.ListBean.PicListBean> picList;
     private UserOrderPicAdapter picAdapter;
     private UserOrderStatusAdapter statusAdapter;
+    private RemarkAdapter remarkAdapter;
     private boolean mStop;
     private int connectFlag = 0;
     private TitleBar.TextAction textAction;
@@ -170,28 +172,22 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
         }
         boolean isShowOperate = orderItem.getOrderStatus()<40 || (Helper.isNotEmpty(orderItem.getOperaterId()) && orderItem.getOperaterId().equals(CurrentUser.getInstance().getUserId()));
         llBottom.setVisibility(isShowOperate?View.VISIBLE:View.GONE);
+
         orderId = orderItem.getOrderId();
-        orderList = new ArrayList<>();
-        orderAdapter = new UserOrderDetailAdapter(orderList);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this) {
-            @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
-        };
-        orderRv.setLayoutManager(layoutManager);
+        orderRv.setLayoutManager(new LinearLayoutManager(this));
+        orderRv.setNestedScrollingEnabled(false);
+        orderAdapter = new UserOrderDetailAdapter(new ArrayList<>());
         orderRv.setAdapter(orderAdapter);
 
-        picList = new ArrayList<>();
-        picAdapter = new UserOrderPicAdapter(picList);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4) {
-            @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
-        };
-        picRv.setLayoutManager(gridLayoutManager);
-        picRv.setAdapter(picAdapter);
+        remarkRv.setLayoutManager(new LinearLayoutManager(this));
+        remarkRv.setNestedScrollingEnabled(false);
+        remarkAdapter = new RemarkAdapter(new ArrayList<>());
+        remarkRv.setAdapter(remarkAdapter);
+
+        statusRv.setLayoutManager(new LinearLayoutManager(this));
+        statusRv.setNestedScrollingEnabled(false);
+        statusAdapter = new UserOrderStatusAdapter(new ArrayList<>());
+        statusRv.setAdapter(statusAdapter);
 
         statusRv.setLayoutManager(new LinearLayoutManager(this){
             @Override
@@ -238,6 +234,7 @@ public class OrderDetailActivity extends BaseActivity implements ContactPop.Sele
             tvTitle.setText(orderDetail.getCategoryName());
             tvTitle2.setText(orderDetail.getCategoryNameJoint());
             statusAdapter.setNewData(orderDetail.getFixOrderTimelineViewRespIOList());
+            remarkAdapter.setNewData(orderDetail.getRemarkList());
         }
     }
 

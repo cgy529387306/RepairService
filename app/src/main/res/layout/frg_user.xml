@@ -26,6 +26,7 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="23dp"
                 android:layout_gravity="end"
+                android:visibility="gone"
                 android:src="@drawable/icon_remind" />
             <FrameLayout
                 android:layout_width="match_parent"

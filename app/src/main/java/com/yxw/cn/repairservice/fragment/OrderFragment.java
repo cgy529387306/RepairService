@@ -22,6 +22,7 @@ import com.yxw.cn.repairservice.contast.MessageConstant;
 import com.yxw.cn.repairservice.contast.UrlConstant;
 import com.yxw.cn.repairservice.entity.MessageEvent;
 import com.yxw.cn.repairservice.entity.OperateResult;
+import com.yxw.cn.repairservice.entity.OrderCount;
 import com.yxw.cn.repairservice.entity.OrderItem;
 import com.yxw.cn.repairservice.entity.OrderListData;
 import com.yxw.cn.repairservice.entity.ResponseData;
@@ -123,6 +124,8 @@ public class OrderFragment extends BaseRefreshFragment implements BaseQuickAdapt
                     public void onSuccess(ResponseData<OrderListData> response) {
                         if (response!=null){
                             if (response.isSuccess() && response.getData()!=null) {
+                                OrderCount orderCount = new OrderCount(response.getData().getTotalCount(),mOrderType);
+                                EventBusUtil.post(MessageConstant.UPDATE_ORDER_COUNT,orderCount);
                                 isNext = response.getData().isHasNext();
                                 if (p == 1) {
                                     mAdapter.setNewData(response.getData().getItems());

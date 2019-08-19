@@ -20,6 +20,7 @@ import com.yxw.cn.repairservice.BaseRefreshFragment;
 import com.yxw.cn.repairservice.R;
 import com.yxw.cn.repairservice.activity.AccountCenterActivity;
 import com.yxw.cn.repairservice.activity.MsgDetailActivity;
+import com.yxw.cn.repairservice.activity.MsgListActivity;
 import com.yxw.cn.repairservice.activity.MyEngineerActivity;
 import com.yxw.cn.repairservice.activity.order.InServiceActivity;
 import com.yxw.cn.repairservice.activity.order.MyOrderActivity;
@@ -49,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 /**
  * 首页
@@ -114,6 +116,17 @@ public class HomeFragment extends BaseRefreshFragment implements BaseQuickAdapte
                 }
             }
         });
+    }
+
+    @OnClick({R.id.iv_msg})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.iv_msg:
+                startActivity(MsgListActivity.class);
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
