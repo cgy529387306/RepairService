@@ -38,6 +38,7 @@ public class LoginInfo {
     private String sex;
     private String pName;
     private String jobNumber;
+    private String invitationCode;
 
     public String getToken() {
         return token == null ? "" : token;
@@ -310,5 +311,13 @@ public class LoginInfo {
 
     public void setJobNumber(String jobNumber) {
         this.jobNumber = jobNumber;
+    }
+
+    public String getInvitationCode() {
+        return invitationCode == null ? "" : invitationCode;
+    }
+
+    public void setInvitationCode(String invitationCode) {
+        this.invitationCode = invitationCode;
     }
 }

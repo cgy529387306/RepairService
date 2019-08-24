@@ -183,6 +183,7 @@ public class RegisterStepActivity extends BaseActivity {
         super.onDestroy();
         RegisterFragment.mPhone = null;
         RegisterFragment.mPassword = null;
+        RegisterFragment.mInviteCode = null;
         IdCardFragment.idCardFront = null;
         IdCardFragment.idCardBack = null;
         IdCardFragment.icCardBoth = null;

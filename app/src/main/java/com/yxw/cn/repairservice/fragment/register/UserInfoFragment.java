@@ -124,6 +124,7 @@ public class UserInfoFragment extends BaseFragment {
         Map<String, Object> map = new HashMap<>();
         map.put("userName", RegisterFragment.mPhone);
         map.put("password", RegisterFragment.mPassword);
+        map.put("invitationCode", RegisterFragment.mInviteCode);
         map.put("appSign", UrlConstant.mRoleSign);
         map.put("idCardFront", Base64Util.getBase64ImageStr(IdCardFragment.idCardFront));
         map.put("idCardBack", Base64Util.getBase64ImageStr(IdCardFragment.idCardBack));

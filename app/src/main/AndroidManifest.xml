@@ -134,7 +134,8 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.user.RegisterStepActivity"
             android:screenOrientation="portrait"/>
-
+        <activity android:name=".activity.user.PromoteActivity"
+            android:screenOrientation="portrait"/>
 
 
         <activity android:name=".activity.order.MyOrderActivity"
