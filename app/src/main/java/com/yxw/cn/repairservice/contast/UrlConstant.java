@@ -56,6 +56,7 @@ public class UrlConstant {
     public final static String GET_EXCEPTION_REASON = BASE_USER + "/ms20/api/sys/dicts/findDictsByKey";//查询数据字典
     public final static String GET_LUNBO = BASE_USER + "/ms20/api/fix/app/picture/findAllList";//app轮播图分页查询
     public final static String GET_NOTICE = BASE_USER + "/ms20/api/fix/app/notice/findNotice";//公告列表
+    public final static String GET_NOTICE_READ = BASE_USER + "/ms20/api/fix/app/notice/saveRead/";//已读
 
     public final static String ORDER_SERVICE_LIST = BASE_USER + "/ms60/api/fix/order/findServiceProviderOrderList/";//服务商端订单条件查询
     public final static String ORDER_SERVICE_ASSIGN = BASE_USER + "/ms60/api/fix/order/accept/serviceAssign/";//服务商指派工程师

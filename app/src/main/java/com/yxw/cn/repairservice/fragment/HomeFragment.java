@@ -42,7 +42,6 @@ import com.yxw.cn.repairservice.util.ImageUtils;
 import com.yxw.cn.repairservice.util.LocationUtils;
 import com.yxw.cn.repairservice.util.PreferencesHelper;
 import com.yxw.cn.repairservice.view.RecycleViewDivider;
-import com.yxw.cn.repairservice.view.TitleBar;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,6 +50,8 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import q.rorbin.badgeview.Badge;
+import q.rorbin.badgeview.QBadgeView;
 
 /**
  * 首页
@@ -62,9 +63,12 @@ public class HomeFragment extends BaseRefreshFragment implements BaseQuickAdapte
     TextView mTvLocation;
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
+    @BindView(R.id.iv_msg)
+    ImageView mIvMsg;
 
     private GridView mGridCate;
     private Banner mBanner;
+    private Badge mMsgBadge;
 
     private HomeMsgAdapter mAdapter;
     private int mPage = 2;
@@ -77,6 +81,7 @@ public class HomeFragment extends BaseRefreshFragment implements BaseQuickAdapte
 
     @Override
     protected void initView() {
+        mMsgBadge = new QBadgeView(mContext).bindTarget(mIvMsg);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new RecycleViewDivider(LinearLayoutManager.VERTICAL,1,getResources().getColor(R.color.gray_divider)));
         mAdapter = new HomeMsgAdapter(new ArrayList());
@@ -181,6 +186,7 @@ public class HomeFragment extends BaseRefreshFragment implements BaseQuickAdapte
                     public void onSuccess(ResponseData<NoticeListData> response) {
                         dismissLoading();
                         if (response!=null){
+                            initMsgBadge(response);
                             if (response.isSuccess() && response.getData()!=null) {
                                 isNext = response.getData().isHasNext();
                                 if (p == 1) {
@@ -273,8 +279,20 @@ public class HomeFragment extends BaseRefreshFragment implements BaseQuickAdapte
                     mTvLocation.setVisibility(View.VISIBLE);
                     mTvLocation.setText(city);
                 }
+            case MessageConstant.GET_MSG_COUNT:
+                onRefresh();
                 break;
         }
     }
+
+    private void initMsgBadge(ResponseData responseData){
+        int msgCount = responseData.getDicts();
+        if (msgCount==0){
+            mMsgBadge.hide(false);
+        }else{
+            mMsgBadge.setBadgeNumber(msgCount);
+        }
+    }
+
 
 }
