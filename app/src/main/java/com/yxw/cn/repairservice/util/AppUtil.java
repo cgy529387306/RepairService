@@ -439,6 +439,23 @@ public class AppUtil {
         }
     }
 
+    /**
+     * 获取id
+     * @param orderItem
+     * @return
+     */
+    public static OrderItem setDetailId(OrderItem orderItem,String id){
+        int orderStatus = orderItem.getOrderStatus();
+        if (orderStatus<=27){
+            orderItem.setOrderId(id);
+        }else if (orderStatus<=30){
+            orderItem.setServiceId(id);
+        }else{
+            orderItem.setAcceptId(id);
+        }
+        return orderItem;
+    }
+
     public static String getDetailUrl(OrderItem orderItem){
         int orderStatus = orderItem.getOrderStatus();
         if (orderStatus<=27){
