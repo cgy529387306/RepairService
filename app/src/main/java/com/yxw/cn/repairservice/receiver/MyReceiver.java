@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-
 import com.yxw.cn.repairservice.activity.main.MainActivity;
 import com.yxw.cn.repairservice.activity.order.OrderDetailActivity;
 import com.yxw.cn.repairservice.activity.user.LoginActivity;
@@ -66,9 +65,7 @@ public class MyReceiver extends BroadcastReceiver {
 
 	private void openNotification(Context context, Bundle bundle){
 		try {
-			String content = bundle.getString(JPushInterface.EXTRA_MESSAGE);
 			String extra = bundle.getString(JPushInterface.EXTRA_EXTRA);
-			Log.d(TAG,content);
 			Log.d(TAG,extra);
 			PushExtras pushExtras = JsonHelper.fromJson(extra,PushExtras.class);
 			Intent intent;
