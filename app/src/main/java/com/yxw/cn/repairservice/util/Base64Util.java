@@ -38,7 +38,7 @@ public class Base64Util {
             e.printStackTrace();
         }
         // 加密
-        return  Base64.encodeToString(data, Base64.DEFAULT);
+        return "data:image/png;base64,"+Base64.encodeToString(data, Base64.DEFAULT);
     }
 
     //通过路径将图片转化为Bitmap
